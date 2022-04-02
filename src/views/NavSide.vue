@@ -1,0 +1,62 @@
+<template>
+  <div class="nav">
+    <el-col>
+      <el-menu
+        default-active="2"
+        class="el-menu-vertical-demo"
+        @open="handleOpen"
+        @close="handleClose"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
+        router
+      >
+        <el-submenu index="1">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>财务预估</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="/financialForecasts">预估查询</el-menu-item>
+            <!-- <el-menu-item index="/annualEstimates">年缴合同预估计算</el-menu-item>
+            <el-menu-item index="1-2">月缴合同预估计算</el-menu-item>
+            <el-menu-item index="1-3">入账明细</el-menu-item> -->
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="2">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>精算预估</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="/actuarialEstimates">预估查询</el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+      </el-menu>
+    </el-col>
+  </div>
+</template>
+
+<script>
+export default {
+  methods: {
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
+    },
+  },
+};
+</script>
+
+<style scoped>
+.nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+  background-color: #545c64;
+  box-shadow: 2px 0 3px rgba(0, 21, 41, 0.35);
+}
+</style>

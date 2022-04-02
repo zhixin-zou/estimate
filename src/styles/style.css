@@ -1,0 +1,89 @@
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-overflow-scrolling: touch; 
+}
+
+body {
+  font: 14px/1.2 "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  color: #606266;
+  background-color: #F0F2F5;
+}
+
+input, button, textarea, select {
+  font: 14px/1.2 "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none
+}
+
+a {
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+.clearfix::after {
+  content: ' ';
+  display: table;
+  clear: both;
+}
+
+.permission-hidden {
+  display: none;
+}
+
+/* .left-right-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  .left-container {
+  flex-basis: 280px;
+  flex-shrink: 0;
+  margin-right: 8px;
+  margin-bottom: 0 !important;
+  overflow: auto;
+  }
+  .right-container {
+  flex-grow: 1;
+  margin-left: 8px;
+  overflow: auto;
+  }
+} */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 5px solid transparent;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: 1px 1px 5px #999 inset;
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 20px;
+  background-clip: content-box;
+  box-shadow: 0 0 0 5px #999 inset;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
