@@ -18,6 +18,7 @@ Vue.use(request);
 
 // Vue.component(FilterPanel.name, FilterPanel)
 Vue.component(FsListPanel.name, FsListPanel);
+/* eslint-disable no-new */
 
 new Vue({
   router,

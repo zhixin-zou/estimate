@@ -17,10 +17,8 @@
             <span>财务预估</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/financialForecasts">预估查询</el-menu-item>
-            <!-- <el-menu-item index="/annualEstimates">年缴合同预估计算</el-menu-item>
-            <el-menu-item index="1-2">月缴合同预估计算</el-menu-item>
-            <el-menu-item index="1-3">入账明细</el-menu-item> -->
+            <el-menu-item index="/financialForecasts">财务分入预估</el-menu-item>
+            <el-menu-item index="/separateEstimates">财务分出预估</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
         <el-submenu index="2">

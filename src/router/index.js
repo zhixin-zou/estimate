@@ -12,6 +12,7 @@ import YearAdjustDetail from '@/views/financial/yearAdjustDetail.vue'
 import MonthContractDetail from '@/views/financial/monthContractDetail.vue'
 import ActuarialEstimates from '@/views/actuarial/actuarialEstimates.vue'
 import MonthAdjustDetail from '@/views/financial/monthAdjustDetail.vue'
+import SeparateEstimates from '@/views/financial/separateEstimates.vue'
 
 // import store from '@/store'
 // import { Message } from 'element-ui'
@@ -31,6 +32,10 @@ const routes = [{
     {
         path: '/financialForecasts',
         component: FinancialForecasts
+    },
+    {
+        path: '/separateEstimates',
+        component: SeparateEstimates
     },
     {
         path: '/annualEstimates',

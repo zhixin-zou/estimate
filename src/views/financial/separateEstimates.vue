@@ -1,5 +1,5 @@
 <template>
-  <div class="actuarialEstimates">
+  <div class="separateEstimates">
     <div class="searchBox">
       <div class="searchMain">
         <el-form ref="form" :model="form" label-width="100px">
@@ -78,10 +78,10 @@
         <el-table-column prop="brokerageRate" label="经纪费比例">
         </el-table-column>
         <el-table-column prop="cedentRate" label="分出比例"> </el-table-column>
-        <!-- <el-table-column prop="estimateStatus" label="预估状态">
-        </el-table-column> -->
+        <el-table-column prop="estimateStatus" label="预估状态">
+        </el-table-column>
 
-        <el-table-column fixed="right" label="操作" width="200">
+        <el-table-column fixed="right" label="操作" width="150">
           <template slot-scope="scope">
             <el-button
               @click="handleFinancialClick(scope.row)"
@@ -94,12 +94,6 @@
               type="text"
               size="small"
               >历史预估</el-button
-            >
-               <el-button
-              @click="handleBreak(scope.row)"
-              type="text"
-              size="small"
-              >合同拆分</el-button
             >
           </template>
         </el-table-column>
@@ -117,26 +111,16 @@
         </el-pagination>
       </div>
     </div>
-    <div class="calculateResult">
-      <el-button plain @click="handleCalculate">汇算结果查看</el-button>
-    </div>
   </div>
 </template>
 
 <script>
 import { $http } from "@/utils/request";
-import api from "@/utils/api";
-
-// import { mapActions } from "vuex";
+// import api from "@/utils/api";
 
 export default {
   data() {
     return {
-      loading: false,
-      total: 0,
-      pageSize: 2,
-      currentPage: 1,
-      totalPage: 1,
       form: {
         contratType: "",
         contratNoBegin: "",
@@ -147,42 +131,48 @@ export default {
       },
       currentPageData: [],
       tableData: [],
+
+      loading: false,
+      total: 0,
+      pageSize: 2,
+      currentPage: 1,
+      totalPage: 1,
       companyList: [],
     };
   },
   methods: {
-    // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
-      // $http
-      //   .get("http://yapi.smart-xwork.cn/mock/134845/estimate/partnerQuery")
-      //   .then((res) => {
-      //     console.log(res, "queryCompany");
-      //     this.companyList = res.data.data.partnerList;
-      //   });
+      $http
+        .get("http://yapi.smart-xwork.cn/mock/134845/estimate/partnerQuery")
+        .then((res) => {
+          console.log(res, "queryCompany");
+          this.companyList = res.data.data.partnerList;
+        });
+    },
+    onSubmit() {
+      console.log("submit!");
+    },
+    handleClick(row) {
+      console.log(row);
     },
     handleSearchClick() {
-      $http.post(api.contractListQuery, this.form).then((res) => {
-        this.$message.success(res.data.msg);
-        this.tableData = res.data.data.contractList;
-        this.total = res.data.data.contractList.length;
-        this.totalPage = Math.ceil(this.total / this.pageSize);
-        this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
-        this.setCurrentPageData();
-      });
+      console.log(this.form, "form");
+      $http
+        .post(
+          "http://yapi.smart-xwork.cn/mock/134845/estimate/finance/contractListQuery",
+          this.form
+        )
+        .then((res) => {
+          this.$message.success(res.data.msg);
+          this.tableData = res.data.data.contractList;
+          this.total = res.data.data.contractList.length;
+          this.totalPage = Math.ceil(this.total / this.pageSize);
+          this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+          console.log(this.totalPage, "this.totalPage");
+          this.setCurrentPageData();
+        });
+      this.setCurrentPageData();
     },
-    handleResetClick() {
-      this.form = {
-        contratType: "",
-        contratNoBegin: "",
-        contratNoEnd: "",
-        cedent: "",
-        contratTimeBegin: "",
-        contratTimeEnd: "",
-      };
-    },
-    // 合同拆分
-    handleBreak() {},
-    // 假分页
     setCurrentPageData() {
       let begin = (this.currentPage - 1) * this.pageSize;
       let end = this.currentPage * this.pageSize;
@@ -205,10 +195,40 @@ export default {
       this.currentPage = page;
       this.setCurrentPageData();
     },
+    handleFinancialClick(row) {
+      sessionStorage.setItem("estimateKey", row.estimateKey);
+      sessionStorage.setItem("estimateMonth", row.estimateMonth);
+      sessionStorage.setItem("contractKey", row.contractKey);
+      console.log(row);
+      if (row.payType === "annual") {
+        this.$router.push("/annualEstimates");
+      } else {
+        this.$router.push("/monthContractDetail");
+      }
+    },
+    handleHistoryClick(row) {
+      sessionStorage.setItem("estimateKey", row.estimateKey);
+      sessionStorage.setItem("estimateMonth", row.estimateMonth);
+      sessionStorage.setItem("contractKey", row.contractKey);
+      // if (row.payType === "annual") {
+        this.$router.push("/viewHistory");
+      // } else {
+      //   this.$router.push("/monthHistory");
+      // }
+    },
+    handleResetClick() {
+      this.form = {
+        contratType: "",
+        contratNoBegin: "",
+        contratNoEnd: "",
+        cedent: "",
+        contratTimeBegin: "",
+        contratTimeEnd: "",
+      };
+    },
   },
-  // mounted () {
-  //   this.test()
-  // },
+  mounted() {
+  },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());
   },
@@ -216,7 +236,7 @@ export default {
 </script>
 
 <style lang="scss">
-.actuarialEstimates {
+.separateEstimates {
   position: relative;
   background-color: #fff;
   .searchBox {
@@ -308,11 +328,6 @@ export default {
       margin-top: 10px;
       float: right;
     }
-  }
-  .calculateResult {
-    margin-left: 45%;
-    // margin-bottom: 20px;
-    height: 50px;
   }
 }
 </style>

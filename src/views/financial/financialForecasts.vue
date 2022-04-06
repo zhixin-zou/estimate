@@ -163,7 +163,6 @@ export default {
           this.form
         )
         .then((res) => {
-          console.log(res, "0000000000000");
           this.$message.success(res.data.msg);
           this.tableData = res.data.data.contractList;
           this.total = res.data.data.contractList.length;
@@ -201,7 +200,7 @@ export default {
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
       console.log(row);
-      if (row.payType === "month") {
+      if (row.payType === "annual") {
         this.$router.push("/annualEstimates");
       } else {
         this.$router.push("/monthContractDetail");
@@ -211,11 +210,11 @@ export default {
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
-      if (row.payType === "annual") {
+      // if (row.payType === "annual") {
         this.$router.push("/viewHistory");
-      } else {
-        this.$router.push("/monthHistory");
-      }
+      // } else {
+      //   this.$router.push("/monthHistory");
+      // }
     },
     handleResetClick() {
       this.form = {
@@ -229,9 +228,6 @@ export default {
     },
   },
   mounted() {
-    // .catch(() => {
-    //   // console.log('promise catch err')
-    // });
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());

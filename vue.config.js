@@ -31,7 +31,7 @@ module.exports = {
                 changeOrigin: true
             },
             '/estimate/finance/': {
-                target: 'http://10.98.165.33:8106',
+                target: 'http://10.98.165.20:8106',
                 changeOrigin: true
             },
         }

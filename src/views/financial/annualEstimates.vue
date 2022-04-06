@@ -87,16 +87,20 @@
       <el-divider></el-divider>
       <div class="adjustHeader">
         <div class="adjustBox">
-          <div class="adjustName"><span>浮动因子：</span></div>
+          <div class="adjustName"><span>分入浮动因子：</span></div>
           <div class="input">
-            <el-input v-model="floatingFactor"></el-input>
+            <el-input v-model="iabSlidingScaleAdjustRate"></el-input>
+          </div>
+          <div class="adjustName"><span>分出浮动因子：</span></div>
+          <div class="input">
+            <el-input v-model="orpSlidingScaleAdjustRate"></el-input>
           </div>
         </div>
         <el-button
           type="primary"
           round
           class="adjustButton"
-          @click="handleFloatChange"
+          @click="handleFloatAdjust"
           >确定</el-button
         >
       </div>
@@ -412,7 +416,8 @@ export default {
       testList: [],
       lastList: [],
       calculatData: [],
-      floatingFactor: 0,
+      iabSlidingScaleAdjustRate: "",
+      orpSlidingScaleAdjustRate: "",
     };
   },
   methods: {
@@ -429,6 +434,10 @@ export default {
           this.workSheetList = res.data.data.workSheetList;
           this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
           this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+          this.iabSlidingScaleAdjustRate =
+            res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+          this.orpSlidingScaleAdjustRate =
+            res.data.data.contractInfo.orpSlidingScaleAdjustRate;
           this.handleFloatChange();
         });
     },
@@ -461,7 +470,7 @@ export default {
     },
     handleHistoryQuery() {
       console.log("调整历史");
-      this.$router.push('/yearAdjustDetail')
+      this.$router.push("/yearAdjustDetail");
     },
     handleTotalEPI() {
       $http
@@ -471,15 +480,16 @@ export default {
           estimateMonth: sessionStorage.getItem("estimateMonth"),
         })
         .then((res) => {
-          console.log(res);
-          console.log(this.EPIData, "EPIData");
-
           if (res.data.code === "0") {
             this.contractInfoList.push(res.data.data.contractInfo);
             this.cedentList = res.data.data.cedentList;
             this.workSheetList = res.data.data.workSheetList;
             this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
             this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.iabSlidingScaleAdjustRate =
+              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+            this.orpSlidingScaleAdjustRate =
+              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
             this.$message.success("修改成功");
           }
         });
@@ -500,6 +510,10 @@ export default {
             this.workSheetList = res.data.data.workSheetList;
             this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
             this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.iabSlidingScaleAdjustRate =
+              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+            this.orpSlidingScaleAdjustRate =
+              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
             this.$message.success("修改成功");
           }
         });
@@ -527,20 +541,6 @@ export default {
         return item;
       }, []);
       console.log(this.testList, "this.testList");
-      // this.testList.forEach(e => {
-      //   this.lastList.push({
-      //     company:
-      //   })
-      // })
-
-      // this.calculatedFeeList2.forEach((item) => {
-      //   this.testList.forEach((element) => {
-      //     if (item.company === element.company) {
-      //       console.log(item.calculatItem, "item.calculatItem", item.company);
-
-      //     }
-      //   });
-      // });
       var result = [];
       var obj3 = {};
       for (var i = 0; i < this.calculatedFeeList2.length; i++) {
@@ -583,6 +583,26 @@ export default {
       console.log(result, "companycalculatItem");
       console.log(this.lastList, "lastListaaaa");
       // this.calculatedFeeList2.forEach((item, index) => {});
+    },
+    handleFloatAdjust() {
+      $http
+        .post(api.yearSlidingScaleRateAdjust, {
+          iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
+          orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
+          estimateKey: sessionStorage.getItem("estimateKey"),
+        })
+        .then((res) => {
+          this.contractInfoList.push(res.data.data.contractInfo);
+          this.cedentList = res.data.data.cedentList;
+          this.workSheetList = res.data.data.workSheetList;
+          this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
+          this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+          this.iabSlidingScaleAdjustRate =
+            res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+          this.orpSlidingScaleAdjustRate =
+            res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+          this.handleFloatChange();
+        });
     },
     handleDetial() {
       this.$router.push("/bookedDetial");

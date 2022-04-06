@@ -142,7 +142,7 @@
 
 <script>
 import { $http } from "@/utils/request";
-// import api from "@/utils/api";
+import api from "@/utils/api";
 import { getMonthBetween } from "@/utils/utils";
 export default {
   data() {
@@ -287,7 +287,7 @@ export default {
   methods: {
     init() {
       $http
-        .post("/estimate/finance/monthContractDetailQuery", {
+        .post(api.monthContractDetailQuery, {
           estimateKey: "a3137f63-aa83-11ec-9e97-a4ae1204f49c",
         })
         .then((res) => {
@@ -295,101 +295,216 @@ export default {
           this.contractInfoList.push(res.data.data.contractInfo);
           this.cedentList = res.data.data.cedentList;
           this.workSheetList = res.data.data.workSheetList;
-          let epiSplitInfo = res.data.data.epiSplitInfo;
+          // let epiSplitInfo = res.data.data.epiSplitInfo;
+          let epiSplitInfo = {
+            totalEPI: "1064414.00",
+            epiSplitList: [
+              {
+                calculatMonth: "202108",
+                calculatedEPI: "212882.8",
+                originEPI: "212882.8",
+                manualAdjustEPI: "0",
+                workSheetAdjustEPI: "0",
+                m1: "13720",
+                m12: "13720",
+                m11: "13720",
+                m10: "13720",
+                m9: "13720",
+                m8: "13720",
+                m7: "13720",
+                m6: "13720",
+                m5: "13720",
+                m4: "13720",
+                m3: "13720",
+                m2: "13720",
+              },
+              {
+                calculatMonth: "202109",
+                calculatedEPI: "212882.8",
+                originEPI: "212882.8",
+                manualAdjustEPI: "0",
+                workSheetAdjustEPI: "0",
+                m1: "13720",
+                m12: "13720",
+                m11: "13720",
+                m10: "13720",
+                m9: "13720",
+                m8: "13720",
+                m7: "13720",
+                m6: "13720",
+                m5: "13720",
+                m4: "13720",
+                m3: "13720",
+                m2: "13720",
+              },
+              {
+                calculatMonth: "202110",
+                calculatedEPI: "212882.8",
+                originEPI: "212882.8",
+                manualAdjustEPI: "0",
+                workSheetAdjustEPI: "0",
+                m1: "13720",
+                m12: "13720",
+                m11: "13720",
+                m10: "13720",
+                m9: "13720",
+                m8: "13720",
+                m7: "13720",
+                m6: "13720",
+                m5: "13720",
+                m4: "13720",
+                m3: "13720",
+                m2: "13720",
+              },
+              {
+                calculatMonth: "202111",
+                calculatedEPI: "212882.8",
+                originEPI: "212882.8",
+                manualAdjustEPI: "0",
+                workSheetAdjustEPI: "0",
+                m1: "13720",
+                m12: "13720",
+                m11: "13720",
+                m10: "13720",
+                m9: "13720",
+                m8: "13720",
+                m7: "13720",
+                m6: "13720",
+                m5: "13720",
+                m4: "13720",
+                m3: "13720",
+                m2: "13720",
+              },
+              {
+                calculatMonth: "202112",
+                calculatedEPI: "212882.8",
+                originEPI: "212882.8",
+                manualAdjustEPI: "0",
+                workSheetAdjustEPI: "0",
+                m1: "13720",
+                m12: "13720",
+                m11: "13720",
+                m10: "13720",
+                m9: "13720",
+                m8: "13720",
+                m7: "13720",
+                m6: "13720",
+                m5: "13720",
+                m4: "13720",
+                m3: "13720",
+                m2: "13720",
+              },
+            ],
+            contractMonthBegin: "202107",
+            contractMonthEnd: "202201",
+            calculatMonth: "18",
+            epiSplitSumList: [
+              {
+                month: "202107",
+                sumAmount: "13720",
+                totalPremium: "13720",
+                cumulativeAmount: "13720",
+              },
+              {
+                month: "202107",
+                sumAmount: "13720",
+                totalPremium: "13720",
+                cumulativeAmount: "13720",
+              },
+            ],
+          };
+          this.totalEPI = epiSplitInfo.totalEPI;
           console.log(epiSplitInfo, "epiSplitInfo");
-          // 横向时间处理
-          let startTime =
-            epiSplitInfo.contractMonthBegin.slice(0, 4) +
-            "-" +
-            epiSplitInfo.contractMonthBegin.slice(4) +
-            "-01";
-          let endTime = "";
-          if (
-            epiSplitInfo.contractMonthBegin.slice(4) !== "01" &&
-            epiSplitInfo.contractMonthBegin.slice(4) !== "02"
-          ) {
-            let endYear =
-              Number(epiSplitInfo.contractMonthBegin.slice(0, 4)) + 2;
-            let endMonth = Number(epiSplitInfo.contractMonthBegin.slice(4)) - 2;
-            if (endMonth < 10) {
-              endTime = String(endYear) + "-0" + String(endMonth) + "-01";
-            } else {
-              endTime = String(endYear) + String(endMonth) + "-01";
-            }
-            console.log(endTime, "endTime");
-          } else if (epiSplitInfo.contractMonthBegin.slice(4) === "01") {
-            let endYear =
-              Number(epiSplitInfo.contractMonthBegin.slice(0, 4)) + 1;
-            endTime = String(endYear) + "-11" + "-01";
-          } else if (epiSplitInfo.contractMonthBegin.slice(4) === "02") {
-            let endYear =
-              Number(epiSplitInfo.contractMonthBegin.slice(0, 4)) + 1;
-            endTime = String(endYear) + "-12" + "-01";
-          }
-          this.monthList = getMonthBetween(startTime, endTime);
-          // console.log(this.monthList, "monthList");
-          // end
-          let newEPIObj = {};
-          this.monthList.forEach((item) => {
-            newEPIObj[item.month] = "";
-          });
-          // console.log(newEPIObj, "newEPIList");
-          // epiSplitList中对象拼接
-          epiSplitInfo.epiSplitList.forEach((item) => {
-            Object.assign(item, newEPIObj);
-          });
-          // console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
-          // epiSplitList中数据重组
-          epiSplitInfo.epiSplitList.forEach((item) => {
-            let newData = {};
-            let MData = {};
-            // let newMonthList = [];
-            // 截取12个月data
-            let newKeys = Object.keys(item);
-            newKeys.map((e, idx) => {
-              if (e === item.calculatMonth) {
-                console.log(idx, "idx");
-                let startId = idx;
-                newKeys.map((i, id) => {
-                  if (id < startId + 12 && id >= startId) {
-                    // console.log(i, 'item[i]');
-                    newData[i] = item[i];
-                  }
-                });
-              }
-              // console.log(e, 'MDataMDataMDataMDataMData');
-              if (e === "m1") {
-                // console.log(idx, "idx2");
-                let startId = idx;
-                newKeys.map((i, id2) => {
-                  if (id2 < startId + 12 && id2 >= startId) {
-                    MData[i] = item[i];
-                  }
-                });
-              }
-            });
-            // console.log(newData, "!!!!!", MData);
-            // console.log(Reflect.ownKeys(newData), 'newDatanewDatanewData', Reflect.ownKeys(MData));
-            let finArr1 = Reflect.ownKeys(newData);
-            let finArr2 = Reflect.ownKeys(MData);
-            let lastData = {};
-            finArr1.forEach((i, index) => {
-              // console.log(i, 'iiiiiii')
-              lastData[i] = MData[finArr2[index]];
-            });
-            console.log(lastData, "lastData");
-            for (var p in item) {
-              for (var q in lastData) {
-                if (p === q) {
-                  item[p] = lastData[q];
-                }
-              }
-            }
-            // console.log(item, 'item');
-          });
-          this.EPIData = epiSplitInfo.epiSplitList;
-          console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
+          this.dataProcess(epiSplitInfo)
         });
+    },
+    dataProcess(epiSplitInfo) {
+      // 横向时间处理
+      let startTime =
+        epiSplitInfo.contractMonthBegin.slice(0, 4) +
+        "-" +
+        epiSplitInfo.contractMonthBegin.slice(4) +
+        "-01";
+      console.log(startTime, "startTime");
+      let endTime = "";
+      // 年份处理
+      let monthInfo = epiSplitInfo.calculatMonth % 12;
+      let yearsInfo = parseInt(epiSplitInfo.calculatMonth / 12);
+      console.log(yearsInfo, "?????", monthInfo);
+      let endYear =
+        Number(epiSplitInfo.contractMonthEnd.slice(0, 4)) + yearsInfo;
+      let endMonth = Number(epiSplitInfo.contractMonthEnd.slice(4)) + monthInfo;
+      console.log(endYear, endMonth, "===============");
+      if (endMonth < 10) {
+        endTime = String(endYear) + "-0" + String(endMonth) + "-01";
+      } else {
+        endTime = String(endYear) + "-" + String(endMonth) + "-01";
+      }
+      console.log(endTime, "endTime");
+      this.monthList = getMonthBetween(startTime, endTime);
+      console.log(this.monthList, "monthList");
+      // end
+      let newEPIObj = {};
+      this.monthList.forEach((item) => {
+        newEPIObj[item.month] = "";
+      });
+      // console.log(newEPIObj, "newEPIList");
+      // epiSplitList中对象拼接
+      epiSplitInfo.epiSplitList.forEach((item) => {
+        Object.assign(item, newEPIObj);
+      });
+      // console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
+      // epiSplitList中数据重组
+      epiSplitInfo.epiSplitList.forEach((item) => {
+        let newData = {};
+        let MData = {};
+        // let newMonthList = [];
+        // 截取12个月data
+        let newKeys = Object.keys(item);
+        newKeys.map((e, idx) => {
+          if (e === item.calculatMonth) {
+            console.log(idx, "idx");
+            let startId = idx;
+            newKeys.map((i, id) => {
+              if (id < startId + 12 && id >= startId) {
+                // console.log(i, 'item[i]');
+                newData[i] = item[i];
+              }
+            });
+          }
+          // console.log(e, 'MDataMDataMDataMDataMData');
+          if (e === "m1") {
+            // console.log(idx, "idx2");
+            let startId = idx;
+            newKeys.map((i, id2) => {
+              if (id2 < startId + 12 && id2 >= startId) {
+                MData[i] = item[i];
+              }
+            });
+          }
+        });
+        // console.log(newData, "!!!!!", MData);
+        // console.log(Reflect.ownKeys(newData), 'newDatanewDatanewData', Reflect.ownKeys(MData));
+        let finArr1 = Reflect.ownKeys(newData);
+        let finArr2 = Reflect.ownKeys(MData);
+        let lastData = {};
+        finArr1.forEach((i, index) => {
+          // console.log(i, 'iiiiiii')
+          lastData[i] = MData[finArr2[index]];
+        });
+        console.log(lastData, "lastData");
+        for (var p in item) {
+          for (var q in lastData) {
+            if (p === q) {
+              item[p] = lastData[q];
+            }
+          }
+        }
+        // console.log(item, 'item');
+      });
+      this.EPIData = epiSplitInfo.epiSplitList;
+      console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
+      //epi调整结束
     },
     getSummaries(param) {
       const { columns, data } = param;
@@ -418,7 +533,20 @@ export default {
 
       return sums;
     },
-    handleTotalEPI() {},
+    handleTotalEPI() {
+      $http
+        .post(api.monthTotalEPIAdjust, {
+          totalEPI: this.totalEPI,
+          estimateKey: sessionStorage.getItem("estimateKey"),
+        })
+        .then((res) => {
+          this.contractInfoList.push(res.data.data.contractInfo);
+          this.cedentList = res.data.data.cedentList;
+          this.workSheetList = res.data.data.workSheetList;
+          let epiSplitInfo = res.data.data.epiSplitInfo;
+          this.dataProcess(epiSplitInfo)
+        });
+    },
     handleHistoryQuery() {
       // console.log("调整历史");
       this.$router.push("/monthAdjustDetail");
@@ -427,7 +555,9 @@ export default {
       console.log(this.EPIData, "EPIData");
     },
     handleFloatChange() {},
-    handleDetial() {},
+    handleDetial() {
+      this.$router.push("/bookedDetial");
+    },
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());
