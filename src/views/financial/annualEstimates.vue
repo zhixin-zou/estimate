@@ -141,11 +141,11 @@ export default {
       columns: [
         {
           title: "合同号",
-          property: "contratNo",
+          property: "contractNo",
         },
         {
           title: "合同类型",
-          property: "contratType",
+          property: "contractType",
         },
         {
           title: "主险种",
@@ -190,6 +190,8 @@ export default {
         {
           title: "预估状态",
           property: "estimateStatus",
+          formatter: "dict",
+          dictName: "estimateStatus",
         },
         {
           title: "预估维度键值",

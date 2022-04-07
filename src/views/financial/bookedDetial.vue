@@ -139,7 +139,13 @@ export default {
         });
     },
     handleCheck () {
-        
+        $http.post(api.saveToFinance, {
+          estimateKey: sessionStorage.getItem('estimateKey'),
+          estimateMonth: sessionStorage.getItem('estimateMonth'),
+          accountType: '0'
+        }).then(res => {
+          console.log(res);
+        })
     }
   },
   beforeRouteEnter(to, from, next) {

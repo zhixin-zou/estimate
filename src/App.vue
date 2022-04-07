@@ -89,6 +89,7 @@ export default {
 #app .aside {
   height: 100%;
   width: 200px;
+  min-width: 200px;
   overflow-x: hidden;
 }
 #app .container {

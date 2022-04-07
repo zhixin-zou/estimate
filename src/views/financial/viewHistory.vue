@@ -1,8 +1,8 @@
 <template>
   <div class="viewHistory">
     <el-table :data="historyDate" border style="width: 100%">
-      <el-table-column fixed prop="contratNo" label="合同号"> </el-table-column>
-      <el-table-column prop="contratType" label="合同类型"> </el-table-column>
+      <el-table-column fixed prop="contractNo" label="合同号"> </el-table-column>
+      <el-table-column prop="contractType" label="合同类型"> </el-table-column>
       <el-table-column prop="planCode" label="主险种"> </el-table-column>
       <el-table-column prop="cedent" label="分入公司"> </el-table-column>
       <el-table-column prop="effectivePeriodBegin" label="开始日期">

@@ -4,7 +4,7 @@
       <div class="searchMain">
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="合同类型">
-            <el-select v-model="form.contratType" placeholder="请选择">
+            <el-select v-model="form.contractType" placeholder="请选择">
               <el-option label="比例合约" value="PROPTREATY "></el-option>
               <el-option label="非比例合约" value="NONPROPTREATY"></el-option>
               <el-option label="比例临分" value="PROPFAC"></el-option>
@@ -12,10 +12,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="合同号开始">
-            <el-input v-model="form.contratNoBegin"></el-input>
+            <el-input v-model="form.contractNoBegin"></el-input>
           </el-form-item>
           <el-form-item label="合同号结束">
-            <el-input v-model="form.contratNoEnd"></el-input>
+            <el-input v-model="form.contractNoEnd"></el-input>
           </el-form-item>
           <el-form-item label="分入公司">
             <el-select v-model="form.cedent" placeholder="请选择">
@@ -31,7 +31,7 @@
             <el-date-picker
               type="date"
               placeholder="选择日期"
-              v-model="form.contratTimeBegin"
+              v-model="form.contractTimeBegin"
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
@@ -39,7 +39,7 @@
             <el-date-picker
               type="date"
               placeholder="选择日期"
-              v-model="form.contratTimeEnd"
+              v-model="form.contractTimeEnd"
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
@@ -62,9 +62,9 @@
     </div>
     <div class="listBox">
       <el-table :data="currentPageData" border style="width: 100%">
-        <el-table-column fixed prop="contratNo" label="合同号">
+        <el-table-column fixed prop="contractNo" label="合同号">
         </el-table-column>
-        <el-table-column prop="contratType" label="合同类型"> </el-table-column>
+        <el-table-column prop="contractType" label="合同类型"> </el-table-column>
         <el-table-column prop="planCode" label="主险种"> </el-table-column>
         <el-table-column prop="cedent" label="分入公司"> </el-table-column>
         <el-table-column prop="effectivePeriodBegin" label="开始日期">
@@ -138,12 +138,12 @@ export default {
       currentPage: 1,
       totalPage: 1,
       form: {
-        contratType: "",
-        contratNoBegin: "",
-        contratNoEnd: "",
+        contractType: "",
+        contractNoBegin: "",
+        contractNoEnd: "",
         cedent: "",
-        contratTimeBegin: "",
-        contratTimeEnd: "",
+        contractTimeBegin: "",
+        contractTimeEnd: "",
       },
       currentPageData: [],
       tableData: [],
@@ -172,12 +172,12 @@ export default {
     },
     handleResetClick() {
       this.form = {
-        contratType: "",
-        contratNoBegin: "",
-        contratNoEnd: "",
+        contractType: "",
+        contractNoBegin: "",
+        contractNoEnd: "",
         cedent: "",
-        contratTimeBegin: "",
-        contratTimeEnd: "",
+        contractTimeBegin: "",
+        contractTimeEnd: "",
       };
     },
     // 合同拆分
