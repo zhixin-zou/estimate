@@ -23,7 +23,9 @@
       </el-form-item>
     </el-form>
     <fs-list-panel :columns="columns" :listData="listData"></fs-list-panel>
-    <el-button plain class="bookDetialButton" @click="handleCheck">确认入账</el-button>
+    <el-button plain class="bookDetialButton" @click="handleCheck"
+      >确认入账</el-button
+    >
   </div>
 </template>
 
@@ -50,7 +52,7 @@ export default {
         },
         {
           title: "Accounting Date",
-          property: "conversionDate",
+          property: "accountingDate",
         },
         {
           title: "Period",
@@ -119,7 +121,7 @@ export default {
         {
           title: "Line Description",
           property: "lineDescription",
-        }
+        },
       ],
       listData: [],
     };
@@ -127,26 +129,33 @@ export default {
   methods: {
     init() {
       $http
-        .post(api.EBSInfoQuery, {
+        .post(api.ebsInfoQuery, {
           estimateKey: sessionStorage.getItem("estimateKey"),
           estimateMonth: sessionStorage.getItem("estimateMonth"),
           accountType: "0",
         })
         .then((res) => {
-          console.log(res, "res");
-          this.EBSSummaryForm = res.data.data.EBSSummary;
-          this.listData = res.data.data.EBSDetail
+          if (res.data.code === "0") {
+            console.log(res, "res");
+            this.EBSSummaryForm = res.data.data.ebsSummary;
+            this.listData = res.data.data.ebsDetail;
+          } else {
+            console.log(res);
+            this.$message.error(res.data.msg);
+          }
         });
     },
-    handleCheck () {
-        $http.post(api.saveToFinance, {
-          estimateKey: sessionStorage.getItem('estimateKey'),
-          estimateMonth: sessionStorage.getItem('estimateMonth'),
-          accountType: '0'
-        }).then(res => {
-          console.log(res);
+    handleCheck() {
+      $http
+        .post(api.saveToFinance, {
+          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateMonth: sessionStorage.getItem("estimateMonth"),
+          accountType: "0",
         })
-    }
+        .then((res) => {
+          console.log(res);
+        });
+    },
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());
@@ -160,8 +169,8 @@ export default {
     width: 600px;
   }
   .bookDetialButton {
-      margin-top: 20px;
-      margin-left: 45%;
+    margin-top: 20px;
+    margin-left: 45%;
   }
 }
 </style>

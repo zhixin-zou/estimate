@@ -63,11 +63,24 @@
         </el-table-column>
         <el-table-column prop="manualAdjustEPI" label="EPI调整">
           <template slot-scope="scope">
+            <span
+              v-if="
+                scope.row.calculatMonth === '累计' ||
+                scope.row.calculatMonth === '预估+实际' ||
+                scope.row.calculatMonth === '合计'
+              "
+            >
+              {{ scope.row.manualAdjustEPI }}</span
+            >
             <el-input
+              v-else
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
+              :disabled="
+                scope.row.calculatMonth < estimateMonth ||
+                scope.row.commandFlag === '1'
+              "
             ></el-input>
-            <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
           </template>
         </el-table-column>
         <el-table-column prop="workSheetAdjustEPI" label="实际账单调整">
@@ -79,8 +92,21 @@
           :label="item.month"
         >
           <template slot-scope="scope">
+            <span
+              v-if="
+                scope.row.calculatMonth === '累计' ||
+                scope.row.calculatMonth === '预估+实际' ||
+                scope.row.calculatMonth === '合计'
+              "
+              >{{ scope.row[item.month] }}</span
+            >
             <el-input
-              :disabled="scope.row[item.month] === ''"
+              v-else
+              :disabled="
+                scope.row[item.month] === '' ||
+                scope.row.calculatMonth < estimateMonth ||
+                scope.row.commandFlag === '0'
+              "
               placeholder=""
               v-model="scope.row[item.month]"
             ></el-input>
@@ -92,9 +118,19 @@
         >温馨提示：每月6号前调整的可调整上月EPI，每月6号后只能调整本月EPI</span
       >
       <br />
-      <el-button class="EPIbutton" @click="handleAdjustEPI"
-        >保存调整后的EPI</el-button
+      <el-dropdown
+        class="dropdownButton"
+        split-button
+        type="primary"
+        @click="handleAdjustEPI"
+        @command="handleCommand"
       >
+        保存调整后的EPI
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="0">月份金额调整</el-dropdown-item>
+          <el-dropdown-item command="1">分摊明细调整</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
     <div class="separateInfo">
       <h2>计算后预估费用明细</h2>
@@ -151,6 +187,7 @@ import { getMonthBetween } from "@/utils/utils";
 export default {
   data() {
     return {
+      estimateMonth: sessionStorage.getItem("estimateMonth"),
       totalEPI: "0",
       floatingFactor: "",
       columns: [
@@ -164,15 +201,15 @@ export default {
         },
         {
           title: "主险种",
-          property: "planCode",
+          property: "planName",
         },
         {
           title: "分入公司",
-          property: "cedent",
+          property: "cedentName",
         },
         {
           title: "再保公司",
-          property: "reinsurer",
+          property: "reinsurerName",
         },
         {
           title: "经纪人",
@@ -235,7 +272,7 @@ export default {
         },
         {
           title: "分出公司编码",
-          property: "orpPartnerNo",
+          property: "orpPartnerCode",
         },
         {
           title: "分出公司名称",
@@ -283,177 +320,49 @@ export default {
       ],
       workSheetList: [],
       EPIData: [],
+      // epiDatacopy: [],
+
       monthList: [],
       lastList: [],
       // calculatedFeeList: [],
-      calculatedFeeList: [
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "212882.8",
-        },
-      ],
-      calculatedFeeList2: [
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "212882.9",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "2.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "3.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "4.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "5.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "7.8",
-        },
-        {
-          company: "wesure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "123.8",
-        },
-        {
-          company: "wesure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "333.8",
-        },
-        {
-          company: "wesure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "54.8",
-        },
-        {
-          company: "wesure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "456.8",
-        },
-      ],
+      calculatedFeeList: [],
+      calculatedFeeList2: [],
       iabSlidingScaleAdjustRate: "",
       orpSlidingScaleAdjustRate: "",
+      commandFlag: "0",
     };
   },
   methods: {
     init() {
       $http
         .post(api.monthContractDetailQuery, {
-          estimateKey: "a3137f63-aa83-11ec-9e97-a4ae1204f49c",
+          estimateKey: sessionStorage.getItem("estimateKey"),
         })
         .then((res) => {
-          console.log(res, "month");
-          this.contractInfoList.push(res.data.data.contractInfo);
-          this.cedentList = res.data.data.cedentList;
-          this.workSheetList = res.data.data.workSheetList;
-          let epiSplitInfo = res.data.data.epiSplitInfo;
-          this.totalEPI = epiSplitInfo.totalEPI;
-          console.log(epiSplitInfo, "epiSplitInfo");
-          this.dataProcess(epiSplitInfo);
-          this.handleFloatChange();
-          this.iabSlidingScaleAdjustRate =
-            res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-          this.orpSlidingScaleAdjustRate =
-            res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+          if (res.data.code == "0") {
+            console.log(res, "month");
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.cedentList = res.data.data.cedentList;
+            this.workSheetList = res.data.data.workSheetList;
+            let epiSplitInfo = res.data.data.epiSplitInfo;
+            // this.epiDatacopy = res.data.data.epiSplitInfo.epiSplitList
+            localStorage.setItem(
+              "epiDatacopy",
+              JSON.stringify(res.data.data.epiSplitInfo.epiSplitList)
+            );
+            this.totalEPI = epiSplitInfo.totalEPI;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+            console.log(epiSplitInfo, "epiSplitInfo");
+            this.dataProcess(epiSplitInfo);
+            this.handleFloatChange();
+            this.iabSlidingScaleAdjustRate =
+              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+            this.orpSlidingScaleAdjustRate =
+              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+          } else {
+            this.$messag.error(res.data.msg);
+          }
         });
     },
     dataProcess(epiSplitInfo) {
@@ -470,32 +379,41 @@ export default {
       let yearsInfo = parseInt(epiSplitInfo.calculatMonths / 12);
       console.log(yearsInfo, "?????", monthInfo);
       let endYear =
-        Number(epiSplitInfo.contractMonthEnd.slice(0, 4)) + yearsInfo;
-      let endMonth = Number(epiSplitInfo.contractMonthEnd.slice(4)) + monthInfo;
+        Number(epiSplitInfo.contractMonthBegin.slice(0, 4)) + yearsInfo;
+      let endMonth =
+        Number(epiSplitInfo.contractMonthBegin.slice(4)) + monthInfo;
       console.log(endYear, endMonth, "===============");
       if (endMonth > 12) {
         endYear += 1;
         endMonth = endMonth - 12;
       }
       if (endMonth < 10) {
-        endTime = String(endYear) + "-0" + String(endMonth) + "-01";
+        endTime = String(endYear) + "-0" + String(endMonth - 1) + "-01";
       } else {
-        endTime = String(endYear) + "-" + String(endMonth) + "-01";
+        endTime = String(endYear) + "-" + String(endMonth - 1) + "-01";
       }
       console.log(endTime, "endTime");
       this.monthList = getMonthBetween(startTime, endTime);
       console.log(this.monthList, "monthList");
       // end
       let newEPIObj = {};
+      let sumObj = {};
+      let totalPremiumObj = {};
+      let cumulativeAmount = {};
       this.monthList.forEach((item) => {
         newEPIObj[item.month] = "";
+        sumObj[item.month] = "";
+        totalPremiumObj[item.month] = "";
+        cumulativeAmount[item.month] = "";
       });
       console.log(newEPIObj, "newEPIList");
       // epiSplitList中对象拼接
       epiSplitInfo.epiSplitList.forEach((item) => {
+        item.commandFlag = "0";
         Object.assign(item, newEPIObj);
       });
-      // console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
+
+      console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
       // epiSplitList中数据重组
       epiSplitInfo.epiSplitList.forEach((item) => {
         let newData = {};
@@ -545,7 +463,43 @@ export default {
         // console.log(item, 'item');
       });
       this.EPIData = epiSplitInfo.epiSplitList;
-      console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
+      // 合计累计预估加实际处理
+      console.log(epiSplitInfo.epiSplitSumList, "??????????????????????");
+      let epiSplitSumList = epiSplitInfo.epiSplitSumList;
+      let sumHeaderObj = cumulativeAmount;
+      let premiumHeaderObj = totalPremiumObj;
+      let allHeaderObj = sumObj;
+      allHeaderObj.calculatMonth = "合计";
+      sumHeaderObj.calculatMonth = "累计";
+      // sumHeaderObj.calculatedEPI = "";
+      // sumHeaderObj.originEPI = "";
+      // sumHeaderObj.manualAdjustEPI = "";
+      premiumHeaderObj.calculatMonth = "预估+实际";
+      epiSplitSumList.forEach((item) => {
+        for (var key in sumHeaderObj) {
+          if (item.calculatMonth === key) {
+            sumHeaderObj[key] = item.cumulativeAmount;
+          }
+        }
+        for (var key1 in premiumHeaderObj) {
+          if (item.calculatMonth === key1) {
+            premiumHeaderObj[key1] = item.cumulativeAmount;
+          }
+        }
+        for (var key2 in allHeaderObj) {
+          if (item.calculatMonth === key2) {
+            allHeaderObj[key2] = item.cumulativeAmount;
+          }
+        }
+      });
+      console.log(
+        sumObj,
+        "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
+      );
+      this.EPIData.push(allHeaderObj);
+      this.EPIData.push(sumHeaderObj);
+      this.EPIData.push(premiumHeaderObj);
+      // console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
       //epi调整结束
     },
     getSummaries(param) {
@@ -566,7 +520,7 @@ export default {
               return prev;
             }
           }, 0);
-          console.log(sums[index], "sums[index]");
+          // console.log(sums[index], "sums[index]");
           sums[index] = sums[index].toFixed(2) + " 元";
         } else {
           sums[index] = "N/A";
@@ -598,8 +552,45 @@ export default {
       // console.log("调整历史");
       this.$router.push("/monthAdjustDetail");
     },
+    handleTest(scope) {
+      console.log(scope, ";;;;;;;");
+    },
+    handleCommand(command) {
+      this.commandFlag = command;
+      this.EPIData.forEach((item) => {
+        item.commandFlag = this.commandFlag;
+      });
+      console.log(this.commandFlag);
+    },
     handleAdjustEPI() {
-      console.log(this.EPIData, "EPIData");
+      console.log(
+        JSON.parse(localStorage.getItem("epiDatacopy")),
+        "epiDatacopy",
+        this.EPIData,
+        "sadad"
+      );
+      let monthEpiSplitList = JSON.parse(localStorage.getItem("epiDatacopy"));
+      if (this.commandFlag === "0") {
+        this.EPIData.forEach((item) => {
+          monthEpiSplitList.forEach((e) => {
+            if (item.calculatMonth === e.calculatMonth) {
+              e.manualAdjustEPI = item.manualAdjustEPI;
+            }
+          });
+        });
+      } else {
+        let epiList = this.EPIData.splice(0, this.EPIData.length - 3);
+        console.log(epiList, "epiList");
+        // epiList.forEach(item => {
+        //   // if ()
+        // })
+      }
+
+      $http.post(api.monthTotalEPIAdjust, {
+        estimateKey: sessionStorage.getItem("estimateKey"),
+        monthAdjustType: this.commandFlag,
+        monthEpiSplitList: monthEpiSplitList
+      })
     },
     handleFloatChange() {
       this.lastList = [];
@@ -658,15 +649,78 @@ export default {
           ) {
             // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
             item[element.calculatMonth] = element.estimateAmount;
-            console.log(element.calculatMonth, "element");
+            // console.log(element.calculatMonth, 'element');
           }
         });
       });
-
-      console.log(result, "companycalculatItem");
-      console.log(this.lastList, "lastListaaaa");
-      // this.calculatedFeeList2.forEach((item, index) => {});
+      // console.log(this.lastList, "lastListaaaa");
     },
+    // handleFloatChange() {
+    //   this.lastList = [];
+    //   console.log(this.calculatedFeeList, "this.calculatedFeeList");
+    //   var obj = {};
+    //   this.calculatedFeeList = this.calculatedFeeList.reduce(function (
+    //     item,
+    //     next
+    //   ) {
+    //     obj[next.calculatMonth]
+    //       ? ""
+    //       : (obj[next.calculatMonth] = true && item.push(next));
+    //     return item;
+    //   },
+    //   []);
+    //   console.log(this.calculatedFeeList2, "this.calculatedFeeList2");
+    //   var obj2 = {};
+    //   this.testList = this.calculatedFeeList2.reduce(function (item, next) {
+    //     obj2[next.company]
+    //       ? ""
+    //       : (obj2[next.company] = true && item.push(next));
+    //     return item;
+    //   }, []);
+    //   console.log(this.testList, "this.testList");
+    //   var result = [];
+    //   var obj3 = {};
+    //   for (var i = 0; i < this.calculatedFeeList2.length; i++) {
+    //     if (
+    //       !(
+    //         obj3[this.calculatedFeeList2[i].company] &&
+    //         obj3[this.calculatedFeeList2[i].calculatItem]
+    //       )
+    //     ) {
+    //       result.push(this.calculatedFeeList2[i]);
+    //       obj3[this.calculatedFeeList2[i].company] = true;
+    //       obj3[this.calculatedFeeList2[i].calculatItem] = true;
+    //     }
+    //   }
+    //   result.forEach((item) => {
+    //     this.lastList.push({
+    //       company: item.company,
+    //       calculatItem: item.calculatItem,
+    //     });
+    //     console.log(this.lastList, "lastList");
+    //   });
+    //   this.lastList.forEach((item) => {
+    //     this.calculatedFeeList.forEach((element) => {
+    //       item[element.calculatMonth] = 0;
+    //     });
+    //   });
+    //   this.lastList.forEach((item) => {
+    //     this.calculatedFeeList2.forEach((element) => {
+    //       if (
+    //         item.company === element.company &&
+    //         item.calculatItem === element.calculatItem
+    //       ) {
+    //         // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
+    //         item[element.calculatMonth] = element.estimateAmount;
+    //         console.log(element.calculatMonth, "element");
+    //       }
+    //     });
+    //   });
+
+    //   console.log(result, "companycalculatItem");
+    //   console.log(this.lastList, "lastListaaaa");
+    //   // this.calculatedFeeList2.forEach((item, index) => {});
+    // },
     handleFloatAdjust() {
       $http
         .post(api.monthSlidingScaleRateAdjust, {
@@ -678,124 +732,7 @@ export default {
           this.contractInfoList.push(res.data.data.contractInfo);
           this.cedentList = res.data.data.cedentList;
           this.workSheetList = res.data.data.workSheetList;
-          // let epiSplitInfo = res.data.data.epiSplitInfo;
-          let epiSplitInfo = {
-            totalEPI: "1064414.00",
-            epiSplitList: [
-              {
-                calculatMonth: "202108",
-                calculatedEPI: "212882.8",
-                originEPI: "212882.8",
-                manualAdjustEPI: "0",
-                workSheetAdjustEPI: "0",
-                m1: "13720",
-                m12: "13720",
-                m11: "13720",
-                m10: "13720",
-                m9: "13720",
-                m8: "13720",
-                m7: "13720",
-                m6: "13720",
-                m5: "13720",
-                m4: "13720",
-                m3: "13720",
-                m2: "13720",
-              },
-              {
-                calculatMonth: "202109",
-                calculatedEPI: "212882.8",
-                originEPI: "212882.8",
-                manualAdjustEPI: "0",
-                workSheetAdjustEPI: "0",
-                m1: "13720",
-                m12: "13720",
-                m11: "13720",
-                m10: "13720",
-                m9: "13720",
-                m8: "13720",
-                m7: "13720",
-                m6: "13720",
-                m5: "13720",
-                m4: "13720",
-                m3: "13720",
-                m2: "13720",
-              },
-              {
-                calculatMonth: "202110",
-                calculatedEPI: "212882.8",
-                originEPI: "212882.8",
-                manualAdjustEPI: "0",
-                workSheetAdjustEPI: "0",
-                m1: "13720",
-                m12: "13720",
-                m11: "13720",
-                m10: "13720",
-                m9: "13720",
-                m8: "13720",
-                m7: "13720",
-                m6: "13720",
-                m5: "13720",
-                m4: "13720",
-                m3: "13720",
-                m2: "13720",
-              },
-              {
-                calculatMonth: "202111",
-                calculatedEPI: "212882.8",
-                originEPI: "212882.8",
-                manualAdjustEPI: "0",
-                workSheetAdjustEPI: "0",
-                m1: "13720",
-                m12: "13720",
-                m11: "13720",
-                m10: "13720",
-                m9: "13720",
-                m8: "13720",
-                m7: "13720",
-                m6: "13720",
-                m5: "13720",
-                m4: "13720",
-                m3: "13720",
-                m2: "13720",
-              },
-              {
-                calculatMonth: "202112",
-                calculatedEPI: "212882.8",
-                originEPI: "212882.8",
-                manualAdjustEPI: "0",
-                workSheetAdjustEPI: "0",
-                m1: "13720",
-                m12: "13720",
-                m11: "13720",
-                m10: "13720",
-                m9: "13720",
-                m8: "13720",
-                m7: "13720",
-                m6: "13720",
-                m5: "13720",
-                m4: "13720",
-                m3: "13720",
-                m2: "13720",
-              },
-            ],
-            contractMonthBegin: "202107",
-            contractMonthEnd: "202201",
-            calculatMonth: "18",
-            epiSplitSumList: [
-              {
-                month: "202107",
-                sumAmount: "13720",
-                totalPremium: "13720",
-                cumulativeAmount: "13720",
-              },
-              {
-                month: "202107",
-                sumAmount: "13720",
-                totalPremium: "13720",
-                cumulativeAmount: "13720",
-              },
-            ],
-          };
+          let epiSplitInfo = res.data.data.epiSplitInfo;
           this.totalEPI = epiSplitInfo.totalEPI;
           console.log(epiSplitInfo, "epiSplitInfo");
           this.dataProcess(epiSplitInfo);
@@ -851,9 +788,12 @@ export default {
         float: right;
       }
     }
-    .EPIbutton {
+    .dropdownButton {
       margin-left: 45%;
     }
+  }
+  .checkDetial {
+    margin-left: 45%;
   }
 }
 </style>

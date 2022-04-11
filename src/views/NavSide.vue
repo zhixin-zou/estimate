@@ -30,6 +30,15 @@
             <el-menu-item index="/actuarialEstimates">预估查询</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
+              <el-submenu index="3">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>账务查看</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="/actuarialEstimates">账务查寻</el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
       </el-menu>
     </el-col>
   </div>

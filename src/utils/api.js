@@ -18,7 +18,7 @@ export default {
     // 年缴EPI明细调整
     yearDetailEPIAdjust: '/estimate/finance/yearDetailEPIAdjust',
     // 查看入账明细
-    EBSInfoQuery: '/estimate/finance/EBSInfoQuery',
+    ebsInfoQuery: '/estimate/finance/ebsInfoQuery',
     // 查看预估历史
     estimateHistoryQuery: '/estimate/finance/estimateHistoryQuery',
     // 年缴明细调整

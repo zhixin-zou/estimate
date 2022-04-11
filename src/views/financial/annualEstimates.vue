@@ -47,7 +47,6 @@
           >查看历史</el-button
         >
       </div>
-
       <el-table
         :data="EPIData"
         border
@@ -65,7 +64,9 @@
             <el-input
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
+              :disabled="scope.row.calculatMonth < estimateMonth"
             ></el-input>
+            <!-- {{ scope.row + '++++++++++++++++'}} -->
             <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
           </template>
         </el-table-column>
@@ -104,6 +105,7 @@
           >确定</el-button
         >
       </div>
+      <!-- {{ this.lastList }} -->
       <el-table
         :data="lastList"
         border
@@ -136,6 +138,7 @@ import api from "@/utils/api";
 export default {
   data() {
     return {
+      estimateMonth: sessionStorage.getItem("estimateMonth"),
       totalEPI: "0",
       separateForm: {},
       columns: [
@@ -149,15 +152,15 @@ export default {
         },
         {
           title: "主险种",
-          property: "planCode",
+          property: "planName",
         },
         {
           title: "分入公司",
-          property: "cedent",
+          property: "cedentName",
         },
         {
           title: "再保公司",
-          property: "reinsurer",
+          property: "reinsurerName",
         },
         {
           title: "经纪人",
@@ -193,10 +196,10 @@ export default {
           formatter: "dict",
           dictName: "estimateStatus",
         },
-        {
-          title: "预估维度键值",
-          property: "estimateKey",
-        },
+        // {
+        //   title: "预估维度键值",
+        //   property: "estimateKey",
+        // },
         {
           title: "分入浮动因子",
           property: "iabSlidingScaleAdjustRate",
@@ -271,150 +274,8 @@ export default {
       workSheetList: [],
 
       EPIData: [],
-      calculatedFeeList: [
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "212882.8",
-        },
-      ],
-      calculatedFeeList2: [
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "212882.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "212882.9",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Premium",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "2.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "3.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "4.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "5.8",
-        },
-        {
-          company: "fusure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "7.8",
-        },
-        {
-          company: "wesure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202108",
-          estimateAmount: "123.8",
-        },
-        {
-          company: "wesure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202109",
-          estimateAmount: "333.8",
-        },
-        {
-          company: "wesure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202110",
-          estimateAmount: "54.8",
-        },
-        {
-          company: "wesure",
-          calculatItem: "Commission",
-          currencyCode: "CNY",
-          calculatMonth: "202111",
-          estimateAmount: "456.8",
-        },
-      ],
+      calculatedFeeList: [],
+      calculatedFeeList2: [],
       testList: [],
       lastList: [],
       calculatData: [],
@@ -430,17 +291,25 @@ export default {
           estimateKey: params,
         })
         .then((res) => {
-          console.log(res, "reseres");
-          this.contractInfoList.push(res.data.data.contractInfo);
-          this.cedentList = res.data.data.cedentList;
-          this.workSheetList = res.data.data.workSheetList;
-          this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
-          this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
-          this.iabSlidingScaleAdjustRate =
-            res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-          this.orpSlidingScaleAdjustRate =
-            res.data.data.contractInfo.orpSlidingScaleAdjustRate;
-          this.handleFloatChange();
+          if (res.data.code === "0") {
+            console.log(res, "reseres");
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.cedentList = res.data.data.cedentList;
+            this.workSheetList = res.data.data.workSheetList;
+            this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
+            this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+
+            this.iabSlidingScaleAdjustRate =
+              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+            this.orpSlidingScaleAdjustRate =
+              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.handleFloatChange();
+            console.log(this.lastList, "lastListaaaa");
+          } else {
+            this.$message.error(res.data.msg);
+          }
         });
     },
     getSummaries(param) {
@@ -488,11 +357,15 @@ export default {
             this.workSheetList = res.data.data.workSheetList;
             this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
             this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
             this.iabSlidingScaleAdjustRate =
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
             this.$message.success("修改成功");
+          } else {
+            this.$message.error(res.data.msg);
           }
         });
     },
@@ -581,10 +454,7 @@ export default {
           }
         });
       });
-
-      console.log(result, "companycalculatItem");
-      console.log(this.lastList, "lastListaaaa");
-      // this.calculatedFeeList2.forEach((item, index) => {});
+      // console.log(this.lastList, "lastListaaaa");
     },
     handleFloatAdjust() {
       $http
@@ -657,6 +527,9 @@ export default {
     .EPIbutton {
       margin-left: 45%;
     }
+  }
+  .checkDetial {
+    margin-left: 45%;
   }
 }
 </style>

@@ -5,8 +5,8 @@
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="合同类型">
             <el-select v-model="form.contractType" placeholder="请选择">
-              <el-option label="比例合约" value="PROPTREATY "></el-option>
-              <el-option label="非比例合约" value="NONPROPTREATY"></el-option>
+              <el-option label="比例合约" value="PROPTTY"></el-option>
+              <el-option label="非比例合约" value="NONPROPTTY"></el-option>
               <el-option label="比例临分" value="PROPFAC"></el-option>
               <el-option label="非比例临分" value="NONPROPFAC"></el-option>
             </el-select>
@@ -65,8 +65,8 @@
         <el-table-column fixed prop="contractNo" label="合同号">
         </el-table-column>
         <el-table-column prop="contractType" label="合同类型"> </el-table-column>
-        <el-table-column prop="planCode" label="主险种"> </el-table-column>
-        <el-table-column prop="cedent" label="分入公司"> </el-table-column>
+        <el-table-column prop="planName" label="主险种"> </el-table-column>
+        <el-table-column prop="cedentName" label="分入公司"> </el-table-column>
         <el-table-column prop="effectivePeriodBegin" label="开始日期">
         </el-table-column>
         <el-table-column prop="effectivePeriodEnd" label="结束日期">
@@ -143,7 +143,7 @@ export default {
   methods: {
     init() {
       $http
-        .get("http://yapi.smart-xwork.cn/mock/134845/estimate/partnerQuery")
+        .get("/estimate/partnerQuery")
         .then((res) => {
           console.log(res, "queryCompany");
           this.companyList = res.data.data.partnerList;
@@ -163,13 +163,18 @@ export default {
           this.form
         )
         .then((res) => {
-          this.$message.success(res.data.msg);
-          this.tableData = res.data.data.contractList;
+          // this.$message.success(res.data.msg);
+          if (res.data.code == '0') {
+              this.tableData = res.data.data.contractList;
           this.total = res.data.data.contractList.length;
           this.totalPage = Math.ceil(this.total / this.pageSize);
           this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
           console.log(this.totalPage, "this.totalPage");
           this.setCurrentPageData();
+          } else {
+            this.$message.error(res.data.msg)
+          }
+        
         });
       this.setCurrentPageData();
     },
