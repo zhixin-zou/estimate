@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+// import HomeView from '@/views/HomeView.vue'
 import NotFound from '@/views/NotFound.vue'
 // import Forbidden from '@/views/Forbidden.vue'
 // import HelpIndex from '@/views/help/HelpIndex.vue'
@@ -13,6 +13,8 @@ import MonthContractDetail from '@/views/financial/monthContractDetail.vue'
 import ActuarialEstimates from '@/views/actuarial/actuarialEstimates.vue'
 import MonthAdjustDetail from '@/views/financial/monthAdjustDetail.vue'
 import SeparateEstimates from '@/views/financial/separateEstimates.vue'
+import FinancialSearch from '@/views/financialView/financialSearch.vue'
+import SeparateEstimateDetial from '@/views/financial/separateEstimateDetial.vue'
 
 // import store from '@/store'
 // import { Message } from 'element-ui'
@@ -21,11 +23,12 @@ import SeparateEstimates from '@/views/financial/separateEstimates.vue'
 
 Vue.use(Router)
 
-const routes = [{
+const routes = [
+    {
         path: '/',
-        component: HomeView,
+        component: FinancialForecasts,
         meta: {
-            title: '首页',
+            title: 'test',
             requireAuth: false
         }
     },
@@ -64,6 +67,14 @@ const routes = [{
     {
         path: '/monthAdjustDetail',
         component: MonthAdjustDetail
+    },
+    {
+        path: '/financialSearch',
+        component: FinancialSearch
+    },
+    {
+        path: '/outDetial',
+        component: SeparateEstimateDetial
     },
     {
         path: '/404',
@@ -129,7 +140,7 @@ const routes = [{
 //     return result
 // }
 
-const router = new Router({ mode: 'history', routes })
+const router = new Router({ mode: 'hash', routes })
     // 捕获 router.push 异常
     // const originalPush = Router.prototype.push
     // Router.prototype.push = function push(location) {

@@ -3,6 +3,7 @@ module.exports = {
   publicPath: "/",
   // build目录
   outputDir: "dist",
+  indexPath: 'financialForecasts.html',
   devServer: {
     // clientLogLevel: 'warning',
     // historyApiFallback: true,
@@ -35,7 +36,7 @@ module.exports = {
     //     changeOrigin: true,
     //   },
       "/estimate": {
-        target: "http://10.98.165.20:8106",
+        target: "http://10.10.128.14:8106",
         changeOrigin: true,
       },
     },

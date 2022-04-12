@@ -11,6 +11,7 @@
       <el-table-column prop="effectivePeriodEnd" label="结束日期">
       </el-table-column>
       <el-table-column prop="payType" label="缴费方式"> </el-table-column>
+      <el-table-column prop="estimateMonth" label="预估月份"> </el-table-column>
       <el-table-column prop="epi" label="预估保费"> </el-table-column>
       <el-table-column prop="commissionRate" label="手续费比例">
       </el-table-column>

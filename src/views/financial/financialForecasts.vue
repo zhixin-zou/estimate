@@ -64,14 +64,22 @@
       <el-table :data="currentPageData" border style="width: 100%">
         <el-table-column fixed prop="contractNo" label="合同号">
         </el-table-column>
-        <el-table-column prop="contractType" label="合同类型"> </el-table-column>
+        <el-table-column prop="contractType" label="合同类型">
+        </el-table-column>
         <el-table-column prop="planName" label="主险种"> </el-table-column>
         <el-table-column prop="cedentName" label="分入公司"> </el-table-column>
         <el-table-column prop="effectivePeriodBegin" label="开始日期">
         </el-table-column>
         <el-table-column prop="effectivePeriodEnd" label="结束日期">
         </el-table-column>
-        <el-table-column prop="payType" label="缴费方式"> </el-table-column>
+        <el-table-column prop="payType" label="缴费方式">
+          <template slot-scope="scope">
+            <el-select v-model="scope.row.payType" @change="handleTypeChange(scope)" :disabled="scope.row.payType !== ''">
+              <el-option value="annual">annual</el-option>
+              <el-option value="month">monthly</el-option>
+            </el-select>
+          </template>
+        </el-table-column>
         <el-table-column prop="epi" label="预估保费"> </el-table-column>
         <el-table-column prop="commissionRate" label="手续费比例">
         </el-table-column>
@@ -87,6 +95,7 @@
               @click="handleFinancialClick(scope.row)"
               type="text"
               size="small"
+              v-show="scope.row.payType !== ''"
               >预估计算</el-button
             >
             <el-button
@@ -95,6 +104,12 @@
               size="small"
               >历史预估</el-button
             >
+            <!-- <el-button
+              @click="handleAdjustType(scope.row)"
+              type="text"
+              size="small"
+              >调整缴费方式</el-button
+            > -->
           </template>
         </el-table-column>
       </el-table>
@@ -111,12 +126,18 @@
         </el-pagination>
       </div>
     </div>
+    <!-- <el-dialog title="选择修改" :visible.sync="showTypeDialog" width="500px">
+      <el-select v-model="payTypeInfo" placeholder="请选择">
+        <el-option label="年缴" value="annual"> </el-option>
+        <el-option label="月缴" value="monthly"> </el-option>
+      </el-select>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
 import { $http } from "@/utils/request";
-// import api from "@/utils/api";
+import api from "@/utils/api";
 
 export default {
   data() {
@@ -138,16 +159,16 @@ export default {
       currentPage: 1,
       totalPage: 1,
       companyList: [],
+      showTypeDialog: false,
+      payTypeInfo: "",
     };
   },
   methods: {
     init() {
-      $http
-        .get("/estimate/partnerQuery")
-        .then((res) => {
-          console.log(res, "queryCompany");
-          this.companyList = res.data.data.partnerList;
-        });
+      $http.get("/estimate/partnerQuery").then((res) => {
+        console.log(res, "queryCompany");
+        this.companyList = res.data.data.partnerList;
+      });
     },
     onSubmit() {
       console.log("submit!");
@@ -158,23 +179,19 @@ export default {
     handleSearchClick() {
       console.log(this.form, "form");
       $http
-        .post(
-          "/estimate/finance/contractListQuery",
-          this.form
-        )
+        .post("/estimate/finance/contractListQuery", this.form)
         .then((res) => {
           // this.$message.success(res.data.msg);
-          if (res.data.code == '0') {
-              this.tableData = res.data.data.contractList;
-          this.total = res.data.data.contractList.length;
-          this.totalPage = Math.ceil(this.total / this.pageSize);
-          this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
-          console.log(this.totalPage, "this.totalPage");
-          this.setCurrentPageData();
+          if (res.data.code == "0") {
+            this.tableData = res.data.data.contractList;
+            this.total = res.data.data.contractList.length;
+            this.totalPage = Math.ceil(this.total / this.pageSize);
+            this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+            console.log(this.totalPage, "this.totalPage");
+            this.setCurrentPageData();
           } else {
-            this.$message.error(res.data.msg)
+            this.$message.error(res.data.msg);
           }
-        
         });
       this.setCurrentPageData();
     },
@@ -200,6 +217,16 @@ export default {
       this.currentPage = page;
       this.setCurrentPageData();
     },
+    handleTypeChange (scope) {
+      $http.post(api.contractPayModeAdjust, {contractKey: scope.row.contractKey, payType: scope.row.payType}).then(res => {
+        if(res.data.code === '0') {
+          this.$message.success('缴费类型更改成功')
+        } else {
+          this.$message.error('缴费类型更改失败')
+        }
+      })
+      console.log(scope);
+    },
     handleFinancialClick(row) {
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
@@ -216,10 +243,23 @@ export default {
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
       // if (row.payType === "annual") {
-        this.$router.push("/viewHistory");
+      this.$router.push("/viewHistory");
       // } else {
       //   this.$router.push("/monthHistory");
       // }
+    },
+    handleAdjustType(row) {
+      this.showTypeDialog = true;
+      this.$http(api.contractPayModeAdjust, {
+        contractKey: row.contractKey,
+        payType: this.payTypeInfo,
+      }).then((res) => {
+        if (res.data.data.code === "0") {
+          this.$message.success("修改成功");
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
     },
     handleResetClick() {
       this.form = {
@@ -232,8 +272,7 @@ export default {
       };
     },
   },
-  mounted() {
-  },
+  mounted() {},
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());
   },

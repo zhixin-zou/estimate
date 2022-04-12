@@ -1,5 +1,6 @@
 <template>
   <div class="bookedDetial">
+    <el-button class="backButton" @click="handleBackClick">返回</el-button>
     <el-form
       :model="EBSSummaryForm"
       disabled
@@ -145,6 +146,9 @@ export default {
           }
         });
     },
+    handleBackClick () {
+      this.$router.go(-1)
+    },
     handleCheck() {
       $http
         .post(api.saveToFinance, {
@@ -165,6 +169,10 @@ export default {
 
 <style lang="scss">
 .bookedDetial {
+  .backButton {
+    position: absolute;
+    right: 5%;
+  }
   .el-form-item {
     width: 600px;
   }

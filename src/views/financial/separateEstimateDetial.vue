@@ -1,7 +1,7 @@
 <template>
-  <div class="annualEstimates">
+  <div class="separateEstimateDetial">
     <div class="separateInfo">
-      <h2>合同信息</h2>
+      <h2>分出合同信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
         :columns="columns"
@@ -9,7 +9,7 @@
       ></fs-list-panel>
     </div>
     <div class="separateInfo">
-      <h2>分出信息</h2>
+      <h2>分入合同信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
         :columns="cedentColumns"
@@ -17,7 +17,7 @@
       ></fs-list-panel>
     </div>
     <div class="separateInfo">
-      <h2>分入保费账单信息</h2>
+      <h2>分出账单信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
         :columns="workSheetColumns"
@@ -25,68 +25,9 @@
       ></fs-list-panel>
     </div>
     <div class="separateInfo">
-      <h2>EPI拆分</h2>
-      <el-divider></el-divider>
-      <div class="adjustHeader">
-        <div class="adjustBox">
-          <div class="adjustName"><span>总EPI：</span></div>
-          <div class="input"><el-input v-model="totalEPI"></el-input></div>
-        </div>
-        <el-button
-          type="primary"
-          round
-          class="adjustButton"
-          @click="handleTotalEPI"
-          >调整</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          class="historyQuery"
-          @click="handleHistoryQuery"
-          >查看历史</el-button
-        >
-      </div>
-      <el-table
-        :data="EPIData"
-        border
-        :summary-method="getSummaries"
-        show-summary
-        style="width: 100%; margin-top: 20px"
-      >
-        <el-table-column prop="calculatMonth" label="计算月份" width="180">
-        </el-table-column>
-        <el-table-column prop="calculatedEPI" label="计算后EPI">
-        </el-table-column>
-        <el-table-column prop="originEPI" label="原始EPI"> </el-table-column>
-        <el-table-column prop="manualAdjustEPI" label="EPI调整">
-          <template slot-scope="scope">
-            <el-input
-              placeholder="请输入内容"
-              v-model="scope.row.manualAdjustEPI"
-              :disabled="Number(scope.row.calculatMonth) < estimateMonth"
-            ></el-input>
-            <!-- {{ scope.row + '++++++++++++++++'}} -->
-            <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
-          </template>
-        </el-table-column>
-        <el-table-column prop="workSheetAdjustEPI" label="实际账单调整">
-        </el-table-column>
-        <el-table-column prop="totalPremium" label="预估+实际">
-        </el-table-column>
-      </el-table>
-      <span
-        >温馨提示：每月6号前调整的可调整上月EPI，每月6号后只能调整本月EPI</span
-      >
-      <br />
-      <el-button class="EPIbutton" @click="handleAdjustEPI"
-        >保存调整后的EPI</el-button
-      >
-    </div>
-    <div class="separateInfo">
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
-      <div class="adjustHeader">
+      <!-- <div class="adjustHeader">
         <div class="adjustBox">
           <div class="adjustName"><span>分入浮动因子：</span></div>
           <div class="input">
@@ -104,7 +45,7 @@
           @click="handleFloatAdjust"
           >确定</el-button
         >
-      </div>
+      </div> -->
       <!-- {{ this.lastList }} -->
       <el-table
         :data="lastList"
@@ -287,24 +228,16 @@ export default {
     init() {
       let params = sessionStorage.getItem("estimateKey");
       $http
-        .post(api.yearContractDetailQuery, {
+        .post(api.orpContractDetailQuery, {
           estimateKey: params,
         })
         .then((res) => {
           if (res.data.code === "0") {
-            console.log(res, "reseres");
-            this.contractInfoList.push(res.data.data.contractInfo);
-            this.cedentList = res.data.data.cedentList;
-            this.workSheetList = res.data.data.workSheetList;
-            this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
-            this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.contractInfoList = res.data.data.orpCedentList
+            this.cedentList = res.data.data.iabContractInfo;
+            this.workSheetList = res.data.data.orpWorkSheetList;
             this.calculatedFeeList = res.data.data.calculatedFeeList;
             this.calculatedFeeList2 = res.data.data.calculatedFeeList;
-
-            this.iabSlidingScaleAdjustRate =
-              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-            this.orpSlidingScaleAdjustRate =
-              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
             this.handleFloatChange();
             console.log(this.lastList, "lastListaaaa");
           } else {
@@ -339,60 +272,60 @@ export default {
 
       return sums;
     },
-    handleHistoryQuery() {
-      console.log("调整历史");
-      this.$router.push("/yearAdjustDetail");
-    },
-    handleTotalEPI() {
-      $http
-        .post(api.yearTotalEPIAdjust, {
-          totalEPI: this.totalEPI,
-          estimateKey: sessionStorage.getItem("estimateKey"),
-          estimateMonth: sessionStorage.getItem("estimateMonth"),
-        })
-        .then((res) => {
-          if (res.data.code === "0") {
-            this.contractInfoList.push(res.data.data.contractInfo);
-            this.cedentList = res.data.data.cedentList;
-            this.workSheetList = res.data.data.workSheetList;
-            this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
-            this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
-            this.calculatedFeeList = res.data.data.calculatedFeeList;
-            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
-            this.iabSlidingScaleAdjustRate =
-              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-            this.orpSlidingScaleAdjustRate =
-              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
-            this.$message.success("修改成功");
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        });
-    },
-    handleAdjustEPI() {
-      console.log(this.EPIData, "EPIData");
+    // handleHistoryQuery() {
+    //   console.log("调整历史");
+    //   this.$router.push("/yearAdjustDetail");
+    // },
+    // handleTotalEPI() {
+    //   $http
+    //     .post(api.yearTotalEPIAdjust, {
+    //       totalEPI: this.totalEPI,
+    //       estimateKey: sessionStorage.getItem("estimateKey"),
+    //       estimateMonth: sessionStorage.getItem("estimateMonth"),
+    //     })
+    //     .then((res) => {
+    //       if (res.data.code === "0") {
+    //         this.contractInfoList.push(res.data.data.contractInfo);
+    //         this.cedentList = res.data.data.cedentList;
+    //         this.workSheetList = res.data.data.workSheetList;
+    //         this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
+    //         this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+    //         this.calculatedFeeList = res.data.data.calculatedFeeList;
+    //         this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+    //         this.iabSlidingScaleAdjustRate =
+    //           res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+    //         this.orpSlidingScaleAdjustRate =
+    //           res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+    //         this.$message.success("修改成功");
+    //       } else {
+    //         this.$message.error(res.data.msg);
+    //       }
+    //     });
+    // },
+    // handleAdjustEPI() {
+    //   console.log(this.EPIData, "EPIData");
 
-      $http
-        .post(api.yearDetailEPIAdjust, {
-          yearEpiSplitList: this.EPIData,
-          estimateKey: sessionStorage.getItem("estimateKey"),
-          estimateMonth: sessionStorage.getItem("estimateMonth"),
-        })
-        .then((res) => {
-          if (res.data.code === "0") {
-            this.contractInfoList.push(res.data.data.contractInfo);
-            this.cedentList = res.data.data.cedentList;
-            this.workSheetList = res.data.data.workSheetList;
-            this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
-            this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
-            this.iabSlidingScaleAdjustRate =
-              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-            this.orpSlidingScaleAdjustRate =
-              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
-            this.$message.success("修改成功");
-          }
-        });
-    },
+    //   $http
+    //     .post(api.yearDetailEPIAdjust, {
+    //       epiSplitList: this.EPIData,
+    //       estimateKey: sessionStorage.getItem("estimateKey"),
+    //       estimateMonth: sessionStorage.getItem("estimateMonth"),
+    //     })
+    //     .then((res) => {
+    //       if (res.data.code === "0") {
+    //         this.contractInfoList.push(res.data.data.contractInfo);
+    //         this.cedentList = res.data.data.cedentList;
+    //         this.workSheetList = res.data.data.workSheetList;
+    //         this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
+    //         this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+    //         this.iabSlidingScaleAdjustRate =
+    //           res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+    //         this.orpSlidingScaleAdjustRate =
+    //           res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+    //         this.$message.success("修改成功");
+    //       }
+    //     });
+    // },
     handleFloatChange() {
       this.lastList = [];
       console.log(this.calculatedFeeList, "this.calculatedFeeList");
@@ -490,7 +423,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.annualEstimates {
+.separateEstimateDetial {
   .separateInfo {
     padding: 10px;
     background-color: #fff;

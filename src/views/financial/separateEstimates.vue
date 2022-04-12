@@ -64,7 +64,8 @@
       <el-table :data="currentPageData" border style="width: 100%">
         <el-table-column fixed prop="contractNo" label="合同号">
         </el-table-column>
-        <el-table-column prop="contractType" label="合同类型"> </el-table-column>
+        <el-table-column prop="contractType" label="合同类型">
+        </el-table-column>
         <el-table-column prop="planName" label="主险种"> </el-table-column>
         <el-table-column prop="cedentName" label="分出公司"> </el-table-column>
         <el-table-column prop="effectivePeriodBegin" label="开始日期">
@@ -116,7 +117,7 @@
 
 <script>
 import { $http } from "@/utils/request";
-// import api from "@/utils/api";
+import api from "@/utils/api";
 
 export default {
   data() {
@@ -142,12 +143,10 @@ export default {
   },
   methods: {
     init() {
-      $http
-        .get("http://yapi.smart-xwork.cn/mock/134845/estimate/partnerQuery")
-        .then((res) => {
-          console.log(res, "queryCompany");
-          this.companyList = res.data.data.partnerList;
-        });
+      $http.get("/estimate/partnerQuery").then((res) => {
+        console.log(res, "queryCompany");
+        this.companyList = res.data.data.partnerList;
+      });
     },
     onSubmit() {
       console.log("submit!");
@@ -157,21 +156,19 @@ export default {
     },
     handleSearchClick() {
       console.log(this.form, "form");
-      $http
-        .post(
-          "http://yapi.smart-xwork.cn/mock/134845/estimate/finance/contractListQuery",
-          this.form
-        )
-        .then((res) => {
-          this.$message.success(res.data.msg);
+      $http.post(api.orpContractListQuery, this.form).then((res) => {
+        if (res.data.code === "0") {
           this.tableData = res.data.data.contractList;
           this.total = res.data.data.contractList.length;
           this.totalPage = Math.ceil(this.total / this.pageSize);
           this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
           console.log(this.totalPage, "this.totalPage");
           this.setCurrentPageData();
-        });
-      this.setCurrentPageData();
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
+      // this.setCurrentPageData();
     },
     setCurrentPageData() {
       let begin = (this.currentPage - 1) * this.pageSize;
@@ -200,18 +197,19 @@ export default {
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
       console.log(row);
-      if (row.payType === "annual") {
-        this.$router.push("/annualEstimates");
-      } else {
-        this.$router.push("/monthContractDetail");
-      }
+      // if (row.payType === "annual") {
+      //   this.$router.push("/annualEstimates");
+      // } else {
+      //   this.$router.push("/monthContractDetail");
+      // }
+      this.$router.push("/outDetial");
     },
     handleHistoryClick(row) {
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
       // if (row.payType === "annual") {
-        this.$router.push("/viewHistory");
+      this.$router.push("/viewHistory");
       // } else {
       //   this.$router.push("/monthHistory");
       // }
@@ -227,8 +225,7 @@ export default {
       };
     },
   },
-  mounted() {
-  },
+  mounted() {},
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());
   },

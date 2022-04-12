@@ -1,5 +1,5 @@
 <template>
-  <div class="actuarialEstimates">
+  <div class="financialSearch">
     <div class="searchBox">
       <div class="searchMain">
         <el-form ref="form" :model="form" label-width="100px">
@@ -43,6 +43,16 @@
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
+           <el-form-item label="做账时间">
+            <el-select v-model="form.cedent" placeholder="请选择">
+              <el-option
+                v-for="(item, index) in companyList"
+                :key="index"
+                :label="item.partnerName"
+                :value="item.partnerCode"
+              ></el-option>
+            </el-select>
+          </el-form-item>
         </el-form>
       </div>
 
@@ -85,19 +95,22 @@
         <el-table-column fixed="right" label="操作" width="200">
           <template slot-scope="scope">
             <el-button
-              @click="handleFinancialClick(scope.row)"
+              @click="handleFinancialAccounting(scope.row)"
               type="text"
               size="small"
-              >预估计算</el-button
+              >财务入账</el-button
             >
             <el-button
-              @click="handleHistoryClick(scope.row)"
+              @click="handleCalculateAccounting(scope.row)"
               type="text"
               size="small"
-              >历史预估</el-button
+              >精算入账</el-button
             >
-            <el-button @click="handleBreak(scope.row)" type="text" size="small"
-              >合同拆分</el-button
+            <el-button
+              @click="historyAccounting(scope.row)"
+              type="text"
+              size="small"
+              >历史账务</el-button
             >
           </template>
         </el-table-column>
@@ -115,9 +128,9 @@
         </el-pagination>
       </div>
     </div>
-    <div class="calculateResult">
+    <!-- <div class="calculateResult">
       <el-button plain @click="handleCalculate">汇算结果查看</el-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -178,20 +191,9 @@ export default {
         contractTimeEnd: "",
       };
     },
-    handleFinancialClick(row) {
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", row.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
-      console.log(row);
-      if (row.payType === "annual") {
-        this.$router.push("/annualEstimates");
-      } else {
-        this.$router.push("/monthContractDetail");
-      }
-    },
-    handleHistoryClick() {},
-    // 合同拆分
-    handleBreak() {},
+    handleFinancialAccounting() {},
+    handleCalculateAccounting() {},
+    historyAccounting() {},
     // 假分页
     setCurrentPageData() {
       let begin = (this.currentPage - 1) * this.pageSize;
@@ -226,7 +228,7 @@ export default {
 </script>
 
 <style lang="scss">
-.actuarialEstimates {
+.financialSearch {
   position: relative;
   background-color: #fff;
   .searchBox {

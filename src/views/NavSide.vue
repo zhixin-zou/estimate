@@ -11,7 +11,7 @@
         active-text-color="#ffd04b"
         router
       >
-        <el-submenu index="1">
+        <el-submenu index="/test">
           <template slot="title">
             <i class="el-icon-location"></i>
             <span>财务预估</span>
@@ -36,7 +36,7 @@
             <span>账务查看</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/actuarialEstimates">账务查寻</el-menu-item>
+            <el-menu-item index="/financialSearch">账务查寻</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>

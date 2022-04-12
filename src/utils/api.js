@@ -11,8 +11,13 @@ export default {
 
     // 预估查询
     partnerQuery: '/estimate/partnerQuery',
+    orpContractListQuery: '/estimate/finance/orpContractListQuery',
+    // 缴费方式更新
+    contractPayModeAdjust: '/estimate/finance/contractPayModeAdjust',
     //年缴预估明细
     yearContractDetailQuery: '/estimate/finance/yearContractDetailQuery',
+    // 分出预估明细信息获取
+    orpContractDetailQuery: '/estimate/finance/orpContractDetailQuery',
     // 年缴总EPI调整
     yearTotalEPIAdjust: '/estimate/finance/yearTotalEPIAdjust',
     // 年缴EPI明细调整

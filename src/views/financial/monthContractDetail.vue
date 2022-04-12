@@ -77,7 +77,7 @@
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
               :disabled="
-                scope.row.calculatMonth < estimateMonth ||
+                Number(scope.row.calculatMonth) + 11 < estimateMonth ||
                 scope.row.commandFlag === '1'
               "
             ></el-input>
@@ -104,7 +104,7 @@
               v-else
               :disabled="
                 scope.row[item.month] === '' ||
-                scope.row.calculatMonth < estimateMonth ||
+                item.month < estimateMonth ||
                 scope.row.commandFlag === '0'
               "
               placeholder=""
@@ -421,6 +421,7 @@ export default {
         // let newMonthList = [];
         // 截取12个月data
         let newKeys = Object.keys(item);
+        console.log(newKeys, "========================");
         newKeys.map((e, idx) => {
           if (e === item.calculatMonth) {
             console.log(idx, "idx");
@@ -536,16 +537,29 @@ export default {
           estimateKey: sessionStorage.getItem("estimateKey"),
         })
         .then((res) => {
-          this.contractInfoList.push(res.data.data.contractInfo);
-          this.cedentList = res.data.data.cedentList;
-          this.workSheetList = res.data.data.workSheetList;
-          let epiSplitInfo = res.data.data.epiSplitInfo;
-          this.dataProcess(epiSplitInfo);
-          this.handleFloatChange();
-          this.iabSlidingScaleAdjustRate =
-            res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-          this.orpSlidingScaleAdjustRate =
-            res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+          if (res.data.code == "0") {
+              this.contractInfoList.push(res.data.data.contractInfo);
+              this.cedentList = res.data.data.cedentList;
+              this.workSheetList = res.data.data.workSheetList;
+              let epiSplitInfo = res.data.data.epiSplitInfo;
+              // this.epiDatacopy = res.data.data.epiSplitInfo.epiSplitList
+              localStorage.setItem(
+                "epiDatacopy",
+                JSON.stringify(res.data.data.epiSplitInfo.epiSplitList)
+              );
+              this.totalEPI = epiSplitInfo.totalEPI;
+              this.calculatedFeeList = res.data.data.calculatedFeeList;
+              this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+              this.dataProcess(epiSplitInfo);
+              this.handleFloatChange();
+              this.iabSlidingScaleAdjustRate =
+                res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+              this.orpSlidingScaleAdjustRate =
+                res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.$message.success("修改成功");
+            } else {
+              this.$messag.error(res.data.msg);
+            }
         });
     },
     handleHistoryQuery() {
@@ -578,19 +592,116 @@ export default {
             }
           });
         });
+        $http
+          .post(api.monthDetailEPIAdjust, {
+            estimateKey: sessionStorage.getItem("estimateKey"),
+            monthAdjustType: this.commandFlag,
+            monthEpiSplitList: monthEpiSplitList,
+          })
+          .then((res) => {
+            if (res.data.code == "0") {
+              this.contractInfoList.push(res.data.data.contractInfo);
+              this.cedentList = res.data.data.cedentList;
+              this.workSheetList = res.data.data.workSheetList;
+              let epiSplitInfo = res.data.data.epiSplitInfo;
+              // this.epiDatacopy = res.data.data.epiSplitInfo.epiSplitList
+              localStorage.setItem(
+                "epiDatacopy",
+                JSON.stringify(res.data.data.epiSplitInfo.epiSplitList)
+              );
+              this.totalEPI = epiSplitInfo.totalEPI;
+              this.calculatedFeeList = res.data.data.calculatedFeeList;
+              this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+              this.dataProcess(epiSplitInfo);
+              this.handleFloatChange();
+              this.iabSlidingScaleAdjustRate =
+                res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+              this.orpSlidingScaleAdjustRate =
+                res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.$message.success("修改成功");
+            } else {
+              this.$messag.error(res.data.msg);
+            }
+          });
       } else {
+        // console.log(this.EPIData, 'this.EPIDatathis.EPIDatathis.EPIData');
         let epiList = this.EPIData.splice(0, this.EPIData.length - 3);
-        console.log(epiList, "epiList");
+        epiList.forEach((item) => {
+          let monthArrNew = [];
+          let mArr = [];
+          let monthArr = Object.keys(item);
+          monthArr.map((e, idx) => {
+            if (e === item.calculatMonth) {
+              console.log(idx, "idx");
+              let startId = idx;
+              monthArr.map((i, id) => {
+                if (id < startId + 12 && id >= startId) {
+                  monthArrNew[i] = item[i];
+                  mArr.push(item[i]);
+                }
+              });
+            }
+          });
+
+          monthEpiSplitList.forEach((element) => {
+            if (element.calculatMonth === item.calculatMonth) {
+              element.m1 = mArr[0];
+              element.m2 = mArr[1];
+              element.m3 = mArr[2];
+              element.m4 = mArr[3];
+              element.m5 = mArr[4];
+              element.m6 = mArr[5];
+              element.m7 = mArr[6];
+              element.m8 = mArr[7];
+              element.m9 = mArr[8];
+              element.m10 = mArr[9];
+              element.m11 = mArr[10];
+              element.m12 = mArr[11];
+            }
+          });
+          // console.log(monthEpiSplitList, mArr, "monthArrmonthArrmonthArr", index);
+        });
+        $http
+          .post(api.monthDetailEPIAdjust, {
+            estimateKey: sessionStorage.getItem("estimateKey"),
+            monthAdjustType: this.commandFlag,
+            monthEpiSplitList: monthEpiSplitList,
+          })
+          .then(res => {
+           if (res.data.code == "0") {
+              this.contractInfoList.push(res.data.data.contractInfo);
+              this.cedentList = res.data.data.cedentList;
+              this.workSheetList = res.data.data.workSheetList;
+              let epiSplitInfo = res.data.data.epiSplitInfo;
+              // this.epiDatacopy = res.data.data.epiSplitInfo.epiSplitList
+              localStorage.setItem(
+                "epiDatacopy",
+                JSON.stringify(res.data.data.epiSplitInfo.epiSplitList)
+              );
+              this.totalEPI = epiSplitInfo.totalEPI;
+              this.calculatedFeeList = res.data.data.calculatedFeeList;
+              this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+              this.dataProcess(epiSplitInfo);
+              this.handleFloatChange();
+              this.iabSlidingScaleAdjustRate =
+                res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+              this.orpSlidingScaleAdjustRate =
+                res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.$message.success("修改成功");
+            } else {
+              this.$messag.error(res.data.msg);
+            }
+          });
+        console.log(monthEpiSplitList, "epiList");
+        //      $http.post(api.monthTotalEPIAdjust, {
+        //   estimateKey: sessionStorage.getItem("estimateKey"),
+        //   monthAdjustType: this.commandFlag,
+        //   monthEpiSplitList: monthEpiSplitList
+        // })
         // epiList.forEach(item => {
         //   // if ()
         // })
       }
-
-      $http.post(api.monthTotalEPIAdjust, {
-        estimateKey: sessionStorage.getItem("estimateKey"),
-        monthAdjustType: this.commandFlag,
-        monthEpiSplitList: monthEpiSplitList
-      })
     },
     handleFloatChange() {
       this.lastList = [];
@@ -655,72 +766,7 @@ export default {
       });
       // console.log(this.lastList, "lastListaaaa");
     },
-    // handleFloatChange() {
-    //   this.lastList = [];
-    //   console.log(this.calculatedFeeList, "this.calculatedFeeList");
-    //   var obj = {};
-    //   this.calculatedFeeList = this.calculatedFeeList.reduce(function (
-    //     item,
-    //     next
-    //   ) {
-    //     obj[next.calculatMonth]
-    //       ? ""
-    //       : (obj[next.calculatMonth] = true && item.push(next));
-    //     return item;
-    //   },
-    //   []);
-    //   console.log(this.calculatedFeeList2, "this.calculatedFeeList2");
-    //   var obj2 = {};
-    //   this.testList = this.calculatedFeeList2.reduce(function (item, next) {
-    //     obj2[next.company]
-    //       ? ""
-    //       : (obj2[next.company] = true && item.push(next));
-    //     return item;
-    //   }, []);
-    //   console.log(this.testList, "this.testList");
-    //   var result = [];
-    //   var obj3 = {};
-    //   for (var i = 0; i < this.calculatedFeeList2.length; i++) {
-    //     if (
-    //       !(
-    //         obj3[this.calculatedFeeList2[i].company] &&
-    //         obj3[this.calculatedFeeList2[i].calculatItem]
-    //       )
-    //     ) {
-    //       result.push(this.calculatedFeeList2[i]);
-    //       obj3[this.calculatedFeeList2[i].company] = true;
-    //       obj3[this.calculatedFeeList2[i].calculatItem] = true;
-    //     }
-    //   }
-    //   result.forEach((item) => {
-    //     this.lastList.push({
-    //       company: item.company,
-    //       calculatItem: item.calculatItem,
-    //     });
-    //     console.log(this.lastList, "lastList");
-    //   });
-    //   this.lastList.forEach((item) => {
-    //     this.calculatedFeeList.forEach((element) => {
-    //       item[element.calculatMonth] = 0;
-    //     });
-    //   });
-    //   this.lastList.forEach((item) => {
-    //     this.calculatedFeeList2.forEach((element) => {
-    //       if (
-    //         item.company === element.company &&
-    //         item.calculatItem === element.calculatItem
-    //       ) {
-    //         // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
-    //         item[element.calculatMonth] = element.estimateAmount;
-    //         console.log(element.calculatMonth, "element");
-    //       }
-    //     });
-    //   });
 
-    //   console.log(result, "companycalculatItem");
-    //   console.log(this.lastList, "lastListaaaa");
-    //   // this.calculatedFeeList2.forEach((item, index) => {});
-    // },
     handleFloatAdjust() {
       $http
         .post(api.monthSlidingScaleRateAdjust, {
@@ -729,18 +775,23 @@ export default {
           estimateKey: sessionStorage.getItem("estimateKey"),
         })
         .then((res) => {
-          this.contractInfoList.push(res.data.data.contractInfo);
-          this.cedentList = res.data.data.cedentList;
-          this.workSheetList = res.data.data.workSheetList;
-          let epiSplitInfo = res.data.data.epiSplitInfo;
-          this.totalEPI = epiSplitInfo.totalEPI;
-          console.log(epiSplitInfo, "epiSplitInfo");
-          this.dataProcess(epiSplitInfo);
-          this.handleFloatChange();
-          this.iabSlidingScaleAdjustRate =
-            res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-          this.orpSlidingScaleAdjustRate =
-            res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+          if (res.data.code === "0") {
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.cedentList = res.data.data.cedentList;
+            this.workSheetList = res.data.data.workSheetList;
+            let epiSplitInfo = res.data.data.epiSplitInfo;
+            this.totalEPI = epiSplitInfo.totalEPI;
+            console.log(epiSplitInfo, "epiSplitInfo");
+            this.dataProcess(epiSplitInfo);
+            this.handleFloatChange();
+            this.iabSlidingScaleAdjustRate =
+              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+            this.orpSlidingScaleAdjustRate =
+              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.$message.success("修改成功");
+          } else {
+            this.$message.error(res.data.msg);
+          }
         });
     },
     handleDetial() {
