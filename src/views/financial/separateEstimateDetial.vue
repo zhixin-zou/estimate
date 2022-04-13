@@ -266,7 +266,7 @@ export default {
           console.log(sums[index], "sums[index]");
           sums[index] = sums[index].toFixed(2) + " 元";
         } else {
-          sums[index] = "N/A";
+          sums[index] = "";
         }
       });
 

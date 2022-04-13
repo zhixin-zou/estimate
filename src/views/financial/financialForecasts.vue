@@ -74,19 +74,40 @@
         </el-table-column>
         <el-table-column prop="payType" label="缴费方式">
           <template slot-scope="scope">
-            <el-select v-model="scope.row.payType" @change="handleTypeChange(scope)" :disabled="scope.row.payType !== ''">
+            <el-select
+              v-model="scope.row.payType"
+              @change="handleTypeChange(scope)"
+              :disabled="scope.row.payType !== ''"
+            >
               <el-option value="annual">annual</el-option>
               <el-option value="month">monthly</el-option>
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="epi" label="预估保费"> </el-table-column>
+        <el-table-column prop="epi" label="预估保费">
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row.epi) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="commissionRate" label="手续费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="brokerageRate" label="经纪费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.brokerageRate) }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="cedentRate" label="分出比例"> </el-table-column>
+        <el-table-column prop="cedentRate" label="分出比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.cedentRate) }}</span>
+          </template></el-table-column
+        >
         <el-table-column prop="estimateStatus" label="预估状态">
+          <template slot-scope="scope">
+            <span>{{ getDictData(scope.row.estimateStatus) }}</span>
+          </template>
         </el-table-column>
 
         <el-table-column fixed="right" label="操作" width="150">
@@ -138,6 +159,8 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
+import { kiloSplit, toPercent } from "@/utils/utils";
+import { getText } from "@/utils/dict.js";
 
 export default {
   data() {
@@ -184,6 +207,13 @@ export default {
           // this.$message.success(res.data.msg);
           if (res.data.code == "0") {
             this.tableData = res.data.data.contractList;
+            // console.log(this.tableData, "tableData");
+            // this.tableData.forEach((item) => {
+            //   item.epi = kiloSplit(item.epi);
+            //   // item.commissionRate = toPercent(item.commissionRate)
+            //   // item.brokerageRate = toPercent(item.brokerageRate)
+            //   // item.cedentRate = toPercent(item.cedentRate)
+            // });
             this.total = res.data.data.contractList.length;
             this.totalPage = Math.ceil(this.total / this.pageSize);
             this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
@@ -194,6 +224,15 @@ export default {
           }
         });
       this.setCurrentPageData();
+    },
+    toPercentData(data) {
+      return toPercent(data);
+    },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
+    getDictData(data) {
+      return getText("estimateStatus", data);
     },
     setCurrentPageData() {
       let begin = (this.currentPage - 1) * this.pageSize;
@@ -217,14 +256,19 @@ export default {
       this.currentPage = page;
       this.setCurrentPageData();
     },
-    handleTypeChange (scope) {
-      $http.post(api.contractPayModeAdjust, {contractKey: scope.row.contractKey, payType: scope.row.payType}).then(res => {
-        if(res.data.code === '0') {
-          this.$message.success('缴费类型更改成功')
-        } else {
-          this.$message.error('缴费类型更改失败')
-        }
-      })
+    handleTypeChange(scope) {
+      $http
+        .post(api.contractPayModeAdjust, {
+          contractKey: scope.row.contractKey,
+          payType: scope.row.payType,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("缴费类型更改成功");
+          } else {
+            this.$message.error("缴费类型更改失败");
+          }
+        });
       console.log(scope);
     },
     handleFinancialClick(row) {

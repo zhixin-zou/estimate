@@ -51,8 +51,6 @@
       <el-table
         :data="EPIData"
         border
-        :summary-method="getSummaries"
-        show-summary
         style="width: 100%; margin-top: 20px"
       >
         <el-table-column prop="calculatMonth" label="计算月份" width="180">
@@ -165,6 +163,7 @@
         </el-table-column>
         <el-table-column prop="calculatItem" label="计算项目">
         </el-table-column>
+        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
           v-for="(item, index) in calculatedFeeList"
           :key="index"
@@ -230,18 +229,23 @@ export default {
         {
           title: "预估保费",
           property: "epi",
+          formatter: 'kiloSplit'
         },
         {
           title: "手续费比例",
           property: "commissionRate",
+          formatter: "toPercent",
         },
         {
           title: "分出比例",
           property: "cedentRate",
+          formatter: "toPercent",
         },
         {
           title: "预估状态",
           property: "estimateStatus",
+          formatter: "dict",
+          dictName: "estimateStatus",
         },
         // {
         //   title: "预估维度键值",
@@ -281,6 +285,7 @@ export default {
         {
           title: "分出公司比例",
           property: "orpRate",
+          formatter: "toPercent",
         },
       ],
       cedentList: [],
@@ -449,11 +454,15 @@ export default {
         let finArr1 = Reflect.ownKeys(newData);
         let finArr2 = Reflect.ownKeys(MData);
         let lastData = {};
+        let finArr2copy = finArr2.splice(1,3)
+        // console.log(finArr2copy,'finArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copy', finArr2);
+        finArr2 = finArr2.concat(finArr2copy)
+        console.log(finArr2, 'finArr2finArr2finArr2finArr2finArr2',finArr2copy);
         finArr1.forEach((i, index) => {
           // console.log(i, 'iiiiiii')
           lastData[i] = MData[finArr2[index]];
         });
-        console.log(lastData, "lastData");
+        console.log(lastData, "lastData", MData, finArr1, finArr2);
         for (var p in item) {
           for (var q in lastData) {
             if (p === q) {
@@ -524,7 +533,7 @@ export default {
           // console.log(sums[index], "sums[index]");
           sums[index] = sums[index].toFixed(2) + " 元";
         } else {
-          sums[index] = "N/A";
+          sums[index] = "";
         }
       });
 
@@ -538,28 +547,29 @@ export default {
         })
         .then((res) => {
           if (res.data.code == "0") {
-              this.contractInfoList.push(res.data.data.contractInfo);
-              this.cedentList = res.data.data.cedentList;
-              this.workSheetList = res.data.data.workSheetList;
-              let epiSplitInfo = res.data.data.epiSplitInfo;
-              // this.epiDatacopy = res.data.data.epiSplitInfo.epiSplitList
-              localStorage.setItem(
-                "epiDatacopy",
-                JSON.stringify(res.data.data.epiSplitInfo.epiSplitList)
-              );
-              this.totalEPI = epiSplitInfo.totalEPI;
-              this.calculatedFeeList = res.data.data.calculatedFeeList;
-              this.calculatedFeeList2 = res.data.data.calculatedFeeList;
-              this.dataProcess(epiSplitInfo);
-              this.handleFloatChange();
-              this.iabSlidingScaleAdjustRate =
-                res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-              this.orpSlidingScaleAdjustRate =
-                res.data.data.contractInfo.orpSlidingScaleAdjustRate;
-              this.$message.success("修改成功");
-            } else {
-              this.$messag.error(res.data.msg);
-            }
+            this.contractInfoList = [];
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.cedentList = res.data.data.cedentList;
+            this.workSheetList = res.data.data.workSheetList;
+            let epiSplitInfo = res.data.data.epiSplitInfo;
+            // this.epiDatacopy = res.data.data.epiSplitInfo.epiSplitList
+            localStorage.setItem(
+              "epiDatacopy",
+              JSON.stringify(res.data.data.epiSplitInfo.epiSplitList)
+            );
+            this.totalEPI = epiSplitInfo.totalEPI;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+            this.dataProcess(epiSplitInfo);
+            this.handleFloatChange();
+            this.iabSlidingScaleAdjustRate =
+              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+            this.orpSlidingScaleAdjustRate =
+              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.$message.success("修改成功");
+          } else {
+            this.$messag.error(res.data.msg);
+          }
         });
     },
     handleHistoryQuery() {
@@ -600,6 +610,7 @@ export default {
           })
           .then((res) => {
             if (res.data.code == "0") {
+              this.contractInfoList = [];
               this.contractInfoList.push(res.data.data.contractInfo);
               this.cedentList = res.data.data.cedentList;
               this.workSheetList = res.data.data.workSheetList;
@@ -667,8 +678,9 @@ export default {
             monthAdjustType: this.commandFlag,
             monthEpiSplitList: monthEpiSplitList,
           })
-          .then(res => {
-           if (res.data.code == "0") {
+          .then((res) => {
+            if (res.data.code == "0") {
+              this.contractInfoList = [];
               this.contractInfoList.push(res.data.data.contractInfo);
               this.cedentList = res.data.data.cedentList;
               this.workSheetList = res.data.data.workSheetList;
@@ -705,7 +717,7 @@ export default {
     },
     handleFloatChange() {
       this.lastList = [];
-      console.log(this.calculatedFeeList, "this.calculatedFeeList");
+      // console.log(this.calculatedFeeList, "this.calculatedFeeList");
       var obj = {};
       this.calculatedFeeList = this.calculatedFeeList.reduce(function (
         item,
@@ -717,35 +729,74 @@ export default {
         return item;
       },
       []);
-      console.log(this.calculatedFeeList2, "this.calculatedFeeList2");
+      console.log(
+        this.calculatedFeeList2,
+        "this.calculatedFeeList2",
+        this.calculatedFeeList
+      );
       var obj2 = {};
+      var calculatObj = {};
       this.testList = this.calculatedFeeList2.reduce(function (item, next) {
         obj2[next.company]
           ? ""
           : (obj2[next.company] = true && item.push(next));
         return item;
       }, []);
-      console.log(this.testList, "this.testList");
+      let calculatItemList = this.calculatedFeeList2.reduce(function (
+        item,
+        next
+      ) {
+        calculatObj[next.calculatItem]
+          ? ""
+          : (calculatObj[next.calculatItem] = true && item.push(next));
+        return item;
+      },
+      []);
+
       var result = [];
       var obj3 = {};
-      for (var i = 0; i < this.calculatedFeeList2.length; i++) {
-        if (
-          !(
-            obj3[this.calculatedFeeList2[i].company] &&
-            obj3[this.calculatedFeeList2[i].calculatItem]
-          )
-        ) {
-          result.push(this.calculatedFeeList2[i]);
-          obj3[this.calculatedFeeList2[i].company] = true;
-          obj3[this.calculatedFeeList2[i].calculatItem] = true;
+      console.log(
+        calculatItemList,
+        this.calculatedFeeList2,
+        "this.calculatedFeeList2this.calculatedFeeList2this.calculatedFeeList2"
+      );
+      var obj4 = {};
+      calculatItemList.forEach((item) => {
+        obj4[item.calculatItem] = true;
+      });
+      console.log(obj4, "obj4obj4obj4obj4obj4");
+      this.testList.forEach((e) => {
+        this.calculatedFeeList2.forEach((i) => {
+          if (e.company === i.company && obj4[i.calculatItem]) {
+            result.push(i);
+            obj3[i.calculatItem] = true;
+            // console.log(obj3, "obj3");
+          } else {
+            console.log(i.company, "i.companyi.companyi.company");
+          }
+        });
+      });
+      for (var i = 0; i < result.length; i++) {
+        //遍历原数组
+        for (var j = i + 1; j < result.length; j++) {
+          if (
+            result[i].company === result[j].company &&
+            result[i].calculatItem === result[j].calculatItem
+          ) {
+            //数组中i下标后的j上有重复值，则用splice方法(可改变原数组)删除
+            result.splice(j, 1);
+            j--; //删除后下标-1
+          }
         }
       }
+
+      console.log(result, "resultresultresultresultresultresultresultresult");
       result.forEach((item) => {
         this.lastList.push({
           company: item.company,
           calculatItem: item.calculatItem,
         });
-        console.log(this.lastList, "lastList");
+        // console.log(this.lastList, "lastList");
       });
       this.lastList.forEach((item) => {
         this.calculatedFeeList.forEach((element) => {
@@ -760,6 +811,7 @@ export default {
           ) {
             // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
             item[element.calculatMonth] = element.estimateAmount;
+            item.currencyCode = element.currencyCode;
             // console.log(element.calculatMonth, 'element');
           }
         });
@@ -776,6 +828,7 @@ export default {
         })
         .then((res) => {
           if (res.data.code === "0") {
+            this.contractInfoList = [];
             this.contractInfoList.push(res.data.data.contractInfo);
             this.cedentList = res.data.data.cedentList;
             this.workSheetList = res.data.data.workSheetList;

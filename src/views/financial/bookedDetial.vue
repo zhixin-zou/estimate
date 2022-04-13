@@ -1,6 +1,10 @@
 <template>
   <div class="bookedDetial">
-    <el-button class="backButton" @click="handleBackClick">返回</el-button>
+    <div class="backButton">
+      <el-button @click="handleEditClick">修改</el-button>
+      <el-button @click="handleBackClick">返回</el-button>
+    </div>
+
     <el-form
       :model="EBSSummaryForm"
       disabled
@@ -23,7 +27,46 @@
         <el-input v-model="EBSSummaryForm.chartOfAccounts"></el-input>
       </el-form-item>
     </el-form>
-    <fs-list-panel :columns="columns" :listData="listData"></fs-list-panel>
+    <div class="listBox">
+      <el-table :data="listData" border style="width: 100%">
+        <el-table-column fixed prop="ledger" label="ledger"> </el-table-column>
+        <el-table-column prop="currency" label="Currency"> </el-table-column>
+        <el-table-column prop="accountingDate" label="Accounting Date">
+        </el-table-column>
+        <el-table-column prop="period" label="Period"> </el-table-column>
+        <el-table-column prop="company" label="COMPANY"> </el-table-column>
+        <el-table-column prop="costcenter" label="COSTCENTER">
+        </el-table-column>
+        <el-table-column prop="account" label="ACCOUNT"> </el-table-column>
+        <el-table-column prop="subaccount" label="SUBACCOUNT">
+        </el-table-column>
+        <el-table-column prop="product" label="PRODUCT"> </el-table-column>
+        <el-table-column prop="region" label="REGION"> </el-table-column>
+        <el-table-column prop="channel" label="CHANNEL"> </el-table-column>
+        <el-table-column prop="icp" label="ICP"> </el-table-column>
+        <el-table-column prop="spare" label="SPARE"> </el-table-column>
+        <el-table-column prop="debit" label="Debit">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.debit"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="credit" label="Credit">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.credit"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="batchName" label="Batch Name"> </el-table-column>
+        <el-table-column prop="batchDescription" label="Batch Description">
+        </el-table-column>
+        <el-table-column prop="journalName" label="Journal Name">
+        </el-table-column>
+        <el-table-column prop="journalDescription" label="Journal Description">
+        </el-table-column>
+        <el-table-column prop="lineDescription" label="Line Description">
+        </el-table-column>
+      </el-table>
+    </div>
+    <!-- <fs-list-panel :columns="columns" :listData="listData"> </fs-list-panel> -->
     <el-button plain class="bookDetialButton" @click="handleCheck"
       >确认入账</el-button
     >
@@ -123,8 +166,16 @@ export default {
           title: "Line Description",
           property: "lineDescription",
         },
+        {
+          property: "operation",
+          title: "操作",
+          // fixed: "right",
+          width: 130,
+          actions: [{ name: "handleEdit", permission: "", title: "编辑" }],
+        },
       ],
       listData: [],
+      btTitle: "编辑",
     };
   },
   methods: {
@@ -146,8 +197,28 @@ export default {
           }
         });
     },
-    handleBackClick () {
-      this.$router.go(-1)
+    handleEditClick() {
+      let ebsModifyList = [];
+      this.listData.forEach((item) => {
+        ebsModifyList.push({
+          recId: item.recId,
+          debit: item.debit,
+          credit: item.credit,
+        });
+      });
+      console.log(ebsModifyList, "ebsModifyListebsModifyListebsModifyList");
+      $http.post(api.ebsInfoModify, {
+        ebsModifyList: ebsModifyList,
+      }).then(res => {
+        if(res.data.code === '0') {
+          this.$message.success('修改成功')
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
+    },
+    handleBackClick() {
+      this.$router.go(-1);
     },
     handleCheck() {
       $http

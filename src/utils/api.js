@@ -63,6 +63,8 @@ export default {
     // 汇算信息获取
     summaryAllocatCalculat: '/estimate/actuarial/summaryAllocatCalculat',
     // 确认下发财务
-    saveToFinance: '/estimate/actuarial/saveToFinance'
+    saveToFinance: '/estimate/actuarial/saveToFinance',
+    // 账务修改
+    ebsInfoModify: '/estimate/finance/ebsInfoModify'
 
 }

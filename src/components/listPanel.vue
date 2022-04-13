@@ -8,23 +8,43 @@
       :width="col.width || 0"
     >
       <template slot-scope="scope">
-        {{ getCellValue(scope.row, col) }}
-        <span></span>
+        <template v-if="Array.isArray(col.actions)">
+          <span v-for="action in col.actions" :key="action.name">
+            <el-button
+              type="text"
+              size="mini"
+              @click="
+                handleActionClick(
+                  action.name,
+                  scope.row,
+                  scope.$index,
+                  col,
+                  action
+                )
+              "
+            >
+              {{ action.title }}
+            </el-button>
+            <i
+              class="el-icon-loading"
+              v-show="
+                Array.isArray(action.loading) &&
+                action.loading.indexOf(scope.$index) > -1
+              "
+            ></i>
+          </span>
+        </template>
+        <template v-else>
+          <span>{{ getCellValue(scope.row, col) }}</span>
+        </template>
       </template>
     </el-table-column>
-    <!-- <el-table-column fixed="right" label="操作">
-      <template slot-scope="scope">
-        <el-button @click="handleClick(scope.row)" type="text" size="small"
-          >查看</el-button
-        >
-        <el-button type="text" size="small">编辑</el-button>
-      </template>
-    </el-table-column> -->
   </el-table>
 </template>
 
 <script>
-import { getText } from '@/utils/dict.js'
+import { getText } from "@/utils/dict.js";
+import { toPercent, kiloSplit } from "@/utils/utils.js";
 
 export default {
   name: "fs-list-panel",
@@ -40,6 +60,10 @@ export default {
       if (col.formatter === "dict" && col.dictName) {
         // 本地字典
         return getText(col.dictName, row[col.property]);
+      } else if (col.formatter === "toPercent") {
+        return toPercent(row[col.property]);
+      } else if (col.formatter === "kiloSplit") {
+        return kiloSplit(row[col.property]);
       } else {
         return row[col.property];
       }
@@ -47,7 +71,34 @@ export default {
   },
 
   data() {
-    return {};
+    return {
+      methods: {
+        getActions(actions) {
+          return actions.filter((act) => !act.more);
+        },
+
+        getMoreActions(actions) {
+          return actions.filter((act) => act.more);
+        },
+        handleActionClick(name, row, index, col, action) {
+          if (
+            Array.isArray(action.loading) &&
+            action.loading.indexOf(index) > -1
+          ) {
+            return;
+          }
+          this.$emit(name, row, index, col, action);
+        },
+
+        getActionTitle(row, action) {
+          if (typeof action.title === "function") {
+            return action.title(row, action);
+          } else {
+            return action.title;
+          }
+        },
+      },
+    };
   },
 };
 </script>
