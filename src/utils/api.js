@@ -65,6 +65,8 @@ export default {
     // 确认下发财务
     saveToFinance: '/estimate/actuarial/saveToFinance',
     // 账务修改
-    ebsInfoModify: '/estimate/finance/ebsInfoModify'
+    ebsInfoModify: '/estimate/finance/ebsInfoModify',
+    // 预估账务查询
+    contractAccountListQuery: '/estimate/finance/contractAccountListQuery'
 
 }

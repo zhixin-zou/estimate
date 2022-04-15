@@ -57,8 +57,15 @@
         <el-table-column prop="calculatMonth" label="计算月份" width="180">
         </el-table-column>
         <el-table-column prop="calculatedEPI" label="计算后EPI">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.calculatedEPI) }} </span>
+          </template>
         </el-table-column>
-        <el-table-column prop="originEPI" label="原始EPI"> </el-table-column>
+        <el-table-column prop="originEPI" label="原始EPI">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.originEPI) }} </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="manualAdjustEPI" label="EPI调整">
           <template slot-scope="scope">
             <el-input
@@ -73,6 +80,9 @@
         <el-table-column prop="workSheetAdjustEPI" label="实际账单调整">
         </el-table-column>
         <el-table-column prop="totalPremium" label="预估+实际">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.totalPremium) }} </span>
+          </template>
         </el-table-column>
       </el-table>
       <span
@@ -117,14 +127,16 @@
         </el-table-column>
         <el-table-column prop="calculatItem" label="计算项目">
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种">
-        </el-table-column>
+        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
           v-for="(item, index) in calculatedFeeList"
           :key="index"
           :prop="item.calculatMonth"
           :label="item.calculatMonth"
         >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -137,6 +149,8 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
+import { kiloSplit } from "@/utils/utils";
+
 export default {
   data() {
     return {
@@ -183,17 +197,17 @@ export default {
         {
           title: "预估保费",
           property: "epi",
-          formatter: 'kiloSplit'
+          formatter: "kiloSplit",
         },
         {
           title: "手续费比例",
           property: "commissionRate",
-          formatter: 'toPercent'
+          formatter: "toPercent",
         },
         {
           title: "分出比例",
           property: "cedentRate",
-          formatter: 'toPercent'
+          formatter: "toPercent",
         },
         {
           title: "预估状态",
@@ -208,10 +222,12 @@ export default {
         {
           title: "分入浮动因子",
           property: "iabSlidingScaleAdjustRate",
+          formatter: "toPercent",
         },
         {
           title: "分出浮动因子",
           property: "orpSlidingScaleAdjustRate",
+          formatter: "toPercent",
         },
         {
           title: "预估月份",
@@ -239,7 +255,7 @@ export default {
         {
           title: "分出公司比例",
           property: "orpRate",
-          formatter: 'toPercent'
+          formatter: "toPercent",
         },
       ],
       cedentList: [],
@@ -318,6 +334,9 @@ export default {
           }
         });
     },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
     getSummaries(param) {
       const { columns, data } = param;
       const sums = [];
@@ -337,7 +356,7 @@ export default {
             }
           }, 0);
           console.log(sums[index], "sums[index]");
-          sums[index] = sums[index].toFixed(2) + " 元";
+          sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
         } else {
           sums[index] = "";
         }
@@ -358,14 +377,12 @@ export default {
         })
         .then((res) => {
           if (res.data.code === "0") {
-            this.contractInfoList = []
+            this.contractInfoList = [];
             this.contractInfoList.push(res.data.data.contractInfo);
             this.cedentList = res.data.data.cedentList;
             this.workSheetList = res.data.data.workSheetList;
             this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
             this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
-            this.calculatedFeeList = res.data.data.calculatedFeeList;
-            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
             this.iabSlidingScaleAdjustRate =
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
@@ -387,7 +404,7 @@ export default {
         })
         .then((res) => {
           if (res.data.code === "0") {
-            this.contractInfoList = []
+            this.contractInfoList = [];
             this.contractInfoList.push(res.data.data.contractInfo);
             this.cedentList = res.data.data.cedentList;
             this.workSheetList = res.data.data.workSheetList;
@@ -465,7 +482,10 @@ export default {
       for (var i = 0; i < result.length; i++) {
         //遍历原数组
         for (var j = i + 1; j < result.length; j++) {
-          if (result[i].company === result[j].company && result[i].calculatItem === result[j].calculatItem) {
+          if (
+            result[i].company === result[j].company &&
+            result[i].calculatItem === result[j].calculatItem
+          ) {
             //数组中i下标后的j上有重复值，则用splice方法(可改变原数组)删除
             result.splice(j, 1);
             j--; //删除后下标-1
@@ -494,7 +514,7 @@ export default {
           ) {
             // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
             item[element.calculatMonth] = element.estimateAmount;
-            item.currencyCode = element.currencyCode
+            item.currencyCode = element.currencyCode;
             // console.log(element.calculatMonth, 'element');
           }
         });
@@ -502,25 +522,32 @@ export default {
       // console.log(this.lastList, "lastListaaaa");
     },
     handleFloatAdjust() {
-      $http
-        .post(api.yearSlidingScaleRateAdjust, {
-          iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
-          orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
-          estimateKey: sessionStorage.getItem("estimateKey"),
-        })
-        .then((res) => {
-          this.contractInfoList = []
-          this.contractInfoList.push(res.data.data.contractInfo);
-          this.cedentList = res.data.data.cedentList;
-          this.workSheetList = res.data.data.workSheetList;
-          this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
-          this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
-          this.iabSlidingScaleAdjustRate =
-            res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-          this.orpSlidingScaleAdjustRate =
-            res.data.data.contractInfo.orpSlidingScaleAdjustRate;
-          this.handleFloatChange();
-        });
+      if (
+        Number(this.iabSlidingScaleAdjustRate) > 1 ||
+        Number(this.orpSlidingScaleAdjustRate) > 1
+      ) {
+        this.$message.warning("浮动因子修改不能大于1");
+      } else {
+        $http
+          .post(api.yearSlidingScaleRateAdjust, {
+            iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
+            orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
+            estimateKey: sessionStorage.getItem("estimateKey"),
+          })
+          .then((res) => {
+            this.contractInfoList = [];
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.cedentList = res.data.data.cedentList;
+            this.workSheetList = res.data.data.workSheetList;
+            this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
+            this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.iabSlidingScaleAdjustRate =
+              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+            this.orpSlidingScaleAdjustRate =
+              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.handleFloatChange();
+          });
+      }
     },
     handleDetial() {
       this.$router.push("/bookedDetial");
@@ -560,6 +587,7 @@ export default {
         }
         .input {
           float: left;
+          margin-right: 20px;
         }
       }
 

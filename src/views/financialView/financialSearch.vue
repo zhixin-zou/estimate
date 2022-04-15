@@ -43,15 +43,14 @@
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
-           <el-form-item label="做账时间">
-            <el-select v-model="form.cedent" placeholder="请选择">
-              <el-option
-                v-for="(item, index) in companyList"
-                :key="index"
-                :label="item.partnerName"
-                :value="item.partnerCode"
-              ></el-option>
+          <el-form-item label="合同类别">
+            <el-select v-model="form.contractClass" placeholder="请选择">
+              <el-option label="分入" value="AB"></el-option>
+              <el-option label="分出" value="opr"></el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="做账时间">
+            <el-input v-model="form.estimateMonth"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -65,6 +64,14 @@
             @click="handleSearchClick"
             style="margin-left: 5px"
             >查询</el-button
+          >
+          <el-button
+            :loading="loading"
+            size="mini"
+            type="primary"
+            @click="handleSearchAll"
+            style="margin-left: 5px"
+            >预估账务总览查询</el-button
           >
           <el-button size="mini" @click="handleResetClick">重置</el-button>
         </div>
@@ -83,12 +90,26 @@
         <el-table-column prop="effectivePeriodEnd" label="结束日期">
         </el-table-column>
         <el-table-column prop="payType" label="缴费方式"> </el-table-column>
-        <el-table-column prop="epi" label="预估保费"> </el-table-column>
+        <el-table-column prop="epi" label="预估保费">
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row.epi) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="commissionRate" label="手续费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="brokerageRate" label="经纪费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.brokerageRate) }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="cedentRate" label="分出比例"> </el-table-column>
+        <el-table-column prop="cedentRate" label="分出比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.cedentRate) }}</span>
+          </template></el-table-column
+        >
         <!-- <el-table-column prop="estimateStatus" label="预估状态">
         </el-table-column> -->
 
@@ -137,6 +158,7 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
+import { kiloSplit, toPercent } from "@/utils/utils";
 
 // import { mapActions } from "vuex";
 
@@ -145,7 +167,7 @@ export default {
     return {
       loading: false,
       total: 0,
-      pageSize: 2,
+      pageSize: 10,
       currentPage: 1,
       totalPage: 1,
       form: {
@@ -155,6 +177,8 @@ export default {
         cedent: "",
         contractTimeBegin: "",
         contractTimeEnd: "",
+        estimateMonth: "",
+        contractClass: "",
       },
       currentPageData: [],
       tableData: [],
@@ -171,15 +195,49 @@ export default {
       //     this.companyList = res.data.data.partnerList;
       //   });
     },
+    toPercentData(data) {
+      return toPercent(data);
+    },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
     handleSearchClick() {
-      $http.post(api.contractListQuery, this.form).then((res) => {
-        this.$message.success(res.data.msg);
-        this.tableData = res.data.data.contractList;
-        this.total = res.data.data.contractList.length;
-        this.totalPage = Math.ceil(this.total / this.pageSize);
-        this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
-        this.setCurrentPageData();
-      });
+      if (this.form.estimateMonth === "") {
+        $http.post(api.contractAccountListQuery, this.form).then((res) => {
+          // this.$message.success('');
+          if (res.data.code === "0") {
+            this.tableData = res.data.data.contractList;
+            this.total = res.data.data.contractList.length;
+            this.totalPage = Math.ceil(this.total / this.pageSize);
+            this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+            this.setCurrentPageData();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
+      }
+    },
+    handleSearchAll() {
+      if (this.form.estimateMonth !== "") {
+        $http
+          .post(api.contractAccountListQuery, {
+            estimateMonth: this.form.estimateMonth,
+          })
+          .then((res) => {
+            // this.$message.success('');
+            if (res.data.code === "0") {
+              this.tableData = res.data.data.contractList;
+              this.total = res.data.data.contractList.length;
+              this.totalPage = Math.ceil(this.total / this.pageSize);
+              this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+              this.setCurrentPageData();
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+      } else {
+          this.$message.warning('请输入做账月份')
+      }
     },
     handleResetClick() {
       this.form = {
@@ -191,9 +249,27 @@ export default {
         contractTimeEnd: "",
       };
     },
-    handleFinancialAccounting() {},
-    handleCalculateAccounting() {},
-    historyAccounting() {},
+    handleFinancialAccounting(row) {
+      sessionStorage.setItem("estimateKey", row.estimateKey);
+      sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.setItem("accountType", "0");
+      this.$router.push("/bookedDetial");
+    },
+    handleCalculateAccounting(row) {
+      sessionStorage.setItem("estimateKey", row.estimateKey);
+      sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.setItem("accountType", "1");
+      this.$router.push("/bookedDetial");
+    },
+    historyAccounting(row) {
+      sessionStorage.setItem("estimateKey", row.estimateKey);
+      sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.setItem("accountType", "");
+      this.$router.push("/bookedDetial");
+    },
     // 假分页
     setCurrentPageData() {
       let begin = (this.currentPage - 1) * this.pageSize;

@@ -1,7 +1,6 @@
 <template>
   <div class="bookedDetial">
     <div class="backButton">
-      <el-button @click="handleEditClick">修改</el-button>
       <el-button @click="handleBackClick">返回</el-button>
     </div>
 
@@ -67,9 +66,10 @@
       </el-table>
     </div>
     <!-- <fs-list-panel :columns="columns" :listData="listData"> </fs-list-panel> -->
-    <el-button plain class="bookDetialButton" @click="handleCheck"
-      >确认入账</el-button
-    >
+    <div class="bookDetialButton">
+      <el-button plain @click="handleCheck">确认入账</el-button>
+      <el-button @click="handleEditClick">修改</el-button>
+    </div>
   </div>
 </template>
 
@@ -207,15 +207,17 @@ export default {
         });
       });
       console.log(ebsModifyList, "ebsModifyListebsModifyListebsModifyList");
-      $http.post(api.ebsInfoModify, {
-        ebsModifyList: ebsModifyList,
-      }).then(res => {
-        if(res.data.code === '0') {
-          this.$message.success('修改成功')
-        } else {
-          this.$message.error(res.data.msg)
-        }
-      })
+      $http
+        .post(api.ebsInfoModify, {
+          ebsModifyList: ebsModifyList,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("修改成功");
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
     },
     handleBackClick() {
       this.$router.go(-1);

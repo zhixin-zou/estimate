@@ -48,16 +48,18 @@
         >
       </div>
 
-      <el-table
-        :data="EPIData"
-        border
-        style="width: 100%; margin-top: 20px"
-      >
+      <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
         <el-table-column prop="calculatMonth" label="计算月份" width="180">
         </el-table-column>
         <el-table-column prop="calculatedEPI" label="月最终预估保费">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.calculatedEPI) }} </span>
+          </template>
         </el-table-column>
         <el-table-column prop="originEPI" label="月原始预估保费">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.originEPI) }} </span>
+          </template>
         </el-table-column>
         <el-table-column prop="manualAdjustEPI" label="EPI调整">
           <template slot-scope="scope">
@@ -96,7 +98,7 @@
                 scope.row.calculatMonth === '预估+实际' ||
                 scope.row.calculatMonth === '合计'
               "
-              >{{ scope.row[item.month] }}</span
+              >{{ kiloSplitData(scope.row[item.month]) }}</span
             >
             <el-input
               v-else
@@ -170,6 +172,9 @@
           :prop="item.calculatMonth"
           :label="item.calculatMonth"
         >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -182,7 +187,8 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
-import { getMonthBetween } from "@/utils/utils";
+import { getMonthBetween, kiloSplit } from "@/utils/utils";
+
 export default {
   data() {
     return {
@@ -229,7 +235,7 @@ export default {
         {
           title: "预估保费",
           property: "epi",
-          formatter: 'kiloSplit'
+          formatter: "kiloSplit",
         },
         {
           title: "手续费比例",
@@ -370,6 +376,9 @@ export default {
           }
         });
     },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
     dataProcess(epiSplitInfo) {
       // 横向时间处理
       let startTime =
@@ -454,10 +463,14 @@ export default {
         let finArr1 = Reflect.ownKeys(newData);
         let finArr2 = Reflect.ownKeys(MData);
         let lastData = {};
-        let finArr2copy = finArr2.splice(1,3)
+        let finArr2copy = finArr2.splice(1, 3);
         // console.log(finArr2copy,'finArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copy', finArr2);
-        finArr2 = finArr2.concat(finArr2copy)
-        console.log(finArr2, 'finArr2finArr2finArr2finArr2finArr2',finArr2copy);
+        finArr2 = finArr2.concat(finArr2copy);
+        console.log(
+          finArr2,
+          "finArr2finArr2finArr2finArr2finArr2",
+          finArr2copy
+        );
         finArr1.forEach((i, index) => {
           // console.log(i, 'iiiiiii')
           lastData[i] = MData[finArr2[index]];
@@ -488,7 +501,7 @@ export default {
       epiSplitSumList.forEach((item) => {
         for (var key in sumHeaderObj) {
           if (item.calculatMonth === key) {
-            sumHeaderObj[key] = item.cumulativeAmount;
+            sumHeaderObj[key] = item.sumAmount;
           }
         }
         for (var key1 in premiumHeaderObj) {
@@ -498,7 +511,7 @@ export default {
         }
         for (var key2 in allHeaderObj) {
           if (item.calculatMonth === key2) {
-            allHeaderObj[key2] = item.cumulativeAmount;
+            allHeaderObj[key2] = item.totalPremium;
           }
         }
       });
@@ -531,7 +544,7 @@ export default {
             }
           }, 0);
           // console.log(sums[index], "sums[index]");
-          sums[index] = sums[index].toFixed(2) + " 元";
+          sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
         } else {
           sums[index] = "";
         }
@@ -700,6 +713,7 @@ export default {
               this.orpSlidingScaleAdjustRate =
                 res.data.data.contractInfo.orpSlidingScaleAdjustRate;
               this.$message.success("修改成功");
+              this.commandFlag = '0'
             } else {
               this.$messag.error(res.data.msg);
             }
@@ -820,32 +834,39 @@ export default {
     },
 
     handleFloatAdjust() {
-      $http
-        .post(api.monthSlidingScaleRateAdjust, {
-          iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
-          orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
-          estimateKey: sessionStorage.getItem("estimateKey"),
-        })
-        .then((res) => {
-          if (res.data.code === "0") {
-            this.contractInfoList = [];
-            this.contractInfoList.push(res.data.data.contractInfo);
-            this.cedentList = res.data.data.cedentList;
-            this.workSheetList = res.data.data.workSheetList;
-            let epiSplitInfo = res.data.data.epiSplitInfo;
-            this.totalEPI = epiSplitInfo.totalEPI;
-            console.log(epiSplitInfo, "epiSplitInfo");
-            this.dataProcess(epiSplitInfo);
-            this.handleFloatChange();
-            this.iabSlidingScaleAdjustRate =
-              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-            this.orpSlidingScaleAdjustRate =
-              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
-            this.$message.success("修改成功");
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        });
+      if (
+        Number(this.iabSlidingScaleAdjustRate) > 1 ||
+        Number(this.orpSlidingScaleAdjustRate) > 1
+      ) {
+        this.$message.warning("浮动因子修改不能大于1");
+      } else {
+        $http
+          .post(api.monthSlidingScaleRateAdjust, {
+            iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
+            orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
+            estimateKey: sessionStorage.getItem("estimateKey"),
+          })
+          .then((res) => {
+            if (res.data.code === "0") {
+              this.contractInfoList = [];
+              this.contractInfoList.push(res.data.data.contractInfo);
+              this.cedentList = res.data.data.cedentList;
+              this.workSheetList = res.data.data.workSheetList;
+              let epiSplitInfo = res.data.data.epiSplitInfo;
+              this.totalEPI = epiSplitInfo.totalEPI;
+              console.log(epiSplitInfo, "epiSplitInfo");
+              this.dataProcess(epiSplitInfo);
+              this.handleFloatChange();
+              this.iabSlidingScaleAdjustRate =
+                res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+              this.orpSlidingScaleAdjustRate =
+                res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.$message.success("修改成功");
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+      }
     },
     handleDetial() {
       this.$router.push("/bookedDetial");
@@ -881,6 +902,7 @@ export default {
           }
         }
         .input {
+          margin-right: 20px;
           float: left;
         }
       }

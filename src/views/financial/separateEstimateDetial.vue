@@ -144,6 +144,7 @@ export default {
         {
           title: "分入浮动因子",
           property: "iabSlidingScaleAdjustRate",
+          
         },
         {
           title: "分出浮动因子",
@@ -447,6 +448,7 @@ export default {
         }
         .input {
           float: left;
+          margin-right: 20px;
         }
       }
 
