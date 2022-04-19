@@ -144,7 +144,7 @@ export default {
         {
           title: "分入浮动因子",
           property: "iabSlidingScaleAdjustRate",
-          
+
         },
         {
           title: "分出浮动因子",
@@ -411,6 +411,7 @@ export default {
         });
     },
     handleDetial() {
+      sessionStorage.setItem("accountType", '1')
       this.$router.push("/bookedDetial");
     },
     changtext(scope) {

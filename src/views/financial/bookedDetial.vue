@@ -183,8 +183,9 @@ export default {
       $http
         .post(api.ebsInfoQuery, {
           estimateKey: sessionStorage.getItem("estimateKey"),
+          contractKey: sessionStorage.getItem("contractKey"),
           estimateMonth: sessionStorage.getItem("estimateMonth"),
-          accountType: "0",
+          accountType: sessionStorage.getItem("accountType"),
         })
         .then((res) => {
           if (res.data.code === "0") {
@@ -227,7 +228,7 @@ export default {
         .post(api.saveToFinance, {
           estimateKey: sessionStorage.getItem("estimateKey"),
           estimateMonth: sessionStorage.getItem("estimateMonth"),
-          accountType: "0",
+          accountType: sessionStorage.getItem("accountType"),
         })
         .then((res) => {
           console.log(res);

@@ -713,7 +713,7 @@ export default {
               this.orpSlidingScaleAdjustRate =
                 res.data.data.contractInfo.orpSlidingScaleAdjustRate;
               this.$message.success("修改成功");
-              this.commandFlag = '0'
+              this.commandFlag = "0";
             } else {
               this.$messag.error(res.data.msg);
             }
@@ -854,6 +854,8 @@ export default {
               this.workSheetList = res.data.data.workSheetList;
               let epiSplitInfo = res.data.data.epiSplitInfo;
               this.totalEPI = epiSplitInfo.totalEPI;
+              this.calculatedFeeList = res.data.data.calculatedFeeList;
+              this.calculatedFeeList2 = res.data.data.calculatedFeeList;
               console.log(epiSplitInfo, "epiSplitInfo");
               this.dataProcess(epiSplitInfo);
               this.handleFloatChange();
@@ -869,6 +871,7 @@ export default {
       }
     },
     handleDetial() {
+      sessionStorage.setItem("accountType", "0");
       this.$router.push("/bookedDetial");
     },
   },

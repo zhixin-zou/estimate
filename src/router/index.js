@@ -15,6 +15,8 @@ import MonthAdjustDetail from '@/views/financial/monthAdjustDetail.vue'
 import SeparateEstimates from '@/views/financial/separateEstimates.vue'
 import FinancialSearch from '@/views/financialView/financialSearch.vue'
 import SeparateEstimateDetial from '@/views/financial/separateEstimateDetial.vue'
+import YearActuarial from '@/views/actuarial/yearActuarial.vue'
+import CalculationResult from '@/views/actuarial/calculationResult.vue'
 
 // import store from '@/store'
 // import { Message } from 'element-ui'
@@ -75,6 +77,14 @@ const routes = [
     {
         path: '/outDetial',
         component: SeparateEstimateDetial
+    },
+    {
+        path: '/yearActuarial',
+        component: YearActuarial
+    },
+    {
+        path: '/calculationResult',
+        component: CalculationResult
     },
     {
         path: '/404',

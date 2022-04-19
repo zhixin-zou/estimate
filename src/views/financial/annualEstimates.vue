@@ -328,7 +328,7 @@ export default {
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
             this.handleFloatChange();
-            console.log(this.lastList, "lastListaaaa");
+            // console.log(this.lastList, "lastListaaaa");
           } else {
             this.$message.error(res.data.msg);
           }
@@ -355,7 +355,7 @@ export default {
               return prev;
             }
           }, 0);
-          console.log(sums[index], "sums[index]");
+          // console.log(sums[index], "sums[index]");
           sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
         } else {
           sums[index] = "";
@@ -383,6 +383,8 @@ export default {
             this.workSheetList = res.data.data.workSheetList;
             this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
             this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
             this.iabSlidingScaleAdjustRate =
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
@@ -519,7 +521,9 @@ export default {
           }
         });
       });
-      // console.log(this.lastList, "lastListaaaa");
+      // this.$set();
+      console.log(this.lastList, "lastListaaaa");
+      // this.$forceUpdate()
     },
     handleFloatAdjust() {
       if (
@@ -541,15 +545,22 @@ export default {
             this.workSheetList = res.data.data.workSheetList;
             this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
             this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
             this.iabSlidingScaleAdjustRate =
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
             this.handleFloatChange();
+            // this.$forceUpdate();
           });
+        // .finally(() => {
+        //   this.handleFloatChange();
+        // });
       }
     },
     handleDetial() {
+      sessionStorage.setItem("accountType", "0");
       this.$router.push("/bookedDetial");
     },
     changtext(scope) {

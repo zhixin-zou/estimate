@@ -83,8 +83,8 @@
         </el-table-column>
         <el-table-column prop="contractType" label="合同类型">
         </el-table-column>
-        <el-table-column prop="planCode" label="主险种"> </el-table-column>
-        <el-table-column prop="cedent" label="分入公司"> </el-table-column>
+        <el-table-column prop="planName" label="主险种"> </el-table-column>
+        <el-table-column prop="cedentName" label="分入公司"> </el-table-column>
         <el-table-column prop="effectivePeriodBegin" label="开始日期">
         </el-table-column>
         <el-table-column prop="effectivePeriodEnd" label="结束日期">
@@ -149,9 +149,6 @@
         </el-pagination>
       </div>
     </div>
-    <!-- <div class="calculateResult">
-      <el-button plain @click="handleCalculate">汇算结果查看</el-button>
-    </div> -->
   </div>
 </template>
 
@@ -188,6 +185,10 @@ export default {
   methods: {
     // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
+      $http.get("/estimate/partnerQuery").then((res) => {
+        console.log(res, "queryCompany");
+        this.companyList = res.data.data.partnerList;
+      });
       // $http
       //   .get("http://yapi.smart-xwork.cn/mock/134845/estimate/partnerQuery")
       //   .then((res) => {
@@ -215,6 +216,8 @@ export default {
             this.$message.error(res.data.msg);
           }
         });
+      } else {
+        this.$message.warning("请去除做账月份");
       }
     },
     handleSearchAll() {
@@ -236,7 +239,7 @@ export default {
             }
           });
       } else {
-          this.$message.warning('请输入做账月份')
+        this.$message.warning("请输入做账月份");
       }
     },
     handleResetClick() {

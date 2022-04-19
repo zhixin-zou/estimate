@@ -109,7 +109,7 @@
           @prev-click="prevPage"
           @next-click="nextPage"
           @current-change="handleCurrentChange"
-          :page-size="2"
+          :page-size="this.pageSize"
           :total="total"
         >
         </el-pagination>
@@ -123,7 +123,7 @@
 
 <script>
 import { $http } from "@/utils/request";
-import api from "@/utils/api";
+// import api from "@/utils/api";
 
 // import { mapActions } from "vuex";
 
@@ -132,7 +132,7 @@ export default {
     return {
       loading: false,
       total: 0,
-      pageSize: 2,
+      pageSize: 10,
       currentPage: 1,
       totalPage: 1,
       form: {
@@ -151,15 +151,13 @@ export default {
   methods: {
     // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
-      // $http
-      //   .get("http://yapi.smart-xwork.cn/mock/134845/estimate/partnerQuery")
-      //   .then((res) => {
-      //     console.log(res, "queryCompany");
-      //     this.companyList = res.data.data.partnerList;
-      //   });
+      $http.get("/estimate/partnerQuery").then((res) => {
+        this.companyList = res.data.data.partnerList;
+      });
     },
     handleSearchClick() {
-      $http.post(api.contractListQuery, this.form).then((res) => {
+      // api.contractListQuery
+      $http.post('http://yapi.smart-xwork.cn/mock/134845/estimate/actuarial/contractListQuery', this.form).then((res) => {
         this.$message.success(res.data.msg);
         this.tableData = res.data.data.contractList;
         this.total = res.data.data.contractList.length;
@@ -184,9 +182,9 @@ export default {
       sessionStorage.setItem("contractKey", row.contractKey);
       console.log(row);
       if (row.payType === "annual") {
-        this.$router.push("/annualEstimates");
+        this.$router.push("/yearActuarial");
       } else {
-        this.$router.push("/monthContractDetail");
+        this.$router.push("/monthActuarial");
       }
     },
     handleHistoryClick() {},
@@ -215,6 +213,9 @@ export default {
       this.currentPage = page;
       this.setCurrentPageData();
     },
+    handleCalculate () {
+      this.$router.push('/calculationResult')
+    }
   },
   // mounted () {
   //   this.test()
