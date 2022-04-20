@@ -75,7 +75,7 @@ const routes = [
         component: FinancialSearch
     },
     {
-        path: '/outDetial',
+        path: '/separateEstimateDetial',
         component: SeparateEstimateDetial
     },
     {

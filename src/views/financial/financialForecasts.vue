@@ -283,6 +283,7 @@ export default {
       }
     },
     handleHistoryClick(row) {
+      sessionStorage.setItem('enterType', 'in')
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);

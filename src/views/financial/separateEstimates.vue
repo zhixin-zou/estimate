@@ -72,14 +72,31 @@
         </el-table-column>
         <el-table-column prop="effectivePeriodEnd" label="结束日期">
         </el-table-column>
-        <el-table-column prop="payType" label="缴费方式"> </el-table-column>
-        <el-table-column prop="epi" label="预估保费"> </el-table-column>
+        <!-- <el-table-column prop="payType" label="缴费方式"> </el-table-column> -->
+        <el-table-column prop="epi" label="预估保费">
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row.epi) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="commissionRate" label="手续费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="brokerageRate" label="经纪费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="cedentRate" label="分出比例"> </el-table-column>
+        <el-table-column prop="cedentRate" label="分出比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="estimateStatus" label="预估状态">
+          <template slot-scope="scope">
+            <span>{{ getDictData(scope.row.estimateStatus) }}</span>
+          </template>
         </el-table-column>
 
         <el-table-column fixed="right" label="操作" width="150">
@@ -106,7 +123,7 @@
           @prev-click="prevPage"
           @next-click="nextPage"
           @current-change="handleCurrentChange"
-          :page-size="2"
+          :page-size="this.pageSize"
           :total="total"
         >
         </el-pagination>
@@ -118,6 +135,8 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
+import { kiloSplit, toPercent } from "@/utils/utils";
+import { getText } from "@/utils/dict.js";
 
 export default {
   data() {
@@ -135,7 +154,7 @@ export default {
 
       loading: false,
       total: 0,
-      pageSize: 2,
+      pageSize: 10,
       currentPage: 1,
       totalPage: 1,
       companyList: [],
@@ -147,6 +166,15 @@ export default {
         console.log(res, "queryCompany");
         this.companyList = res.data.data.partnerList;
       });
+    },
+    toPercentData(data) {
+      return toPercent(data);
+    },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
+    getDictData(data) {
+      return getText("estimateStatus", data);
     },
     onSubmit() {
       console.log("submit!");
@@ -202,9 +230,10 @@ export default {
       // } else {
       //   this.$router.push("/monthContractDetail");
       // }
-      this.$router.push("/outDetial");
+      this.$router.push("/separateEstimateDetial");
     },
     handleHistoryClick(row) {
+      sessionStorage.setItem("enterType", "out");
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);

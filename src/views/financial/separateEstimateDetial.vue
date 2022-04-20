@@ -27,26 +27,6 @@
     <div class="separateInfo">
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
-      <!-- <div class="adjustHeader">
-        <div class="adjustBox">
-          <div class="adjustName"><span>分入浮动因子：</span></div>
-          <div class="input">
-            <el-input v-model="iabSlidingScaleAdjustRate"></el-input>
-          </div>
-          <div class="adjustName"><span>分出浮动因子：</span></div>
-          <div class="input">
-            <el-input v-model="orpSlidingScaleAdjustRate"></el-input>
-          </div>
-        </div>
-        <el-button
-          type="primary"
-          round
-          class="adjustButton"
-          @click="handleFloatAdjust"
-          >确定</el-button
-        >
-      </div> -->
-      <!-- {{ this.lastList }} -->
       <el-table
         :data="lastList"
         border
@@ -58,6 +38,7 @@
         </el-table-column>
         <el-table-column prop="calculatItem" label="计算项目">
         </el-table-column>
+        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
           v-for="(item, index) in calculatedFeeList"
           :key="index"
@@ -83,6 +64,30 @@ export default {
       totalEPI: "0",
       separateForm: {},
       columns: [
+        {
+          title: "转分合同",
+          property: "occContractNo",
+        },
+        {
+          title: "分出合同号",
+          property: "orpContractNo",
+        },
+        {
+          title: "分出公司编码",
+          property: "orpPartnerCode",
+        },
+        {
+          title: "分出公司名称",
+          property: "orpPartnerName",
+        },
+        {
+          title: "分出公司比例",
+          property: "orpRate",
+          formatter: "toPercent",
+        },
+      ],
+      contractInfoList: [],
+      cedentColumns: [
         {
           title: "合同号",
           property: "contractNo",
@@ -122,14 +127,17 @@ export default {
         {
           title: "预估保费",
           property: "epi",
+          formatter: "kiloSplit",
         },
         {
           title: "手续费比例",
           property: "commissionRate",
+          formatter: "toPercent",
         },
         {
           title: "分出比例",
           property: "cedentRate",
+          formatter: "toPercent",
         },
         {
           title: "预估状态",
@@ -141,41 +149,17 @@ export default {
         //   title: "预估维度键值",
         //   property: "estimateKey",
         // },
-        {
-          title: "分入浮动因子",
-          property: "iabSlidingScaleAdjustRate",
-
-        },
-        {
-          title: "分出浮动因子",
-          property: "orpSlidingScaleAdjustRate",
-        },
+        // {
+        //   title: "分入浮动因子",
+        //   property: "iabSlidingScaleAdjustRate",
+        // },
+        // {
+        //   title: "分出浮动因子",
+        //   property: "orpSlidingScaleAdjustRate",
+        // },
         {
           title: "预估月份",
           property: "estimateMonth",
-        },
-      ],
-      contractInfoList: [],
-      cedentColumns: [
-        {
-          title: "转分合同",
-          property: "occContractNo",
-        },
-        {
-          title: "分出合同号",
-          property: "orpContractNo",
-        },
-        {
-          title: "分出公司编码",
-          property: "orpPartnerCode",
-        },
-        {
-          title: "分出公司名称",
-          property: "orpPartnerName",
-        },
-        {
-          title: "分出公司比例",
-          property: "orpRate",
         },
       ],
       cedentList: [],
@@ -234,7 +218,7 @@ export default {
         })
         .then((res) => {
           if (res.data.code === "0") {
-            this.contractInfoList = res.data.data.orpCedentList
+            this.contractInfoList = res.data.data.orpCedentList;
             this.cedentList = res.data.data.iabContractInfo;
             this.workSheetList = res.data.data.orpWorkSheetList;
             this.calculatedFeeList = res.data.data.calculatedFeeList;
@@ -329,7 +313,7 @@ export default {
     // },
     handleFloatChange() {
       this.lastList = [];
-      console.log(this.calculatedFeeList, "this.calculatedFeeList");
+      // console.log(this.calculatedFeeList, "this.calculatedFeeList");
       var obj = {};
       this.calculatedFeeList = this.calculatedFeeList.reduce(function (
         item,
@@ -341,35 +325,71 @@ export default {
         return item;
       },
       []);
-      console.log(this.calculatedFeeList2, "this.calculatedFeeList2");
       var obj2 = {};
+      var calculatObj = {};
       this.testList = this.calculatedFeeList2.reduce(function (item, next) {
         obj2[next.company]
           ? ""
           : (obj2[next.company] = true && item.push(next));
         return item;
       }, []);
-      console.log(this.testList, "this.testList");
+      let calculatItemList = this.calculatedFeeList2.reduce(function (
+        item,
+        next
+      ) {
+        calculatObj[next.calculatItem]
+          ? ""
+          : (calculatObj[next.calculatItem] = true && item.push(next));
+        return item;
+      },
+      []);
+
       var result = [];
       var obj3 = {};
-      for (var i = 0; i < this.calculatedFeeList2.length; i++) {
-        if (
-          !(
-            obj3[this.calculatedFeeList2[i].company] &&
-            obj3[this.calculatedFeeList2[i].calculatItem]
-          )
-        ) {
-          result.push(this.calculatedFeeList2[i]);
-          obj3[this.calculatedFeeList2[i].company] = true;
-          obj3[this.calculatedFeeList2[i].calculatItem] = true;
+      console.log(
+        calculatItemList,
+        this.calculatedFeeList2,
+        "this.calculatedFeeList2this.calculatedFeeList2this.calculatedFeeList2"
+      );
+      var obj4 = {};
+      calculatItemList.forEach((item) => {
+        obj4[item.calculatItem] = true;
+      });
+      console.log(obj4, "obj4obj4obj4obj4obj4");
+      this.testList.forEach((e) => {
+        this.calculatedFeeList2.forEach((i) => {
+          if (e.company === i.company && obj4[i.calculatItem]) {
+            result.push(i);
+            obj3[i.calculatItem] = true;
+            // console.log(obj3, "obj3");
+          } else {
+            console.log(i.company, "i.companyi.companyi.company");
+          }
+        });
+      });
+      for (var i = 0; i < result.length; i++) {
+        //遍历原数组
+        for (var j = i + 1; j < result.length; j++) {
+          if (
+            result[i].company === result[j].company &&
+            result[i].calculatItem === result[j].calculatItem &&
+            result[i].currencyCode === result[j].currencyCode
+          ) {
+            //数组中i下标后的j上有重复值，则用splice方法(可改变原数组)删除
+            result.splice(j, 1);
+            j--; //删除后下标-1
+          }
         }
       }
+
+      console.log(result, "resultresultresultresultresultresultresultresult");
       result.forEach((item) => {
         this.lastList.push({
           company: item.company,
           calculatItem: item.calculatItem,
+          currencyCode: item.currencyCode,
         });
-        console.log(this.lastList, "lastList");
+        // console.log(this.lastList, "lastList");
       });
       this.lastList.forEach((item) => {
         this.calculatedFeeList.forEach((element) => {
@@ -380,15 +400,19 @@ export default {
         this.calculatedFeeList2.forEach((element) => {
           if (
             item.company === element.company &&
-            item.calculatItem === element.calculatItem
+            item.calculatItem === element.calculatItem &&
+            item.currencyCode === element.currencyCode
           ) {
             // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
             item[element.calculatMonth] = element.estimateAmount;
+            // item.currencyCode = element.currencyCode;
             // console.log(element.calculatMonth, 'element');
           }
         });
       });
-      // console.log(this.lastList, "lastListaaaa");
+      // this.$set();
+      console.log(this.lastList, "lastListaaaa");
+      // this.$forceUpdate()
     },
     handleFloatAdjust() {
       $http
@@ -411,7 +435,7 @@ export default {
         });
     },
     handleDetial() {
-      sessionStorage.setItem("accountType", '1')
+      sessionStorage.setItem("accountType", "0");
       this.$router.push("/bookedDetial");
     },
     changtext(scope) {

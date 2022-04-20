@@ -4,7 +4,7 @@
       <el-table-column fixed prop="contractNo" label="合同号">
       </el-table-column>
       <el-table-column prop="contractType" label="合同类型"> </el-table-column>
-      <el-table-column prop="planCode" label="主险种"> </el-table-column>
+      <el-table-column prop="planName" label="主险种"> </el-table-column>
       <el-table-column prop="cedent" label="分入公司"> </el-table-column>
       <el-table-column prop="effectivePeriodBegin" label="开始日期">
       </el-table-column>
@@ -12,13 +12,30 @@
       </el-table-column>
       <el-table-column prop="payType" label="缴费方式"> </el-table-column>
       <el-table-column prop="estimateMonth" label="预估月份"> </el-table-column>
-      <el-table-column prop="epi" label="预估保费"> </el-table-column>
+      <el-table-column prop="epi" label="预估保费">
+        <template slot-scope="scope">
+          <span>{{ kiloSplitData(scope.row.epi) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="commissionRate" label="手续费比例">
+        <template slot-scope="scope">
+          <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+        </template>
       </el-table-column>
       <el-table-column prop="brokerageRate" label="经纪费比例">
+        <template slot-scope="scope">
+          <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+        </template>
       </el-table-column>
-      <el-table-column prop="cedentRate" label="分出比例"> </el-table-column>
-      <el-table-column prop="estimateStatus" label="预估状态">
+      <el-table-column prop="cedentRate" label="分出比例">
+        <template slot-scope="scope">
+          <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="estimateStatus" label="预估状态"
+        ><template slot-scope="scope">
+          <span>{{ getDictData(scope.row.estimateStatus) }}</span>
+        </template>
       </el-table-column>
 
       <el-table-column fixed="right" label="操作" width="150">
@@ -35,7 +52,8 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
-
+import { kiloSplit, toPercent } from "@/utils/utils";
+import { getText } from "@/utils/dict.js";
 export default {
   data() {
     return {
@@ -54,12 +72,25 @@ export default {
           this.historyDate = res.data.data.contractList;
         });
     },
+    toPercentData(data) {
+      return toPercent(data);
+    },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
+    getDictData(data) {
+      return getText("estimateStatus", data);
+    },
     handleDetial(row) {
       console.log(row);
-      if (row.payType === "annual") {
-        this.$router.push("/annualEstimates");
-      } else {
-        this.$router.push("/monthContractDetail");
+      if (sessionStorage.getItem("enterType") === "in") {
+        if (row.payType === "annual") {
+          this.$router.push("/annualEstimates");
+        } else {
+          this.$router.push("/monthContractDetail");
+        }
+      } else if (sessionStorage.getItem("enterType") === "out") {
+        this.$router.push("/separateEstimateDetial");
       }
     },
   },

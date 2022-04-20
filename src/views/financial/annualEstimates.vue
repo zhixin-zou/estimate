@@ -389,6 +389,7 @@ export default {
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.handleFloatChange();
             this.$message.success("修改成功");
           } else {
             this.$message.error(res.data.msg);
@@ -412,10 +413,13 @@ export default {
             this.workSheetList = res.data.data.workSheetList;
             this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
             this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
             this.iabSlidingScaleAdjustRate =
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.handleFloatChange();
             this.$message.success("修改成功");
           }
         });
@@ -434,11 +438,6 @@ export default {
         return item;
       },
       []);
-      console.log(
-        this.calculatedFeeList2,
-        "this.calculatedFeeList2",
-        this.calculatedFeeList
-      );
       var obj2 = {};
       var calculatObj = {};
       this.testList = this.calculatedFeeList2.reduce(function (item, next) {
@@ -486,7 +485,8 @@ export default {
         for (var j = i + 1; j < result.length; j++) {
           if (
             result[i].company === result[j].company &&
-            result[i].calculatItem === result[j].calculatItem
+            result[i].calculatItem === result[j].calculatItem &&
+            result[i].currencyCode === result[j].currencyCode
           ) {
             //数组中i下标后的j上有重复值，则用splice方法(可改变原数组)删除
             result.splice(j, 1);
@@ -500,6 +500,7 @@ export default {
         this.lastList.push({
           company: item.company,
           calculatItem: item.calculatItem,
+          currencyCode: item.currencyCode,
         });
         // console.log(this.lastList, "lastList");
       });
@@ -512,11 +513,12 @@ export default {
         this.calculatedFeeList2.forEach((element) => {
           if (
             item.company === element.company &&
-            item.calculatItem === element.calculatItem
+            item.calculatItem === element.calculatItem &&
+            item.currencyCode === element.currencyCode
           ) {
             // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
             item[element.calculatMonth] = element.estimateAmount;
-            item.currencyCode = element.currencyCode;
+            // item.currencyCode = element.currencyCode;
             // console.log(element.calculatMonth, 'element');
           }
         });
