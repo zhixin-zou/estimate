@@ -72,13 +72,27 @@
         </el-table-column>
         <el-table-column prop="effectivePeriodEnd" label="结束日期">
         </el-table-column>
-        <el-table-column prop="payType" label="缴费方式"> </el-table-column>
-        <el-table-column prop="epi" label="预估保费"> </el-table-column>
+        <el-table-column prop="epi" label="预估保费">
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row.epi) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="commissionRate" label="手续费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="brokerageRate" label="经纪费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="cedentRate" label="分出比例"> </el-table-column>
+        <el-table-column prop="cedentRate" label="分出比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
+        </el-table-column>
+
         <!-- <el-table-column prop="estimateStatus" label="预估状态">
         </el-table-column> -->
 
@@ -123,6 +137,8 @@
 
 <script>
 import { $http } from "@/utils/request";
+import { kiloSplit, toPercent } from "@/utils/utils";
+import { getText } from "@/utils/dict.js";
 // import api from "@/utils/api";
 
 // import { mapActions } from "vuex";
@@ -155,16 +171,30 @@ export default {
         this.companyList = res.data.data.partnerList;
       });
     },
+    toPercentData(data) {
+      return toPercent(data);
+    },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
+    getDictData(data) {
+      return getText("estimateStatus", data);
+    },
     handleSearchClick() {
       // api.contractListQuery
-      $http.post('http://yapi.smart-xwork.cn/mock/134845/estimate/actuarial/contractListQuery', this.form).then((res) => {
-        this.$message.success(res.data.msg);
-        this.tableData = res.data.data.contractList;
-        this.total = res.data.data.contractList.length;
-        this.totalPage = Math.ceil(this.total / this.pageSize);
-        this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
-        this.setCurrentPageData();
-      });
+      $http
+        .post(
+          "http://yapi.smart-xwork.cn/mock/134845/estimate/actuarial/contractListQuery",
+          this.form
+        )
+        .then((res) => {
+          this.$message.success(res.data.msg);
+          this.tableData = res.data.data.contractList;
+          this.total = res.data.data.contractList.length;
+          this.totalPage = Math.ceil(this.total / this.pageSize);
+          this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+          this.setCurrentPageData();
+        });
     },
     handleResetClick() {
       this.form = {
@@ -213,9 +243,9 @@ export default {
       this.currentPage = page;
       this.setCurrentPageData();
     },
-    handleCalculate () {
-      this.$router.push('/calculationResult')
-    }
+    handleCalculate() {
+      this.$router.push("/calculationResult");
+    },
   },
   // mounted () {
   //   this.test()

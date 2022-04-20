@@ -143,7 +143,7 @@
           @prev-click="prevPage"
           @next-click="nextPage"
           @current-change="handleCurrentChange"
-          :page-size="2"
+          :page-size="pageSize"
           :total="total"
         >
         </el-pagination>
