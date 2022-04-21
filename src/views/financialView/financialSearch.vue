@@ -191,7 +191,7 @@ export default {
         console.log(res, "queryCompany");
         this.companyList = res.data.data.partnerList;
       });
-      // this.handleSearchClick()
+      this.handleSearchClick();
       // $http
       //   .get("http://yapi.smart-xwork.cn/mock/134845/estimate/partnerQuery")
       //   .then((res) => {
@@ -225,22 +225,11 @@ export default {
     },
     handleSearchAll() {
       if (this.form.estimateMonth !== "") {
-        $http
-          .post(api.contractAccountListQuery, {
-            estimateMonth: this.form.estimateMonth,
-          })
-          .then((res) => {
-            // this.$message.success('');
-            if (res.data.code === "0") {
-              this.tableData = res.data.data.contractList;
-              this.total = res.data.data.contractList.length;
-              this.totalPage = Math.ceil(this.total / this.pageSize);
-              this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
-              this.setCurrentPageData();
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          });
+        sessionStorage.setItem("estimateKey", ""),
+          sessionStorage.setItem("contractKey", ""),
+          sessionStorage.setItem("estimateMonth", this.form.estimateMonth),
+          sessionStorage.setItem("accountType", ""),
+          this.$router.push("/bookedDetial");
       } else {
         this.$message.warning("请输入做账月份");
       }

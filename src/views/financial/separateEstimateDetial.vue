@@ -48,6 +48,9 @@
           :prop="item.calculatMonth"
           :label="item.calculatMonth"
         >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -60,6 +63,8 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
+import { kiloSplit } from "@/utils/utils";
+
 export default {
   data() {
     return {
@@ -237,6 +242,9 @@ export default {
           }
         });
     },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
     handleBack() {
       this.$router.go(-1);
     },
@@ -259,7 +267,7 @@ export default {
             }
           }, 0);
           console.log(sums[index], "sums[index]");
-          sums[index] = sums[index].toFixed(2) + " 元";
+          sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
         } else {
           sums[index] = "";
         }
