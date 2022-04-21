@@ -1,5 +1,8 @@
 <template>
   <div class="annualEstimates">
+    <div class="monthHeader">
+      <el-button @click="handleBack">返回</el-button>
+    </div>
     <div class="separateInfo">
       <h2>合同信息</h2>
       <el-divider></el-divider>
@@ -161,6 +164,10 @@ export default {
         {
           title: "合同号",
           property: "contractNo",
+        },
+        {
+          title: "合同session",
+          property: "sessionName",
         },
         {
           title: "合同类型",
@@ -336,6 +343,9 @@ export default {
     },
     kiloSplitData(data) {
       return kiloSplit(data);
+    },
+    handleBack() {
+      this.$router.go(-1);
     },
     getSummaries(param) {
       const { columns, data } = param;
@@ -577,6 +587,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .annualEstimates {
+  .monthHeader {
+    margin-bottom: 10px;
+    float: right;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
   .separateInfo {
     padding: 10px;
     background-color: #fff;

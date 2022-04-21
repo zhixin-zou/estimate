@@ -64,6 +64,8 @@
       <el-table :data="currentPageData" border style="width: 100%">
         <el-table-column fixed prop="contractNo" label="合同号">
         </el-table-column>
+        <el-table-column prop="sessionName" label="合同session">
+        </el-table-column>
         <el-table-column prop="contractType" label="合同类型">
         </el-table-column>
         <el-table-column prop="planName" label="主险种"> </el-table-column>
@@ -85,12 +87,12 @@
         </el-table-column>
         <el-table-column prop="brokerageRate" label="经纪费比例">
           <template slot-scope="scope">
-            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+            <span>{{ toPercentData(scope.row.brokerageRate) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="cedentRate" label="分出比例">
           <template slot-scope="scope">
-            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+            <span>{{ toPercentData(scope.row.cedentRate) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="estimateStatus" label="预估状态">
@@ -166,6 +168,7 @@ export default {
         console.log(res, "queryCompany");
         this.companyList = res.data.data.partnerList;
       });
+      this.handleSearchClick();
     },
     toPercentData(data) {
       return toPercent(data);

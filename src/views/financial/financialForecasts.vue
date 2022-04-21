@@ -64,6 +64,8 @@
       <el-table :data="currentPageData" border style="width: 100%">
         <el-table-column fixed prop="contractNo" label="合同号">
         </el-table-column>
+        <el-table-column prop="sessionName" label="合同session">
+        </el-table-column>
         <el-table-column prop="contractType" label="合同类型">
         </el-table-column>
         <el-table-column prop="planName" label="主险种"> </el-table-column>
@@ -192,6 +194,7 @@ export default {
         console.log(res, "queryCompany");
         this.companyList = res.data.data.partnerList;
       });
+      this.handleSearchClick();
     },
     onSubmit() {
       console.log("submit!");
@@ -283,7 +286,7 @@ export default {
       }
     },
     handleHistoryClick(row) {
-      sessionStorage.setItem('enterType', 'in')
+      sessionStorage.setItem("enterType", "in");
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);

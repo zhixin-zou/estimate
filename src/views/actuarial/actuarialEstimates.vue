@@ -64,6 +64,8 @@
       <el-table :data="currentPageData" border style="width: 100%">
         <el-table-column fixed prop="contractNo" label="合同号">
         </el-table-column>
+        <el-table-column prop="sessionName" label="合同session">
+        </el-table-column>
         <el-table-column prop="contractType" label="合同类型">
         </el-table-column>
         <el-table-column prop="planCode" label="主险种"> </el-table-column>

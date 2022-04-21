@@ -1,5 +1,8 @@
 <template>
   <div class="monthContractDetial">
+    <div class="monthHeader">
+      <el-button @click="handleBack">返回</el-button>
+    </div>
     <div class="separateInfo">
       <h2>合同信息</h2>
       <el-divider></el-divider>
@@ -77,9 +80,7 @@
               v-else
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
-              :disabled="
-                scope.row.commandFlag === '1'
-              "
+              :disabled="scope.row.commandFlag === '1'"
             ></el-input>
           </template>
         </el-table-column>
@@ -90,6 +91,7 @@
           :key="index"
           :prop="item.month"
           :label="item.month"
+          width="130"
         >
           <template slot-scope="scope">
             <span
@@ -102,8 +104,9 @@
             >
             <el-input
               v-else
+              @keydown.native="keydown"
               :disabled="
-                scope.row[item.month] === '' ||
+                scope.row[item.month] === ' ' ||
                 item.month < estimateMonth ||
                 scope.row.commandFlag === '0'
               "
@@ -199,6 +202,10 @@ export default {
         {
           title: "合同号",
           property: "contractNo",
+        },
+        {
+          title: "合同session",
+          property: "sessionName",
         },
         {
           title: "合同类型",
@@ -379,6 +386,9 @@ export default {
     kiloSplitData(data) {
       return kiloSplit(data);
     },
+    handleBack() {
+      this.$router.go(-1);
+    },
     dataProcess(epiSplitInfo) {
       // 横向时间处理
       let startTime =
@@ -435,7 +445,7 @@ export default {
         // let newMonthList = [];
         // 截取12个月data
         let newKeys = Object.keys(item);
-        console.log(newKeys, "========================");
+        // console.log(newKeys, "========================");
         newKeys.map((e, idx) => {
           if (e === item.calculatMonth) {
             console.log(idx, "idx");
@@ -466,24 +476,28 @@ export default {
         let finArr2copy = finArr2.splice(1, 3);
         // console.log(finArr2copy,'finArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copy', finArr2);
         finArr2 = finArr2.concat(finArr2copy);
-        console.log(
-          finArr2,
-          "finArr2finArr2finArr2finArr2finArr2",
-          finArr2copy
-        );
+        // console.log(
+        //   finArr2,
+        //   "finArr2finArr2finArr2finArr2finArr2",
+        //   finArr2copy
+        // );
         finArr1.forEach((i, index) => {
           // console.log(i, 'iiiiiii')
           lastData[i] = MData[finArr2[index]];
         });
-        console.log(lastData, "lastData", MData, finArr1, finArr2);
+        console.log(lastData, "lastData");
         for (var p in item) {
           for (var q in lastData) {
             if (p === q) {
               item[p] = lastData[q];
             }
           }
+          console.log(item[p], p);
+          if (item[p] === "") {
+            item[p] = " ";
+          }
         }
-        // console.log(item, 'item');
+        console.log(item, "item");
       });
       this.EPIData = epiSplitInfo.epiSplitList;
       // 合计累计预估加实际处理
@@ -729,6 +743,15 @@ export default {
         // })
       }
     },
+    keydown(e) {
+      console.log(e.target);
+      if (e.code === "Space") {
+        console.log(1111);
+        e.target.value = 0;
+        this.$message.warning("请勿输入空格符");
+      }
+    },
+
     handleFloatChange() {
       this.lastList = [];
       // console.log(this.calculatedFeeList, "this.calculatedFeeList");
@@ -883,6 +906,12 @@ export default {
 
 <style lang="scss" scoped>
 .monthContractDetial {
+  .monthHeader {
+    margin-bottom: 10px;
+    float: right;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
   .separateInfo {
     padding: 10px;
     background-color: #fff;

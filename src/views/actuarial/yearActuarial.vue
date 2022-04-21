@@ -12,6 +12,8 @@
 </template>
 
 <script>
+// import api from "@/utils/api";
+import { $http } from "@/utils/request";
 export default {
   data() {
     return {
@@ -21,16 +23,20 @@ export default {
           property: "contractNo",
         },
         {
+          title: "合同session",
+          property: "sessionName",
+        },
+        {
           title: "合同类型",
           property: "contractType",
         },
         {
           title: "主险种",
-          property: "planName",
+          property: "planCode",
         },
         {
           title: "分入公司",
-          property: "cedentName",
+          property: "cedent",
         },
         {
           title: "合同有效期开始",
@@ -94,11 +100,28 @@ export default {
         //   property: "estimateMonth",
         // },
       ],
+      contractInfoList: [],
     };
   },
   methods: {
-      init() {}
-  }
+    init() {
+      $http
+        .post(
+          "http://yapi.smart-xwork.cn/mock/134845/estimate/actuarial/yearContractDetailQuery",
+          {
+            estimateKey: sessionStorage.getItem("estimateKey"),
+          }
+        )
+        .then((res) => {
+          console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
+          this.contractInfoList = [];
+          this.contractInfoList.push(res.data.data.contractInfo);
+        });
+    },
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => vm.init());
+  },
 };
 </script>
 

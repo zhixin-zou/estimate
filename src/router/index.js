@@ -28,7 +28,7 @@ Vue.use(Router)
 const routes = [
     {
         path: '/',
-        component: FinancialSearch,
+        component: FinancialForecasts,
         meta: {
             title: 'test',
             requireAuth: false
