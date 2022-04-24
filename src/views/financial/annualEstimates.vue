@@ -1,28 +1,44 @@
 <template>
   <div class="annualEstimates">
     <div class="monthHeader">
+      <el-button @click="handleExport('cwYearContract', '合同信息')"
+        >导出</el-button
+      >
       <el-button @click="handleBack">返回</el-button>
     </div>
     <div class="separateInfo">
       <h2>合同信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwYearContract'"
         :columns="columns"
         :listData="contractInfoList"
       ></fs-list-panel>
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('cwYearCendent', '分出信息')"
+        >导出</el-button
+      >
     </div>
     <div class="separateInfo">
       <h2>分出信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwYearCendent'"
         :columns="cedentColumns"
         :listData="cedentList"
       ></fs-list-panel>
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('cwWorkSheet', '分入保费账单信息')"
+        >导出</el-button
+      >
     </div>
     <div class="separateInfo">
       <h2>分入保费账单信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwWorkSheet'"
         :columns="workSheetColumns"
         :listData="workSheetList"
       ></fs-list-panel>
@@ -49,8 +65,12 @@
           @click="handleHistoryQuery"
           >查看历史</el-button
         >
+        <el-button class="historyQuery" @click="handleExport('epiData', 'epi')"
+          >导出</el-button
+        >
       </div>
       <el-table
+        ref="epiData"
         :data="EPIData"
         border
         :summary-method="getSummaries"
@@ -117,9 +137,13 @@
           @click="handleFloatAdjust"
           >确定</el-button
         >
+        <el-button style="float: right" @click="handleExport('adjustForm', '计算后预估费用明细')"
+          >导出</el-button
+        >
       </div>
       <!-- {{ this.lastList }} -->
       <el-table
+        ref="adjustForm"
         :data="lastList"
         border
         :summary-method="getSummaries"
@@ -146,6 +170,7 @@
     <el-button plain class="checkDetial" @click="handleDetial"
       >查看入账明细</el-button
     >
+    <exportButton />
   </div>
 </template>
 
@@ -153,8 +178,14 @@
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
 import { kiloSplit } from "@/utils/utils";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
+// import exportButton from "@/components/exportButton.vue";
 
 export default {
+  // components: {
+  //   exportButton,
+  // },
   data() {
     return {
       estimateMonth: sessionStorage.getItem("estimateMonth"),
@@ -312,6 +343,7 @@ export default {
       orpSlidingScaleAdjustRate: "",
     };
   },
+
   methods: {
     init() {
       let params = sessionStorage.getItem("estimateKey");
@@ -343,6 +375,10 @@ export default {
     },
     kiloSplitData(data) {
       return kiloSplit(data);
+    },
+    handleExport(data, filename) {
+      this.exportBtn(data, filename);
+      // console.log(this.$refs.exportTableRef1.$el);
     },
     handleBack() {
       this.$router.go(-1);
@@ -578,6 +614,31 @@ export default {
     changtext(scope) {
       console.log(scope, "scope");
       // console.log(this.tableData, "tableData");
+    },
+    // 导出方法
+    exportBtn(refProp, fname) {
+      // 获取表格元素
+      const el = this.$refs[refProp].$el;
+      // 文件名
+      console.log(this.$refs[refProp], "elelele");
+      const filename = fname + ".xlsx";
+      /* generate workbook object from table */
+      const wb = XLSX.utils.table_to_book(el);
+      /* get binary string as output */
+      const wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          filename
+        );
+      } catch (e) {
+        console.log(e);
+      }
+      return wbout;
     },
   },
   beforeRouteEnter(to, from, next) {

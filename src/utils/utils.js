@@ -102,6 +102,7 @@ export const dropEmpty = target => {
     return result
 }
 
+// 百分号
 export const toPercent = (point) => {
     var str = Number(point * 100).toFixed(1)
     str += '%'
@@ -543,3 +544,4 @@ export const getMonthBetween = (start, end) => {
     }
     return result
   }
+

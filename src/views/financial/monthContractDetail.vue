@@ -2,27 +2,43 @@
   <div class="monthContractDetial">
     <div class="monthHeader">
       <el-button @click="handleBack">返回</el-button>
+      <el-button @click="handleExport('cwMonthContract', '合同信息')"
+        >导出</el-button
+      >
     </div>
     <div class="separateInfo">
       <h2>合同信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwMonthContract'"
         :columns="columns"
         :listData="contractInfoList"
       ></fs-list-panel>
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('cwMonthCedent', '分出信息')"
+        >导出</el-button
+      >
     </div>
     <div class="separateInfo">
       <h2>分出信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwMonthCedent'"
         :columns="cedentColumns"
         :listData="cedentList"
       ></fs-list-panel>
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('cwMonthWorkSheet', '分入保费账单信息')"
+        >导出</el-button
+      >
     </div>
     <div class="separateInfo">
       <h2>分入保费账单信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwMonthWorkSheet'"
         :columns="workSheetColumns"
         :listData="workSheetList"
       ></fs-list-panel>
@@ -49,8 +65,10 @@
           @click="handleHistoryQuery"
           >查看历史</el-button
         >
+        <el-button class="historyQuery" @click="handleExport('epiData', 'epi')"
+          >导出</el-button
+        >
       </div>
-
       <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
         <el-table-column prop="calculatMonth" label="计算月份" width="180">
         </el-table-column>
@@ -117,6 +135,38 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-table
+        v-show="false"
+        :ref="'epiData'"
+        :data="EPIData"
+        border
+        style="width: 100%; margin-top: 20px"
+      >
+        <el-table-column prop="calculatMonth" label="计算月份" width="180">
+        </el-table-column>
+        <el-table-column prop="calculatedEPI" label="月最终预估保费">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.calculatedEPI) }} </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="originEPI" label="月原始预估保费">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.originEPI) }} </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="manualAdjustEPI" label="EPI调整">
+        </el-table-column>
+        <el-table-column prop="workSheetAdjustEPI" label="实际账单调整">
+        </el-table-column>
+        <el-table-column
+          v-for="(item, index) in monthList"
+          :key="index"
+          :prop="item.month"
+          :label="item.month"
+          width="130"
+        >
+        </el-table-column>
+      </el-table>
       <span
         >温馨提示：每月6号前调整的可调整上月EPI，每月6号后只能调整本月EPI</span
       >
@@ -156,8 +206,14 @@
           @click="handleFloatAdjust"
           >确定</el-button
         >
+        <el-button
+          style="float: right"
+          @click="handleExport('adjustForm', '计算后预估费用明细')"
+          >导出</el-button
+        >
       </div>
       <el-table
+        :ref="'adjustForm'"
         :data="lastList"
         border
         :summary-method="getSummaries"
@@ -191,6 +247,8 @@
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
 import { getMonthBetween, kiloSplit } from "@/utils/utils";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
 
 export default {
   data() {
@@ -388,6 +446,35 @@ export default {
     },
     handleBack() {
       this.$router.go(-1);
+    },
+    // 导出方法
+    exportBtn(refProp, fname) {
+      // 获取表格元素
+      const el = this.$refs[refProp].$el;
+      // 文件名
+      console.log(this.$refs[refProp], "elelele");
+      const filename = fname + ".xlsx";
+      /* generate workbook object from table */
+      const wb = XLSX.utils.table_to_book(el);
+      /* get binary string as output */
+      const wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          filename
+        );
+      } catch (e) {
+        console.log(e);
+      }
+      return wbout;
+    },
+    handleExport(data, filename) {
+      this.exportBtn(data, filename);
+      // console.log(this.$refs.exportTableRef1.$el);
     },
     dataProcess(epiSplitInfo) {
       // 横向时间处理

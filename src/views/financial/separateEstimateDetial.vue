@@ -1,36 +1,58 @@
 <template>
   <div class="separateEstimateDetial">
     <div class="monthHeader">
+      <el-button @click="handleExport('cwfcContract', '分出合同信息')"
+        >导出</el-button
+      >
       <el-button @click="handleBack">返回</el-button>
     </div>
     <div class="separateInfo">
       <h2>分出合同信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwfcContract'"
         :columns="columns"
         :listData="contractInfoList"
       ></fs-list-panel>
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('cwfcCendent', '分入合同信息')"
+        >导出</el-button
+      >
     </div>
     <div class="separateInfo">
       <h2>分入合同信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwfcCendent'"
         :columns="cedentColumns"
         :listData="cedentList"
       ></fs-list-panel>
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('cwfcworkSheet', '分出账单信息')"
+        >导出</el-button
+      >
     </div>
     <div class="separateInfo">
       <h2>分出账单信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
+        :ref="'cwfcworkSheet'"
         :columns="workSheetColumns"
         :listData="workSheetList"
       ></fs-list-panel>
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('cwfcAdjust', '计算后预估费用明细')"
+        >导出</el-button
+      >
     </div>
     <div class="separateInfo">
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
       <el-table
+        :ref="'cwfcAdjust'"
         :data="lastList"
         border
         :summary-method="getSummaries"
@@ -64,6 +86,8 @@
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
 import { kiloSplit } from "@/utils/utils";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
 
 export default {
   data() {
@@ -247,6 +271,34 @@ export default {
     },
     handleBack() {
       this.$router.go(-1);
+    },
+    // 导出方法
+    exportBtn(refProp, fname) {
+      // 获取表格元素
+      const el = this.$refs[refProp].$el;
+      // 文件名
+      console.log(this.$refs[refProp], "elelele");
+      const filename = fname + ".xlsx";
+      /* generate workbook object from table */
+      const wb = XLSX.utils.table_to_book(el);
+      /* get binary string as output */
+      const wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          filename
+        );
+      } catch (e) {
+        console.log(e);
+      }
+      return wbout;
+    },
+    handleExport(data, filename) {
+      this.exportBtn(data, filename);
     },
     getSummaries(param) {
       const { columns, data } = param;

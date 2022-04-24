@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="listData" border style="width: 100%">
+  <el-table :data="listData" border style="width: 100%" :ref="refProp">
     <el-table-column
       v-for="(col, index) in columns"
       :key="index"
@@ -51,6 +51,7 @@ export default {
   props: {
     columns: Array,
     listData: Array,
+    refProp: String,
   },
   methods: {
     // handleClick(row) {
