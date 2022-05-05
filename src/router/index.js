@@ -1,112 +1,118 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 // import HomeView from '@/views/HomeView.vue'
-import NotFound from '@/views/NotFound.vue'
+import NotFound from "@/views/NotFound.vue";
 // import Forbidden from '@/views/Forbidden.vue'
 // import HelpIndex from '@/views/help/HelpIndex.vue'
-import FinancialForecasts from '@/views/financial/financialForecasts.vue'
-import AnnualEstimates from '@/views/financial/annualEstimates.vue'
-import BookedDetial from '@/views/financial/bookedDetial.vue'
-import ViewHistory from '@/views/financial/viewHistory.vue'
-import YearAdjustDetail from '@/views/financial/yearAdjustDetail.vue'
-import MonthContractDetail from '@/views/financial/monthContractDetail.vue'
-import ActuarialEstimates from '@/views/actuarial/actuarialEstimates.vue'
-import MonthAdjustDetail from '@/views/financial/monthAdjustDetail.vue'
-import SeparateEstimates from '@/views/financial/separateEstimates.vue'
-import FinancialSearch from '@/views/financialView/financialSearch.vue'
-import SeparateEstimateDetial from '@/views/financial/separateEstimateDetial.vue'
-import YearActuarial from '@/views/actuarial/yearActuarial.vue'
-import CalculationResult from '@/views/actuarial/calculationResult.vue'
+import FinancialForecasts from "@/views/financial/financialForecasts.vue";
+import AnnualEstimates from "@/views/financial/annualEstimates.vue";
+import BookedDetial from "@/views/financial/bookedDetial.vue";
+import ViewHistory from "@/views/financial/viewHistory.vue";
+import YearAdjustDetail from "@/views/financial/yearAdjustDetail.vue";
+import MonthContractDetail from "@/views/financial/monthContractDetail.vue";
+import ActuarialEstimates from "@/views/actuarial/actuarialEstimates.vue";
+import MonthAdjustDetail from "@/views/financial/monthAdjustDetail.vue";
+import SeparateEstimates from "@/views/financial/separateEstimates.vue";
+import FinancialSearch from "@/views/financialView/financialSearch.vue";
+import SeparateEstimateDetial from "@/views/financial/separateEstimateDetial.vue";
+import YearActuarial from "@/views/actuarial/yearActuarial.vue";
+import MonthActuarial from "@/views/actuarial/monthActuarial.vue";
+
+import CalculationResult from "@/views/actuarial/calculationResult.vue";
 
 // import store from '@/store'
 // import { Message } from 'element-ui'
 // const CustomAppView = () =>
 //     import ('@/views/CustomAppView')
 
-Vue.use(Router)
+Vue.use(Router);
 
 const routes = [
-    {
-        path: '/',
-        component: FinancialForecasts,
-        meta: {
-            title: 'test',
-            requireAuth: false
-        }
+  {
+    path: "/",
+    component: FinancialForecasts,
+    meta: {
+      title: "test",
+      requireAuth: false,
     },
-    {
-        path: '/financialForecasts',
-        component: FinancialForecasts
+  },
+  {
+    path: "/financialForecasts",
+    component: FinancialForecasts,
+  },
+  {
+    path: "/separateEstimates",
+    component: SeparateEstimates,
+  },
+  {
+    path: "/annualEstimates",
+    component: AnnualEstimates,
+  },
+  {
+    path: "/bookedDetial",
+    component: BookedDetial,
+  },
+  {
+    path: "/viewHistory",
+    component: ViewHistory,
+  },
+  {
+    path: "/yearAdjustDetail",
+    component: YearAdjustDetail,
+  },
+  {
+    path: "/monthContractDetail",
+    component: MonthContractDetail,
+  },
+  {
+    path: "/actuarialEstimates",
+    component: ActuarialEstimates,
+  },
+  {
+    path: "/monthAdjustDetail",
+    component: MonthAdjustDetail,
+  },
+  {
+    path: "/financialSearch",
+    component: FinancialSearch,
+  },
+  {
+    path: "/separateEstimateDetial",
+    component: SeparateEstimateDetial,
+  },
+  {
+    path: "/yearActuarial",
+    component: YearActuarial,
+  },
+  {
+    path: "/monthActuarial",
+    component: MonthActuarial,
+  },
+  {
+    path: "/calculationResult",
+    component: CalculationResult,
+  },
+  {
+    path: "/404",
+    component: NotFound,
+    meta: {
+      layout: "error",
+      requireAuth: false,
     },
-    {
-        path: '/separateEstimates',
-        component: SeparateEstimates
-    },
-    {
-        path: '/annualEstimates',
-        component: AnnualEstimates
-    },
-    {
-        path: '/bookedDetial',
-        component: BookedDetial
-    },
-    {
-        path: '/viewHistory',
-        component: ViewHistory
-    },
-    {
-        path: '/yearAdjustDetail',
-        component: YearAdjustDetail
-    },
-    {
-        path: '/monthContractDetail',
-        component: MonthContractDetail
-    },
-    {
-        path: '/actuarialEstimates',
-        component: ActuarialEstimates
-    },
-    {
-        path: '/monthAdjustDetail',
-        component: MonthAdjustDetail
-    },
-    {
-        path: '/financialSearch',
-        component: FinancialSearch
-    },
-    {
-        path: '/separateEstimateDetial',
-        component: SeparateEstimateDetial
-    },
-    {
-        path: '/yearActuarial',
-        component: YearActuarial
-    },
-    {
-        path: '/calculationResult',
-        component: CalculationResult
-    },
-    {
-        path: '/404',
-        component: NotFound,
-        meta: {
-            layout: 'error',
-            requireAuth: false
-        }
-    },
-    // {
-    //     path: '/forbidden',
-    //     component: Forbidden,
-    //     meta: {
-    //         layout: 'error',
-    //         requireAuth: false
-    //     }
-    // },
-    {
-        path: '*',
-        redirect: '/404'
-    }
-]
+  },
+  // {
+  //     path: '/forbidden',
+  //     component: Forbidden,
+  //     meta: {
+  //         layout: 'error',
+  //         requireAuth: false
+  //     }
+  // },
+  {
+    path: "*",
+    redirect: "/404",
+  },
+];
 
 // // 路由元信息默认值
 // routes.forEach(route => {
@@ -150,23 +156,23 @@ const routes = [
 //     return result
 // }
 
-const router = new Router({ mode: 'hash', routes })
-    // 捕获 router.push 异常
-    // const originalPush = Router.prototype.push
-    // Router.prototype.push = function push(location) {
-    //         return originalPush.call(this, location).catch(err => err)
-    //     }
-    // router.beforeEach((to, from, next) => {
-    //     // const path = to.matched[0].path
-    //     // store.dispatch('common/getDict')
-    //     // store
-    //     //     .dispatch('login/getUserInfo')
-    //     //     .then(() => {
-    //     //         store.dispatch('login/getUserPermissionList').then(() => {
-    //     //             if (!to.meta.requireAuth) {
-    //     //                 next()
-    //     //                 return
-    //     //             }
+const router = new Router({ mode: "hash", routes });
+// 捕获 router.push 异常
+// const originalPush = Router.prototype.push
+// Router.prototype.push = function push(location) {
+//         return originalPush.call(this, location).catch(err => err)
+//     }
+// router.beforeEach((to, from, next) => {
+//     // const path = to.matched[0].path
+//     // store.dispatch('common/getDict')
+//     // store
+//     //     .dispatch('login/getUserInfo')
+//     //     .then(() => {
+//     //         store.dispatch('login/getUserPermissionList').then(() => {
+//     //             if (!to.meta.requireAuth) {
+//     //                 next()
+//     //                 return
+//     //             }
 
 //     //             if (store.getters['login/hasRoutePermission'](path)) {
 //     //                 next()
@@ -186,4 +192,4 @@ const router = new Router({ mode: 'hash', routes })
 //     //     })
 // })
 
-export default router
+export default router;

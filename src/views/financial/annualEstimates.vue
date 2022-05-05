@@ -137,7 +137,9 @@
           @click="handleFloatAdjust"
           >确定</el-button
         >
-        <el-button style="float: right" @click="handleExport('adjustForm', '计算后预估费用明细')"
+        <el-button
+          style="float: right"
+          @click="handleExport('adjustForm', '计算后预估费用明细')"
           >导出</el-button
         >
       </div>
@@ -327,6 +329,14 @@ export default {
           property: "amount",
         },
         {
+          title: "账单开始时间",
+          property: "acStartDate",
+        },
+        {
+          title: "账单结束时间",
+          property: "acEndDate",
+        },
+        {
           title: "账单状态",
           property: "workSheetStatus",
         },
@@ -415,6 +425,10 @@ export default {
       this.$router.push("/yearAdjustDetail");
     },
     handleTotalEPI() {
+      if (this.totalEPI === "") {
+        this.$message.warning("请输入需要调整的总EPI");
+        return;
+      }
       $http
         .post(api.yearTotalEPIAdjust, {
           totalEPI: this.totalEPI,

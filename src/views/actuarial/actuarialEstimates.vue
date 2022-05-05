@@ -4,7 +4,11 @@
       <div class="searchMain">
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="合同类型">
-            <el-select v-model="form.contractType" placeholder="请选择">
+            <el-select
+              v-model="form.contractType"
+              placeholder="请选择"
+              clearable
+            >
               <el-option label="比例合约" value="PROPTREATY "></el-option>
               <el-option label="非比例合约" value="NONPROPTREATY"></el-option>
               <el-option label="比例临分" value="PROPFAC"></el-option>
@@ -18,7 +22,7 @@
             <el-input v-model="form.contractNoEnd"></el-input>
           </el-form-item>
           <el-form-item label="分入公司">
-            <el-select v-model="form.cedent" placeholder="请选择">
+            <el-select v-model="form.cedent" placeholder="请选择" clearable>
               <el-option
                 v-for="(item, index) in companyList"
                 :key="index"
@@ -74,6 +78,7 @@
         </el-table-column>
         <el-table-column prop="effectivePeriodEnd" label="结束日期">
         </el-table-column>
+        <el-table-column prop="payType" label="缴费方式"> </el-table-column>
         <el-table-column prop="epi" label="预估保费">
           <template slot-scope="scope">
             <span>{{ kiloSplitData(scope.row.epi) }}</span>
@@ -132,8 +137,42 @@
       </div>
     </div>
     <div class="calculateResult">
-      <el-button plain @click="handleCalculate">汇算结果查看</el-button>
+      <el-button plain @click="handleCalculate">结果汇算</el-button>
     </div>
+    <el-dialog
+      class="contractBreak"
+      title="合同拆分"
+      :visible.sync="contractBreak"
+    >
+      <el-button type="primary" plain @click="addNewRow">增加加一行</el-button>
+      <el-table :data="contractBreakList" border style="width: 100%">
+        <el-table-column prop="productCode" label="产品编码">
+          <template slot-scope="scope">
+            <el-input
+              placeholder="请输入内容"
+              v-model="scope.row.productCode"
+            ></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="productName" label="产品名称">
+          <template slot-scope="scope">
+            <el-input
+              placeholder="请输入内容"
+              v-model="scope.row.productName"
+            ></el-input>
+          </template>
+          ></el-table-column
+        >
+        <el-table-column prop="spiltPremium" label="拆分保费">
+          <template slot-scope="scope">
+            <el-input
+              placeholder="请输入内容"
+              v-model="scope.row.spiltPremium"
+            ></el-input>
+          </template> </el-table-column
+      ></el-table>
+      <el-button type="primary" @click="handleClick">确认</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -141,7 +180,7 @@
 import { $http } from "@/utils/request";
 import { kiloSplit, toPercent } from "@/utils/utils";
 import { getText } from "@/utils/dict.js";
-// import api from "@/utils/api";
+import api from "@/utils/api";
 
 // import { mapActions } from "vuex";
 
@@ -164,6 +203,14 @@ export default {
       currentPageData: [],
       tableData: [],
       companyList: [],
+      contractBreak: false,
+      contractBreakList: [
+        {
+          productCode: "",
+          productName: "",
+          spiltPremium: "",
+        },
+      ],
     };
   },
   methods: {
@@ -171,7 +218,9 @@ export default {
     init() {
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;
-      });
+        this.handleSearchClick()
+      })
+      
     },
     toPercentData(data) {
       return toPercent(data);
@@ -185,12 +234,9 @@ export default {
     handleSearchClick() {
       // api.contractListQuery
       $http
-        .post(
-          "http://yapi.smart-xwork.cn/mock/134845/estimate/actuarial/contractListQuery",
-          this.form
-        )
+        .post("/estimate/actuarial/contractListQuery", this.form)
         .then((res) => {
-          this.$message.success(res.data.msg);
+          // this.$message.success(res.data.msg);
           this.tableData = res.data.data.contractList;
           this.total = res.data.data.contractList.length;
           this.totalPage = Math.ceil(this.total / this.pageSize);
@@ -219,9 +265,22 @@ export default {
         this.$router.push("/monthActuarial");
       }
     },
-    handleHistoryClick() {},
+    handleHistoryClick(row) {
+      if (row.payType === "annual") {
+        sessionStorage.setItem("enterType", "jsyear");
+      } else {
+        sessionStorage.setItem("enterType", "jsmonth");
+      }
+      sessionStorage.setItem("estimateKey", row.estimateKey);
+      sessionStorage.setItem("estimateMonth", row.estimateMonth);
+      sessionStorage.setItem("contractKey", row.contractKey);
+      this.$router.push("/viewHistory");
+    },
     // 合同拆分
-    handleBreak() {},
+    handleBreak(row) {
+      sessionStorage.setItem("estimateKey", row.estimateKey);
+      this.contractBreak = true;
+    },
     // 假分页
     setCurrentPageData() {
       let begin = (this.currentPage - 1) * this.pageSize;
@@ -247,6 +306,35 @@ export default {
     },
     handleCalculate() {
       this.$router.push("/calculationResult");
+    },
+    addNewRow() {
+      this.contractBreakList.push({
+        productCode: "",
+        productName: "",
+        spiltPremium: "",
+      });
+    },
+    handleClick() {
+      $http
+        .post(api.premiumSplit, {
+          estimateKey: sessionStorage.getItem("estimateKey"),
+          splitDetail: this.contractBreakList,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.contractBreak = false;
+            this.$message.success("成功");
+          }
+        })
+        .finally(() => {
+          this.contractBreakList = [
+            {
+              productCode: "",
+              productName: "",
+              spiltPremium: "",
+            },
+          ];
+        });
     },
   },
   // mounted () {

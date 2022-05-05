@@ -1,5 +1,8 @@
 <template>
   <div class="viewHistory">
+    <div class="viewHistoryHeader">
+      <el-button size="medium" @click="handleBack">返回</el-button>
+    </div>
     <el-table :data="historyDate" border style="width: 100%">
       <el-table-column fixed prop="contractNo" label="合同号">
       </el-table-column>
@@ -93,7 +96,14 @@ export default {
         }
       } else if (sessionStorage.getItem("enterType") === "out") {
         this.$router.push("/separateEstimateDetial");
+      } else if (sessionStorage.getItem("enterType") === "jsyear") {
+        this.$router.push("/yearActuarial");
+      } else if (sessionStorage.getItem("enterType") === "jsmonth") {
+        this.$router.push("/monthActuarial");
       }
+    },
+    handleBack() {
+      this.$router.go(-1);
     },
   },
   beforeRouteEnter(to, from, next) {
@@ -102,4 +112,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.viewHistory {
+  .viewHistoryHeader {
+    float: right;
+    margin-bottom: 10px;
+  }
+}
+</style>

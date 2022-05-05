@@ -294,8 +294,15 @@ export const kiloSplit = (num) => {
         strNum = strNum.slice(0, strNum.length - 3)
     }
     if (strNum) { result = strNum + result }
+    // console.log(result, 'tesult');
     if (haveMinus) {
         return '-' + result + endNum
+    }
+    // console.log(endNum.length, '????????????', endNum);
+    if (endNum.length === 0) {
+        endNum = '.00'
+    } else if (endNum.length !== 3) {
+        endNum += '0'
     }
     return result + endNum
 }

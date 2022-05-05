@@ -206,14 +206,14 @@ export default {
             sumHeaderObj[key] = item.sumAmount;
           }
         }
-        for (var key1 in premiumHeaderObj) {
+         for (var key1 in premiumHeaderObj) {
           if (item.calculatMonth === key1) {
-            premiumHeaderObj[key1] = item.cumulativeAmount;
+            premiumHeaderObj[key1] = item.totalPremium;
           }
         }
         for (var key2 in allHeaderObj) {
           if (item.calculatMonth === key2) {
-            allHeaderObj[key2] = item.totalPremium;
+            allHeaderObj[key2] = item.cumulativeAmount;
           }
         }
       });
@@ -222,8 +222,8 @@ export default {
         "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
       );
       this.EPIData.push(allHeaderObj);
-      this.EPIData.push(sumHeaderObj);
       this.EPIData.push(premiumHeaderObj);
+      this.EPIData.push(sumHeaderObj);
       // console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
       //epi调整结束
       epiSplitInfo.EPIData = this.EPIData
@@ -249,7 +249,7 @@ export default {
               return prev;
             }
           }, 0);
-          console.log(sums[index], "sums[index]");
+          // console.log(sums[index], "sums[index]");
           sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
         } else {
           sums[index] = "";

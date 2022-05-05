@@ -390,6 +390,14 @@ export default {
           property: "amount",
         },
         {
+          title: "账单开始时间",
+          property: "acStartDate",
+        },
+        {
+          title: "账单结束时间",
+          property: "acEndDate",
+        },
+        {
           title: "账单状态",
           property: "workSheetStatus",
         },
@@ -607,12 +615,12 @@ export default {
         }
         for (var key1 in premiumHeaderObj) {
           if (item.calculatMonth === key1) {
-            premiumHeaderObj[key1] = item.cumulativeAmount;
+            premiumHeaderObj[key1] = item.totalPremium;
           }
         }
         for (var key2 in allHeaderObj) {
           if (item.calculatMonth === key2) {
-            allHeaderObj[key2] = item.totalPremium;
+            allHeaderObj[key2] = item.cumulativeAmount;
           }
         }
       });
@@ -621,8 +629,8 @@ export default {
         "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
       );
       this.EPIData.push(allHeaderObj);
-      this.EPIData.push(sumHeaderObj);
       this.EPIData.push(premiumHeaderObj);
+      this.EPIData.push(sumHeaderObj);
       // console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
       //epi调整结束
     },
@@ -654,6 +662,10 @@ export default {
       return sums;
     },
     handleTotalEPI() {
+      if (this.totalEPI === "") {
+        this.$message.warning("请输入需要调整的总EPI");
+        return;
+      }
       $http
         .post(api.monthTotalEPIAdjust, {
           totalEPI: this.totalEPI,

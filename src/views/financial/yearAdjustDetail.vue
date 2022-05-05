@@ -1,7 +1,10 @@
 <template>
   <div class="yearAdjustDetail">
+    <div class="yearAdjustDetailHeader">
+      <el-button size="medium" @click="handleBack">返回</el-button>
+    </div>
     <div class="section" v-for="(item, index) in yearAdjustList" :key="index">
-      <h2>{{item.adjustMonth}}</h2>
+      <h2>{{ item.adjustMonth }}</h2>
       <fs-list-panel
         :columns="columns"
         :listData="item.epiSplitList"
@@ -57,6 +60,9 @@ export default {
           console.log(this.yearAdjustList, "???");
         });
     },
+    handleBack() {
+      this.$router.go(-1);
+    },
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());
@@ -64,4 +70,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.yearAdjustDetail {
+  .yearAdjustDetailHeader {
+    float: right;
+    margin-bottom: 20px;
+  }
+}
+</style>

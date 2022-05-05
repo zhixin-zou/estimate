@@ -5,14 +5,14 @@ export default {
   namespaced: true,
 
   state: {
-    productList: []
+    classList: []
   },
 
   mutations: {
-    SET_PRODUCTLIST(state, payload) {
+    SET_CLASSLIST(state, payload) {
       console.log(payload, 'payload');
-      state.productList = payload.productList
-      console.log(state.productList, 'state.productList')
+      state.classList = payload.classList
+      console.log(state.classList, 'state.classList')
     }
   },
 
@@ -20,11 +20,10 @@ export default {
     handleSearch(filter) {
       return $http.post(api.contractListQuery, filter)
     },
-    getProductList({ commit }) {
-      return $http.get('http://yapi.smart-xwork.cn/mock/134845' + api.productListQuery).then(res => {
-        // res.data.productList
+    getClassList({ commit }) {
+      return $http.post(api.classListQuery, {}).then(res => {
         console.log(res.data)
-        commit('SET_PRODUCTLIST', res.data.data)
+        commit('SET_CLASSLIST', res.data.data)
       })
     }
   },

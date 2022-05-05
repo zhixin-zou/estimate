@@ -1,8 +1,9 @@
 <template>
   <div class="bookedDetial">
     <div class="backButton">
-      <!-- <el-button @click="handleBackClick">导出</el-button> -->
-
+      <el-button @click="handleExport('bookDetialList', '明细')"
+        >导出</el-button
+      >
       <el-button @click="handleBackClick">返回</el-button>
     </div>
 
@@ -29,7 +30,11 @@
       </el-form-item>
     </el-form>
     <div class="listBox">
-      <el-table :data="listData" border style="width: 100%">
+      <el-table
+        :data="listData"
+        border
+        style="width: 100%"
+      >
         <el-table-column fixed prop="ledger" label="ledger"> </el-table-column>
         <el-table-column prop="currency" label="Currency"> </el-table-column>
         <el-table-column prop="accountingDate" label="Accounting Date">
@@ -66,6 +71,49 @@
         <el-table-column prop="lineDescription" label="Line Description">
         </el-table-column>
       </el-table>
+         <el-table
+         v-show="false"
+        :data="listData"
+        border
+        style="width: 100%"
+        ref="bookDetialList"
+      >
+        <el-table-column prop="ledger" label="ledger"> </el-table-column>
+        <el-table-column prop="currency" label="Currency"> </el-table-column>
+        <el-table-column prop="accountingDate" label="Accounting Date">
+        </el-table-column>
+        <el-table-column prop="period" label="Period"> </el-table-column>
+        <el-table-column prop="company" label="COMPANY"> </el-table-column>
+        <el-table-column prop="costcenter" label="COSTCENTER">
+        </el-table-column>
+        <el-table-column prop="account" label="ACCOUNT"> </el-table-column>
+        <el-table-column prop="subaccount" label="SUBACCOUNT">
+        </el-table-column>
+        <el-table-column prop="product" label="PRODUCT"> </el-table-column>
+        <el-table-column prop="region" label="REGION"> </el-table-column>
+        <el-table-column prop="channel" label="CHANNEL"> </el-table-column>
+        <el-table-column prop="icp" label="ICP"> </el-table-column>
+        <el-table-column prop="spare" label="SPARE"> </el-table-column>
+        <el-table-column prop="debit" label="Debit">
+          <!-- <template slot-scope="scope">
+            <el-input v-model="scope.row.debit"></el-input>
+          </template> -->
+        </el-table-column>
+        <el-table-column prop="credit" label="Credit">
+          <!-- <template slot-scope="scope">
+            <el-input v-model="scope.row.credit"></el-input>
+          </template> -->
+        </el-table-column>
+        <el-table-column prop="batchName" label="Batch Name"> </el-table-column>
+        <el-table-column prop="batchDescription" label="Batch Description">
+        </el-table-column>
+        <el-table-column prop="journalName" label="Journal Name">
+        </el-table-column>
+        <el-table-column prop="journalDescription" label="Journal Description">
+        </el-table-column>
+        <el-table-column prop="lineDescription" label="Line Description">
+        </el-table-column>
+      </el-table>
     </div>
     <!-- <fs-list-panel :columns="columns" :listData="listData"> </fs-list-panel> -->
     <div class="bookDetialButton">
@@ -78,6 +126,9 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
+
 export default {
   data() {
     return {
@@ -235,6 +286,34 @@ export default {
         .then((res) => {
           console.log(res);
         });
+    },
+    exportBtn(refProp, fname) {
+      // 获取表格元素
+      const el = this.$refs[refProp].$el;
+      // 文件名
+      console.log(this.$refs[refProp], "elelele");
+      const filename = fname + ".xlsx";
+      /* generate workbook object from table */
+      const wb = XLSX.utils.table_to_book(el);
+      /* get binary string as output */
+      const wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          filename
+        );
+      } catch (e) {
+        console.log(e);
+      }
+      return wbout;
+    },
+    handleExport(data, filename) {
+      this.exportBtn(data, filename);
+      // console.log(this.$refs.exportTableRef1.$el);
     },
   },
   beforeRouteEnter(to, from, next) {

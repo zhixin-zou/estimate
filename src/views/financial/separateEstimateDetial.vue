@@ -229,6 +229,14 @@ export default {
           property: "amount",
         },
         {
+          title: "账单开始时间",
+          property: "acStartDate",
+        },
+        {
+          title: "账单结束时间",
+          property: "acEndDate",
+        },
+        {
           title: "账单状态",
           property: "workSheetStatus",
         },
@@ -318,7 +326,7 @@ export default {
               return prev;
             }
           }, 0);
-          console.log(sums[index], "sums[index]");
+          // console.log(sums[index], "sums[index]");
           sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
         } else {
           sums[index] = "";

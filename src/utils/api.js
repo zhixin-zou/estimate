@@ -67,6 +67,10 @@ export default {
     // 账务修改
     ebsInfoModify: '/estimate/finance/ebsInfoModify',
     // 预估账务查询
-    contractAccountListQuery: '/estimate/finance/contractAccountListQuery'
+    contractAccountListQuery: '/estimate/finance/contractAccountListQuery',
+    // 下发财务
+    ebsInfoPush: '/estimate/finance/ebsInfoPush',
+    // 当月汇算class获取
+    classListQuery: '/estimate/actuarial/classListQuery'
 
 }

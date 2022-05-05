@@ -19,11 +19,65 @@
     <div class="separateInfo">
       <h2>费用信息</h2>
       <el-divider></el-divider>
-      <fs-list-panel
+      <!-- <fs-list-panel
         :ref="'feeInfo'"
         :columns="feeColumns"
         :listData="feeInfoList"
-      ></fs-list-panel>
+      ></fs-list-panel> -->
+      <el-table
+        :data="feeInfoList"
+        ref="feeInfo"
+        border
+        style="width: 100%; margin-top: 20px"
+      >
+        <el-table-column prop="dacRate" label="DAC比例">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.dacRate"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="expectClaimRate" label="预计赔付率">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.expectClaimRate"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="expectXOLRate" label="预期XOL費用率">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.expectXOLRate"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="expectMaintainRate" label="预计维持費用">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.expectMaintainRate"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="riskMargin" label="Risk Margin">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.riskMargin"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="discounting" label="Discounting">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.discounting"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="adjustedRiskMarginFactor"
+          label="Adjusted Risk Margin factor"
+        >
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.adjustedRiskMarginFactor"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="cedentRate" label="比例分出">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.cedentRate"></el-input> </template
+        ></el-table-column>
+        <el-table-column prop="retroDacRate" label="转分保DAC比例">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.retroDacRate"></el-input>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <div class="monthHeader">
       <el-button @click="handleExport('cedentInfo', '分出信息')"
@@ -39,12 +93,161 @@
         :listData="cedentList"
       ></fs-list-panel>
     </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('uprRate', 'UPR计算比例')"
+        >导出</el-button
+      >
+    </div>
+    <div class="separateInfo">
+      <h2>UPR计算比例</h2>
+      <el-divider></el-divider>
+      <!-- <fs-list-panel
+        :ref="'uprRate'"
+        :columns="uprRateColumns"
+        :listData="uprRateListData"
+      ></fs-list-panel> -->
+      <el-table
+        ref="uprRate"
+        :data="uprRateListData"
+        border
+        style="width: 100%; margin-top: 20px"
+      >
+        <el-table-column prop="policyMonth" label="Policy month" width="180">
+        </el-table-column>
+        <el-table-column
+          v-for="(item, index) in uprRateList"
+          :key="index"
+          :prop="item.policyMonth"
+          :label="item.policyMonth"
+        >
+          <template slot-scope="scope">
+            <el-input
+              @change="handleChange"
+              placeholder="请输入内容"
+              v-model="scope.row[item.policyMonth]"
+            ></el-input>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-button type="primary" plain @click="handleUprRate"
+        >确认调整</el-button
+      >
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('upr', 'upr预估')">导出</el-button>
+    </div>
+    <div class="separateInfo">
+      <h2>UPR预估</h2>
+      <el-divider></el-divider>
+      <el-table
+        :data="UPRData"
+        ref="upr"
+        border
+        style="width: 100%; margin-top: 20px"
+        :summary-method="getSummaries"
+        show-summary
+      >
+        <el-table-column prop="calculatMonth" label="计算月份" width="180">
+        </el-table-column>
+        <el-table-column prop="financePremium" label="月年缴保费">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.financePremium) }} </span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-for="(item, index) in monthList"
+          :key="index"
+          :prop="item.month"
+          :label="item.month"
+          width="130"
+        >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.month]) }}</span>
+            <!-- <el-input
+              v-else
+              @keydown.native="keydown"
+              :disabled="
+                scope.row[item.month] === ' ' ||
+                item.month < estimateMonth ||
+                scope.row.commandFlag === '0'
+              "
+              placeholder=""
+              v-model="scope.row[item.month]"
+            ></el-input> -->
+            <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table
+        v-show="false"
+        :ref="'upr'"
+        :data="UPRData"
+        border
+        style="width: 100%; margin-top: 20px"
+      >
+        <el-table-column prop="calculatMonth" label="计算月份" width="180">
+        </el-table-column>
+        <el-table-column prop="calculatedEPI" label="月最终预估保费">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.calculatedEPI) }} </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="originEPI" label="月原始预估保费">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.originEPI) }} </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="manualAdjustEPI" label="EPI调整">
+        </el-table-column>
+        <el-table-column prop="workSheetAdjustEPI" label="实际账单调整">
+        </el-table-column>
+        <el-table-column
+          v-for="(item, index) in monthList"
+          :key="index"
+          :prop="item.month"
+          :label="item.month"
+          width="130"
+        >
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="separateInfo">
+      <h2>计算后预估费用明细</h2>
+      <el-divider></el-divider>
+      <el-table
+        :ref="'adjustForm'"
+        :data="lastList"
+        border
+        :summary-method="getSummaries"
+        show-summary
+        style="width: 100%; margin-top: 20px"
+      >
+        <el-table-column prop="company" label="公司" width="180">
+        </el-table-column>
+        <el-table-column prop="calculatItem" label="计算项目">
+        </el-table-column>
+        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
+        <el-table-column
+          v-for="(item, index) in calculatedFeeList"
+          :key="index"
+          :prop="item.calculatMonth"
+          :label="item.calculatMonth"
+        >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <el-button plain class="checkDetial" @click="handleSave">保存</el-button>
   </div>
 </template>
 
 <script>
-// import api from "@/utils/api";
+import api from "@/utils/api";
 import { $http } from "@/utils/request";
+import { getMonthBetween, kiloSplit } from "@/utils/utils";
+
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
 export default {
@@ -102,12 +305,12 @@ export default {
           property: "cedentRate",
           formatter: "toPercent",
         },
-        {
-          title: "转分合同",
-          property: "estimateStatus",
-          formatter: "dict",
-          dictName: "estimateStatus",
-        },
+        // {
+        //   title: "转分合同",
+        //   property: "estimateStatus",
+        //   formatter: "dict",
+        //   dictName: "estimateStatus",
+        // },
         {
           title: "合同状态",
           property: "estimateStatus",
@@ -203,29 +406,301 @@ export default {
           formatter: "toPercent",
         },
       ],
+      uprRateColumns: [
+        {
+          title: "Policy month",
+          property: "policyMonth",
+        },
+      ],
       contractInfoList: [],
       feeInfoList: [],
       cedentList: [],
+      uprRateList: [],
+      uprRateListData: [],
+      monthList: [],
+      UPRData: [],
+      calculatedFeeList: [],
+      calculatedFeeList2: [],
+      lastList: [],
     };
   },
   methods: {
     init() {
       $http
-        .post(
-          "http://yapi.smart-xwork.cn/mock/134845/estimate/actuarial/yearContractDetailQuery",
-          {
-            estimateKey: sessionStorage.getItem("estimateKey"),
-          }
-        )
+        .post("/estimate/actuarial/yearContractDetailQuery", {
+          estimateKey: sessionStorage.getItem("estimateKey"),
+        })
         .then((res) => {
           console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
-          this.feeInfoList.push(res.data.data.feeInfo)
-          this.cedentList = res.data.data.cedentList
-          console.log();
+          this.feeInfoList.push(res.data.data.feeInfo);
+          this.cedentList = res.data.data.cedentList;
+          let obj = { policyMonth: "UPR 分布" };
+          this.uprRateList = res.data.data.uprRateList;
+          this.uprRateList.map((item) => {
+            obj[item.policyMonth] = item.uprRate;
+          });
+          this.uprRateListData.push(obj);
+          console.log(this.uprRateListData, "this.uprRateListData");
+          let uprSplitInfo = res.data.data.uprEstimateList;
+          this.dataProcess(uprSplitInfo);
+          this.calculatedFeeList = res.data.data.calculatedFeeList;
+          this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+          this.handleFloatChange();
         });
+    },
+    kiloSplitData(data) {
+      return kiloSplit(data);
+    },
+    dataProcess(uprSplitInfo) {
+      // 横向时间处理
+      let startTime =
+        uprSplitInfo.contractMonthBegin.slice(0, 4) +
+        "-" +
+        uprSplitInfo.contractMonthBegin.slice(4) +
+        "-01";
+      console.log(startTime, "startTime");
+      let endTime = "";
+      // 年份处理
+      let monthInfo = uprSplitInfo.calculatMonths % 12;
+      let yearsInfo = parseInt(uprSplitInfo.calculatMonths / 12);
+      console.log(yearsInfo, "?????", monthInfo);
+      let endYear =
+        Number(uprSplitInfo.contractMonthBegin.slice(0, 4)) + yearsInfo;
+      let endMonth =
+        Number(uprSplitInfo.contractMonthBegin.slice(4)) + monthInfo;
+      console.log(endYear, endMonth, "===============");
+      if (endMonth > 12) {
+        endYear += 1;
+        endMonth = endMonth - 12;
+      }
+      if (endMonth < 10) {
+        endTime = String(endYear) + "-0" + String(endMonth - 1) + "-01";
+      } else {
+        endTime = String(endYear) + "-" + String(endMonth - 1) + "-01";
+      }
+      console.log(endTime, "endTime");
+      this.monthList = getMonthBetween(startTime, endTime);
+      console.log(this.monthList, "monthList");
+      // end
+      let newEPIObj = {};
+      let sumObj = {};
+      let totalPremiumObj = {};
+      let cumulativeAmount = {};
+      this.monthList.forEach((item) => {
+        newEPIObj[item.month] = "";
+        sumObj[item.month] = "";
+        totalPremiumObj[item.month] = "";
+        cumulativeAmount[item.month] = "";
+      });
+      console.log(newEPIObj, "newEPIList");
+      // uprEstimateList
+      uprSplitInfo.uprSplitList.forEach((item) => {
+        item.commandFlag = "0";
+        Object.assign(item, newEPIObj);
+      });
+
+      console.log(uprSplitInfo.uprSplitList, "uprSplitInfo.uprEstimateList");
+      // uprEstimateList
+      uprSplitInfo.uprSplitList.forEach((item) => {
+        let newData = {};
+        let MData = {};
+        // let newMonthList = [];
+        // 截取12个月data
+        let newKeys = Object.keys(item);
+        // console.log(newKeys, "========================");
+        newKeys.map((e, idx) => {
+          if (e === item.calculatMonth) {
+            console.log(idx, "idx");
+            let startId = idx;
+            newKeys.map((i, id) => {
+              if (id < startId + 12 && id >= startId) {
+                // console.log(i, 'item[i]');
+                newData[i] = item[i];
+              }
+            });
+          }
+          // console.log(e, 'MDataMDataMDataMDataMData');
+          if (e === "m1") {
+            // console.log(idx, "idx2");
+            let startId = idx;
+            newKeys.map((i, id2) => {
+              if (id2 < startId + 12 && id2 >= startId) {
+                MData[i] = item[i];
+              }
+            });
+          }
+        });
+        // console.log(newData, "!!!!!", MData);
+        // console.log(Reflect.ownKeys(newData), 'newDatanewDatanewData', Reflect.ownKeys(MData));
+        let finArr1 = Reflect.ownKeys(newData);
+        let finArr2 = Reflect.ownKeys(MData);
+        let lastData = {};
+        let finArr2copy = finArr2.splice(1, 3);
+        // console.log(finArr2copy,'finArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copyfinArr2copy', finArr2);
+        finArr2 = finArr2.concat(finArr2copy);
+        // console.log(
+        //   finArr2,
+        //   "finArr2finArr2finArr2finArr2finArr2",
+        //   finArr2copy
+        // );
+        finArr1.forEach((i, index) => {
+          // console.log(i, 'iiiiiii')
+          lastData[i] = MData[finArr2[index]];
+        });
+        console.log(lastData, "lastData");
+        for (var p in item) {
+          for (var q in lastData) {
+            if (p === q) {
+              item[p] = lastData[q];
+            }
+          }
+          console.log(item[p], p);
+          if (item[p] === "") {
+            item[p] = " ";
+          }
+        }
+        console.log(item, "item");
+      });
+      this.UPRData = uprSplitInfo.uprSplitList;
+      // // 合计累计预估加实际处理
+      // console.log(uprSplitInfo.epiSplitSumList, "??????????????????????");
+      // let epiSplitSumList = uprSplitInfo.epiSplitSumList;
+      // let sumHeaderObj = cumulativeAmount;
+      // let premiumHeaderObj = totalPremiumObj;
+      // let allHeaderObj = sumObj;
+      // allHeaderObj.calculatMonth = "合计";
+      // sumHeaderObj.calculatMonth = "累计";
+      // // sumHeaderObj.calculatedEPI = "";
+      // // sumHeaderObj.originEPI = "";
+      // // sumHeaderObj.manualAdjustEPI = "";
+      // premiumHeaderObj.calculatMonth = "预估+实际";
+      // epiSplitSumList.forEach((item) => {
+      //   // for (var key in sumHeaderObj) {
+      //   //   if (item.calculatMonth === key) {
+      //   //     sumHeaderObj[key] = item.sumAmount;
+      //   //   }
+      //   // }
+      //   // for (var key1 in premiumHeaderObj) {
+      //   //   if (item.calculatMonth === key1) {
+      //   //     premiumHeaderObj[key1] = item.cumulativeAmount;
+      //   //   }
+      //   // }
+      //   // for (var key2 in allHeaderObj) {
+      //   //   if (item.calculatMonth === key2) {
+      //   //     allHeaderObj[key2] = item.totalPremium;
+      //   //   }
+      //   // }
+      // });
+      console.log(
+        sumObj,
+        "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
+      );
+    },
+    handleFloatChange() {
+      this.lastList = [];
+      // console.log(this.calculatedFeeList, "this.calculatedFeeList");
+      var obj = {};
+      this.calculatedFeeList = this.calculatedFeeList.reduce(function (
+        item,
+        next
+      ) {
+        obj[next.calculatMonth]
+          ? ""
+          : (obj[next.calculatMonth] = true && item.push(next));
+        return item;
+      },
+      []);
+      var obj2 = {};
+      var calculatObj = {};
+      this.testList = this.calculatedFeeList2.reduce(function (item, next) {
+        obj2[next.company]
+          ? ""
+          : (obj2[next.company] = true && item.push(next));
+        return item;
+      }, []);
+      let calculatItemList = this.calculatedFeeList2.reduce(function (
+        item,
+        next
+      ) {
+        calculatObj[next.calculatItem]
+          ? ""
+          : (calculatObj[next.calculatItem] = true && item.push(next));
+        return item;
+      },
+      []);
+
+      var result = [];
+      var obj3 = {};
+      console.log(
+        calculatItemList,
+        this.calculatedFeeList2,
+        "this.calculatedFeeList2this.calculatedFeeList2this.calculatedFeeList2"
+      );
+      var obj4 = {};
+      calculatItemList.forEach((item) => {
+        obj4[item.calculatItem] = true;
+      });
+      console.log(obj4, "obj4obj4obj4obj4obj4");
+      this.testList.forEach((e) => {
+        this.calculatedFeeList2.forEach((i) => {
+          if (e.company === i.company && obj4[i.calculatItem]) {
+            result.push(i);
+            obj3[i.calculatItem] = true;
+            // console.log(obj3, "obj3");
+          } else {
+            console.log(i.company, "i.companyi.companyi.company");
+          }
+        });
+      });
+      for (var i = 0; i < result.length; i++) {
+        //遍历原数组
+        for (var j = i + 1; j < result.length; j++) {
+          if (
+            result[i].company === result[j].company &&
+            result[i].calculatItem === result[j].calculatItem &&
+            result[i].currencyCode === result[j].currencyCode
+          ) {
+            //数组中i下标后的j上有重复值，则用splice方法(可改变原数组)删除
+            result.splice(j, 1);
+            j--; //删除后下标-1
+          }
+        }
+      }
+
+      console.log(result, "resultresultresultresultresultresultresultresult");
+      result.forEach((item) => {
+        this.lastList.push({
+          company: item.company,
+          calculatItem: item.calculatItem,
+          currencyCode: item.currencyCode,
+        });
+        // console.log(this.lastList, "lastList");
+      });
+      this.lastList.forEach((item) => {
+        this.calculatedFeeList.forEach((element) => {
+          item[element.calculatMonth] = 0;
+        });
+      });
+      this.lastList.forEach((item) => {
+        this.calculatedFeeList2.forEach((element) => {
+          if (
+            item.company === element.company &&
+            item.calculatItem === element.calculatItem &&
+            item.currencyCode === element.currencyCode
+          ) {
+            // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
+            item[element.calculatMonth] = element.estimateAmount;
+            // item.currencyCode = element.currencyCode;
+            // console.log(element.calculatMonth, 'element');
+          }
+        });
+      });
+      // this.$set();
+      console.log(this.lastList, "lastListaaaa");
+      // this.$forceUpdate()
     },
     handleBack() {
       this.$router.go(-1);
@@ -257,6 +732,75 @@ export default {
     },
     handleExport(data, filename) {
       this.exportBtn(data, filename);
+    },
+    handleUprRate() {
+      for (var key in this.uprRateListData[0]) {
+        this.uprRateList.forEach((item) => {
+          if (key === item.policyMonth) {
+            item.uprRate = this.uprRateListData[0][key];
+          }
+        });
+      }
+
+      this.$http
+        .post(api.yearFeeRateAdjust, {
+          estimateKey: sessionStorage.getItem("estimateKey"),
+          feeInfo: this.feeInfoList[0],
+          uprRateList: this.uprRateList,
+        })
+        .then(() => {});
+    },
+    handleChange() {
+      console.log(
+        this.uprRateListData,
+        "this.uprRateListDatathis.uprRateListDatathis.uprRateListDatathis.uprRateListData"
+      );
+      console.log(
+        this.uprRateList,
+        "this.uprRateList.uprRateList.uprRateList.uprRateList"
+      );
+    },
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = "合计";
+          return;
+        }
+        const values = data.map((item) => Number(item[column.property]));
+        if (!values.every((value) => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          // console.log(sums[index], "sums[index]");
+          sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
+        } else {
+          sums[index] = "";
+        }
+      });
+
+      return sums;
+    },
+    handleSave() {
+      $http
+        .post(api.ebsInfoPush, {
+          contractKey: sessionStorage.getItem("contractKey"),
+          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateMonth: sessionStorage.getItem("estimateMonth"),
+          accountType: "1",
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("成功");
+            this.$router.push("/bookDetial");
+          }
+        });
     },
   },
   beforeRouteEnter(to, from, next) {
