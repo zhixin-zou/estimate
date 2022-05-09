@@ -68,15 +68,15 @@
             <el-input v-else v-model="scope.row.credit"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="batchName" label="Batch Name" width="120">
+        <el-table-column prop="batchName" label="Batch Name" width="250">
         </el-table-column>
         <el-table-column
           prop="batchDescription"
           label="Batch Description"
-          width="150"
+          width="200"
         >
         </el-table-column>
-        <el-table-column prop="journalName" label="Journal Name" width="220">
+        <el-table-column prop="journalName" label="Journal Name" width="250">
         </el-table-column>
         <el-table-column
           prop="journalDescription"
