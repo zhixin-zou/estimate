@@ -32,32 +32,44 @@
       >
         <el-table-column prop="dacRate" label="DAC比例">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.dacRate"></el-input>
+            <span v-if="historyShow === '4'">{{ scope.row.dacRate }}</span>
+            <el-input v-else v-model="scope.row.dacRate"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="expectClaimRate" label="预计赔付率">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.expectClaimRate"></el-input>
+            <span v-if="historyShow === '4'">{{
+              scope.row.expectClaimRate
+            }}</span>
+            <el-input v-else v-model="scope.row.expectClaimRate"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="expectXOLRate" label="预期XOL費用率">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.expectXOLRate"></el-input>
+            <span v-if="historyShow === '4'">{{
+              scope.row.expectXOLRate
+            }}</span>
+            <el-input v-else v-model="scope.row.expectXOLRate"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="expectMaintainRate" label="预计维持費用">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.expectMaintainRate"></el-input>
+            <span v-if="historyShow === '4'">{{
+              scope.row.expectMaintainRate
+            }}</span>
+            <el-input v-else v-model="scope.row.expectMaintainRate"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="riskMargin" label="Risk Margin">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.riskMargin"></el-input>
+            <span v-if="historyShow === '4'">{{ scope.row.riskMargin }}</span>
+            <el-input v-else v-model="scope.row.riskMargin"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="discounting" label="Discounting">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.discounting"></el-input>
+            <span v-if="historyShow === '4'">{{ scope.row.discounting }}</span>
+            <el-input v-else v-model="scope.row.discounting"></el-input>
           </template>
         </el-table-column>
         <el-table-column
@@ -65,16 +77,27 @@
           label="Adjusted Risk Margin factor"
         >
           <template slot-scope="scope">
-            <el-input v-model="scope.row.adjustedRiskMarginFactor"></el-input>
+            <span v-if="historyShow === '4'">{{
+              scope.row.adjustedRiskMarginFactor
+            }}</span>
+            <el-input
+              v-else
+              v-model="scope.row.adjustedRiskMarginFactor"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="cedentRate" label="比例分出">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.cedentRate"></el-input> </template
+            <span v-if="historyShow === '4'">{{ scope.row.cedentRate }}</span>
+            <el-input
+              v-else
+              v-model="scope.row.cedentRate"
+            ></el-input> </template
         ></el-table-column>
         <el-table-column prop="retroDacRate" label="转分保DAC比例">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.retroDacRate"></el-input>
+            <span v-if="historyShow === '4'">{{ scope.row.retroDacRate }}</span>
+            <el-input v-else v-model="scope.row.retroDacRate"></el-input>
           </template>
         </el-table-column>
       </el-table>
@@ -121,7 +144,11 @@
           :label="item.policyMonth"
         >
           <template slot-scope="scope">
+            <span v-if="historyShow === '4'"
+              >{{ scope.row[item.policyMonth] }}
+            </span>
             <el-input
+              v-else
               @change="handleChange"
               placeholder="请输入内容"
               v-model="scope.row[item.policyMonth]"
@@ -129,7 +156,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-button type="primary" plain @click="handleUprRate"
+      <el-button
+        v-if="historyShow !== '4'"
+        :loading="adjustLoading"
+        type="primary"
+        plain
+        @click="handleUprRate"
+        style="margin-top: 10px; margin-left: 45%"
         >确认调整</el-button
       >
     </div>
@@ -149,7 +182,7 @@
       >
         <el-table-column prop="calculatMonth" label="计算月份" width="180">
         </el-table-column>
-        <el-table-column prop="financePremium" label="月年缴保费">
+        <el-table-column prop="financePremium" label="月年缴保费" width="150">
           <template slot-scope="scope">
             <span> {{ kiloSplitData(scope.row.financePremium) }} </span>
           </template>
@@ -178,38 +211,11 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-table
-        v-show="false"
-        :ref="'upr'"
-        :data="UPRData"
-        border
-        style="width: 100%; margin-top: 20px"
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('adjustForm', '计算后预估费用明细')"
+        >导出</el-button
       >
-        <el-table-column prop="calculatMonth" label="计算月份" width="180">
-        </el-table-column>
-        <el-table-column prop="calculatedEPI" label="月最终预估保费">
-          <template slot-scope="scope">
-            <span> {{ kiloSplitData(scope.row.calculatedEPI) }} </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="originEPI" label="月原始预估保费">
-          <template slot-scope="scope">
-            <span> {{ kiloSplitData(scope.row.originEPI) }} </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="manualAdjustEPI" label="EPI调整">
-        </el-table-column>
-        <el-table-column prop="workSheetAdjustEPI" label="实际账单调整">
-        </el-table-column>
-        <el-table-column
-          v-for="(item, index) in monthList"
-          :key="index"
-          :prop="item.month"
-          :label="item.month"
-          width="130"
-        >
-        </el-table-column>
-      </el-table>
     </div>
     <div class="separateInfo">
       <h2>计算后预估费用明细</h2>
@@ -222,12 +228,13 @@
         show-summary
         style="width: 100%; margin-top: 20px"
       >
-        <el-table-column prop="company" label="公司" width="180">
+        <el-table-column prop="company" label="公司" width="200">
         </el-table-column>
-        <el-table-column prop="calculatItem" label="计算项目">
+        <el-table-column prop="calculatItem" label="计算项目" width="100">
         </el-table-column>
         <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
+          width="150"
           v-for="(item, index) in calculatedFeeList"
           :key="index"
           :prop="item.calculatMonth"
@@ -253,6 +260,8 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
+      historyShow: sessionStorage.getItem("licl"),
+      adjustLoading: false,
       columns: [
         {
           title: "合同号",
@@ -442,6 +451,7 @@ export default {
           this.uprRateList.map((item) => {
             obj[item.policyMonth] = item.uprRate;
           });
+          this.uprRateListData = [];
           this.uprRateListData.push(obj);
           console.log(this.uprRateListData, "this.uprRateListData");
           let uprSplitInfo = res.data.data.uprEstimateList;
@@ -741,6 +751,7 @@ export default {
           }
         });
       }
+      this.adjustLoading = true;
 
       this.$http
         .post(api.yearFeeRateAdjust, {
@@ -748,7 +759,18 @@ export default {
           feeInfo: this.feeInfoList[0],
           uprRateList: this.uprRateList,
         })
-        .then(() => {});
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("调整成功");
+            // this.$router.push("/actuarialEstimates");
+            this.init();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.adjustLoading = false;
+        });
     },
     handleChange() {
       console.log(
@@ -788,19 +810,23 @@ export default {
       return sums;
     },
     handleSave() {
-      $http
-        .post(api.ebsInfoPush, {
-          contractKey: sessionStorage.getItem("contractKey"),
-          estimateKey: sessionStorage.getItem("estimateKey"),
-          estimateMonth: sessionStorage.getItem("estimateMonth"),
-          accountType: "1",
-        })
-        .then((res) => {
-          if (res.data.code === "0") {
-            this.$message.success("成功");
-            this.$router.push("/bookDetial");
-          }
-        });
+      sessionStorage.removeItem("bookDetialHistory");
+      sessionStorage.setItem("accountType", "1");
+      this.$router.push("/bookedDetial");
+
+      // $http
+      //   .post(api.ebsInfoPush, {
+      //     contractKey: sessionStorage.getItem("contractKey"),
+      //     estimateKey: sessionStorage.getItem("estimateKey"),
+      //     estimateMonth: sessionStorage.getItem("estimateMonth"),
+      //     accountType: "1",
+      //   })
+      //   .then((res) => {
+      //     if (res.data.code === "0") {
+      //       this.$message.success("成功");
+      //       this.$router.push("/bookDetial");
+      //     }
+      //   });
     },
   },
   beforeRouteEnter(to, from, next) {

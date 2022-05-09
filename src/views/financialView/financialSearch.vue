@@ -107,7 +107,7 @@
         <el-table-column prop="effectivePeriodEnd" label="结束日期">
         </el-table-column>
         <el-table-column prop="payType" label="缴费方式"> </el-table-column>
-        <el-table-column prop="epi" label="预估保费">
+        <el-table-column prop="epi" label="预估保费" width="200">
           <template slot-scope="scope">
             <span>{{ kiloSplitData(scope.row.epi) }}</span>
           </template>
@@ -162,8 +162,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-
+          :page-sizes="[10, 20, 50, 100, 1000]"
           :total="total"
         >
         </el-pagination>
@@ -226,18 +225,25 @@ export default {
     },
     handleSearchClick() {
       if (this.form.estimateMonth === "") {
-        $http.post(api.contractAccountListQuery, this.form).then((res) => {
-          // this.$message.success('');
-          if (res.data.code === "0") {
-            this.tableData = res.data.data.contractList;
-            this.total = res.data.data.contractList.length;
-            this.totalPage = Math.ceil(this.total / this.pageSize);
-            this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
-            this.setCurrentPageData();
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        });
+        this.loading = true;
+
+        $http
+          .post(api.contractAccountListQuery, this.form)
+          .then((res) => {
+            // this.$message.success('');
+            if (res.data.code === "0") {
+              this.tableData = res.data.data.contractList;
+              this.total = res.data.data.contractList.length;
+              this.totalPage = Math.ceil(this.total / this.pageSize);
+              this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+              this.setCurrentPageData();
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       } else {
         this.$message.warning("请去除做账月份");
       }
@@ -268,6 +274,8 @@ export default {
       sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
       sessionStorage.setItem("accountType", "0");
+      sessionStorage.removeItem("bookDetialHistory");
+
       this.$router.push("/bookedDetial");
     },
     handleCalculateAccounting(row) {
@@ -275,6 +283,8 @@ export default {
       sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
       sessionStorage.setItem("accountType", "1");
+      sessionStorage.removeItem("bookDetialHistory");
+
       this.$router.push("/bookedDetial");
     },
     historyAccounting(row) {
@@ -282,6 +292,7 @@ export default {
       sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
       sessionStorage.setItem("accountType", "");
+      sessionStorage.setItem("bookDetialHistory", "0");
       this.$router.push("/bookedDetial");
     },
     // 假分页

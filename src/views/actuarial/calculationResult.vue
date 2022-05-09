@@ -1,7 +1,7 @@
 <template>
   <div class="calculationResult">
     <div class="searchHeader">
-      <span>请选择汇算产品</span>
+      <span>请选择汇算class</span>
       <el-select
         v-model="classCode"
         placeholder="请选择"
@@ -20,25 +20,31 @@
       <div class="sectionResult" style="margin-top: 30px">
         <div class="monthHeader">
           <el-button @click="handleBack">返回</el-button>
-          <el-button @click="handleExport('hsqContract', '合同信息')"
+          <el-button @click="handleExport('hsqContract', '汇算前合同信息')"
             >导出</el-button
           >
         </div>
         <div class="separateInfo">
           <h2>汇算前合同信息</h2>
           <el-divider></el-divider>
-          <!-- <fs-list-panel
+          <fs-list-panel
+            v-show="false"
             :ref="'hsqContract'"
             :columns="hsqColumns"
             :listData="hsqContractInfoList"
-          ></fs-list-panel> -->
+          ></fs-list-panel>
           <el-table
-            :ref="'hsqContract'"
-            :data="hsqList"
+            v-for="item in hsqList"
+            :key="item.contractNo"
+            :data="item.data"
             border
             style="width: 100%; margin-top: 20px"
           >
-            <el-table-column prop="contractinfo" label="合同号" width="180">
+            <el-table-column
+              prop="contractinfo"
+              :label="item.contractNo"
+              width="180"
+            >
             </el-table-column>
             <el-table-column prop="Retro" label="Retro"> </el-table-column>
             <el-table-column prop="Gross" label="Gross"> </el-table-column>
@@ -48,18 +54,36 @@
       </div>
       <div class="sectionResult" style="margin-top: 30px">
         <div class="monthHeader">
-          <el-button @click="handleExport('hsxzInfo', '险种汇总信息')"
+          <el-button @click="handleExport('xzhzContract', 'class汇总信息')"
             >导出</el-button
           >
         </div>
         <div class="separateInfo">
-          <h2>险种汇总信息</h2>
+          <h2>class汇总信息</h2>
           <el-divider></el-divider>
           <fs-list-panel
-            :ref="'hsxzInfo'"
+            v-show="false"
+            :ref="'xzhzContract'"
             :columns="hsxzColumns"
-            :listData="hsxzInfoList"
+            :listData="hsxzDataList"
           ></fs-list-panel>
+          <el-table
+            v-for="(item, index) in xzhzList"
+            :key="index"
+            :data="item.data"
+            border
+            style="width: 100%; margin-top: 20px"
+          >
+            <el-table-column
+              prop="contractinfo"
+              :label="item.className"
+              width="180"
+            >
+            </el-table-column>
+            <el-table-column prop="Retro" label="Retro"> </el-table-column>
+            <el-table-column prop="Gross" label="Gross"> </el-table-column>
+            <el-table-column prop="Net" label="Net"> </el-table-column>
+          </el-table>
         </div>
       </div>
       <div class="sectionResult" style="margin-top: 30px">
@@ -72,10 +96,28 @@
           <h2>汇算后合同信息</h2>
           <el-divider></el-divider>
           <fs-list-panel
+            v-show="false"
             :ref="'hshContract'"
             :columns="hshColumns"
             :listData="hshContractInfoList"
           ></fs-list-panel>
+          <el-table
+            v-for="item in hshList"
+            :key="item.contractNo"
+            :data="item.data"
+            border
+            style="width: 100%; margin-top: 20px"
+          >
+            <el-table-column
+              prop="contractinfo"
+              :label="item.contractNo"
+              width="180"
+            >
+            </el-table-column>
+            <el-table-column prop="Retro" label="Retro"> </el-table-column>
+            <el-table-column prop="Gross" label="Gross"> </el-table-column>
+            <el-table-column prop="Net" label="Net"> </el-table-column>
+          </el-table>
         </div>
       </div>
       <div class="sectionResult" style="margin-top: 30px">
@@ -93,7 +135,7 @@
             :listData="lastList"
           ></fs-list-panel> -->
           <el-table
-            :ref="'xfcwInfo'"
+            ref="xfcwInfo"
             :data="lastList"
             border
             style="width: 100%; margin-top: 20px"
@@ -107,18 +149,23 @@
             <el-table-column
               v-for="(item, index) in calculatedFeeList"
               :key="index"
-              :prop="item.calculatMonth"
-              :label="item.calculatMonth"
+              :prop="item.contractNo"
+              :label="item.contractNo"
             >
-              <template slot-scope="scope">
+              <!-- <template slot-scope="scope">
                 <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
-              </template>
+              </template> -->
             </el-table-column>
           </el-table>
         </div>
       </div>
       <div class="saveToFinance">
-        <el-button plain @click="saveToFinance">确认并下发财务</el-button>
+        <el-button
+          plain
+          @click="saveToFinance"
+          style="margin-top: 10px; margin-left: 45%"
+          >确认并下发财务</el-button
+        >
       </div>
     </div>
   </div>
@@ -206,8 +253,10 @@ export default {
       ],
       xfcwColumns: [],
       hsqList: [],
+      hshList: [],
       hsqContractInfoList: [],
-      hsxzInfoList: [],
+      xzhzList: [],
+      hsxzDataList: [],
       hshContractInfoList: [],
       lastList: [],
       calculatedFeeList: [],
@@ -267,23 +316,123 @@ export default {
         })
         .then((res) => {
           this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
-          let shqhel = [
-            { contractinfo: "UPR", Gross: "", Retro: "", Net: "" },
-            { contractinfo: "DAC", Gross: "", Retro: "", Net: "" },
-            { contractinfo: "URR", Gross: "", Retro: "", Net: "" },
-            { contractinfo: "PDR", Gross: "", Retro: "", Net: "" },
-          ];
-          console.log(shqhel, 'shqhel');
-          this.hsqContractInfoList.forEach((item) => {
-            console.log(item, '??item');
-          });
-          this.hsxzInfoList = res.data.data.calculatClassSummaryList;
+          this.handleHsq(this.hsqContractInfoList, 0);
+          let hsxzInfoList = res.data.data.calculatClassSummaryList;
+          this.hsxzDataList = res.data.data.calculatClassSummaryList;
+          this.handleHshz(hsxzInfoList);
           this.hshContractInfoList = res.data.data.afterCalculatTreatyList;
+          this.handleHsq(this.hshContractInfoList, 1);
           this.calculatedFeeList = res.data.data.calculatedFeeList;
           this.calculatedFeeList2 = res.data.data.calculatedFeeList;
           this.handleFloatChange();
           this.estimateMonth = res.data.data.estimateMonth;
         });
+    },
+    handleHshz(hshz) {
+      let obj = {};
+      let contractList = hshz.reduce((cur, next) => {
+        obj[next.className]
+          ? ""
+          : (obj[next.className] = true && cur.push(next));
+        return cur;
+      }, []); //设置cur默认类型为数组，并且初始值为空的数组
+      // console.log(contractList, "cont..............................................................................................ractList", hshz);
+      // let copyList = [];
+      let newshqhel = [];
+      // contractList.forEach((item) => {
+      //   newshqhel.push({
+      //     contractNo: item.contractNo,
+      //     data: shqhel,
+      //   });
+      // });
+      contractList.forEach((e) => {
+        var arr = [];
+        let shqhel = [
+          { contractinfo: "UPR", Gross: "", Retro: "", Net: "" },
+          { contractinfo: "DAC", Gross: "", Retro: "", Net: "" },
+          // { contractinfo: "URR", Gross: "", Retro: "", Net: "" },
+          { contractinfo: "PDR", Gross: "", Retro: "", Net: "" },
+        ];
+        hshz.forEach((i) => {
+          if (e.contractNo === i.contractNo) {
+            arr.push(i);
+            // console.log(11111, i);
+          }
+        });
+        // console.log(shqhel, arr, "?????????????????????????????????????");
+        shqhel.forEach((j) => {
+          arr.forEach((k) => {
+            if (j.contractinfo === k.feeItem) {
+              j[k.inOutItem] = k.amount;
+              // console.log(j,k, 'jkjkjkjkjk');
+            }
+            // console.log(shqhel, 'shqhelshqhelshqhelshqhel');
+          });
+        });
+        // console.log(shqhel, "shqhelshqhelshqhelshqhel");
+        newshqhel.push({
+          className: e.className,
+          data: shqhel,
+        });
+        // console.log(arr, "arrarrarrarrarrarr");
+      });
+      // console.log(newshqhel, "newshqhelnewshqhel");
+      this.xzhzList = newshqhel;
+    },
+    handleHsq(hsxx, flag) {
+      let obj = {};
+      let contractList = hsxx.reduce((cur, next) => {
+        obj[next.contractNo]
+          ? ""
+          : (obj[next.contractNo] = true && cur.push(next));
+        return cur;
+      }, []); //设置cur默认类型为数组，并且初始值为空的数组
+      // console.log(contractList, "contractList", hsxx);
+      // let copyList = [];
+      let newshqhel = [];
+      // contractList.forEach((item) => {
+      //   newshqhel.push({
+      //     contractNo: item.contractNo,
+      //     data: shqhel,
+      //   });
+      // });
+      contractList.forEach((e) => {
+        var arr = [];
+        let shqhel = [
+          { contractinfo: "UPR", Gross: "", Retro: "", Net: "" },
+          { contractinfo: "DAC", Gross: "", Retro: "", Net: "" },
+          { contractinfo: "URR", Gross: "", Retro: "", Net: "" },
+          { contractinfo: "PDR", Gross: "", Retro: "", Net: "" },
+        ];
+        hsxx.forEach((i) => {
+          if (e.contractNo === i.contractNo) {
+            arr.push(i);
+            // console.log(11111, i);
+          }
+        });
+        // console.log(shqhel, arr, "?????????????????????????????????????");
+        shqhel.forEach((j) => {
+          arr.forEach((k) => {
+            if (j.contractinfo === k.feeItem) {
+              j[k.inOutItem] = k.amount;
+              // console.log(j,k, 'jkjkjkjkjk');
+            }
+            // console.log(shqhel, 'shqhelshqhelshqhelshqhel');
+          });
+        });
+        // console.log(shqhel, "shqhelshqhelshqhelshqhel");
+        newshqhel.push({
+          contractNo: e.contractNo,
+          data: shqhel,
+        });
+        // console.log(arr, "arrarrarrarrarrarr");
+      });
+      // console.log(newshqhel, "newshqhelnewshqhel");
+      if (flag === 0) {
+        this.hsqList = newshqhel;
+      } else {
+        this.hshList = newshqhel;
+      }
     },
     handleFloatChange() {
       this.lastList = [];
@@ -293,9 +442,9 @@ export default {
         item,
         next
       ) {
-        obj[next.calculatMonth]
+        obj[next.contractNo]
           ? ""
-          : (obj[next.calculatMonth] = true && item.push(next));
+          : (obj[next.contractNo] = true && item.push(next));
         return item;
       },
       []);
@@ -363,11 +512,11 @@ export default {
           calculatItem: item.calculatItem,
           currencyCode: item.currencyCode,
         });
-        // console.log(this.lastList, "lastList");
+        console.log(this.lastList, "lastList");
       });
       this.lastList.forEach((item) => {
         this.calculatedFeeList.forEach((element) => {
-          item[element.calculatMonth] = 0;
+          item[element.contractNo] = "";
         });
       });
       this.lastList.forEach((item) => {
@@ -378,7 +527,7 @@ export default {
             item.currencyCode === element.currencyCode
           ) {
             // console.log(item[element.calculatMonth], 'item[element.calculatMonth]');
-            item[element.calculatMonth] = element.estimateAmount;
+            item[element.contractNo] = element.estimateAmount;
             // item.currencyCode = element.currencyCode;
             // console.log(element.calculatMonth, 'element');
           }

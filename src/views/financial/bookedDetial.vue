@@ -30,49 +30,69 @@
       </el-form-item>
     </el-form>
     <div class="listBox">
-      <el-table
-        :data="listData"
-        border
-        style="width: 100%"
-      >
-        <el-table-column fixed prop="ledger" label="ledger"> </el-table-column>
-        <el-table-column prop="currency" label="Currency"> </el-table-column>
-        <el-table-column prop="accountingDate" label="Accounting Date">
+      <el-table :data="listData" border style="width: 100%">
+        <!-- <el-table-column fixed prop="ledger" label="ledger"> </el-table-column> -->
+        <el-table-column prop="currency" label="Currency" width="90">
+        </el-table-column>
+        <el-table-column
+          prop="accountingDate"
+          label="Accounting Date"
+          width="150"
+        >
         </el-table-column>
         <el-table-column prop="period" label="Period"> </el-table-column>
-        <el-table-column prop="company" label="COMPANY"> </el-table-column>
+        <!-- <el-table-column prop="company" label="COMPANY"> </el-table-column>
         <el-table-column prop="costcenter" label="COSTCENTER">
+        </el-table-column> -->
+        <el-table-column prop="account" label="ACCOUNT" width="100">
         </el-table-column>
-        <el-table-column prop="account" label="ACCOUNT"> </el-table-column>
-        <el-table-column prop="subaccount" label="SUBACCOUNT">
+        <el-table-column prop="subaccount" label="SUBACCOUNT" width="130">
         </el-table-column>
-        <el-table-column prop="product" label="PRODUCT"> </el-table-column>
-        <el-table-column prop="region" label="REGION"> </el-table-column>
-        <el-table-column prop="channel" label="CHANNEL"> </el-table-column>
+        <el-table-column prop="product" label="PRODUCT" width="100">
+        </el-table-column>
+        <el-table-column prop="region" label="REGION" width="100">
+        </el-table-column>
+        <el-table-column prop="channel" label="CHANNEL" width="100">
+        </el-table-column>
         <el-table-column prop="icp" label="ICP"> </el-table-column>
-        <el-table-column prop="spare" label="SPARE"> </el-table-column>
-        <el-table-column prop="debit" label="Debit">
+        <!-- <el-table-column prop="spare" label="SPARE"> </el-table-column> -->
+        <el-table-column prop="debit" label="Debit" width="200">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.debit"></el-input>
+            <span v-if="historyShow === '0'">{{ scope.row.debit }}</span>
+            <el-input v-else v-model="scope.row.debit" :disabled="scope.row.updateFlag !== 'Y'"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="credit" label="Credit">
+        <el-table-column prop="credit" label="Credit" width="200">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.credit"></el-input>
+            <span v-if="historyShow === '0'">{{ scope.row.credit }}</span>
+            <el-input v-else v-model="scope.row.credit"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="batchName" label="Batch Name"> </el-table-column>
-        <el-table-column prop="batchDescription" label="Batch Description">
+        <el-table-column prop="batchName" label="Batch Name" width="120">
         </el-table-column>
-        <el-table-column prop="journalName" label="Journal Name">
+        <el-table-column
+          prop="batchDescription"
+          label="Batch Description"
+          width="150"
+        >
         </el-table-column>
-        <el-table-column prop="journalDescription" label="Journal Description">
+        <el-table-column prop="journalName" label="Journal Name" width="220">
         </el-table-column>
-        <el-table-column prop="lineDescription" label="Line Description">
+        <el-table-column
+          prop="journalDescription"
+          label="Journal Description"
+          width="500"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="lineDescription"
+          label="Line Description"
+          width="400"
+        >
         </el-table-column>
       </el-table>
-         <el-table
-         v-show="false"
+      <el-table
+        v-show="false"
         :data="listData"
         border
         style="width: 100%"
@@ -116,9 +136,13 @@
       </el-table>
     </div>
     <!-- <fs-list-panel :columns="columns" :listData="listData"> </fs-list-panel> -->
-    <div class="bookDetialButton">
-      <el-button plain @click="handleCheck">确认入账</el-button>
-      <el-button @click="handleEditClick">修改</el-button>
+    <div class="bookDetialButton" v-if="historyShow !== '0'">
+      <el-button :loading="loading" plain @click="handleCheck"
+        >确认入账</el-button
+      >
+      <el-button :loading="editLoading" @click="handleEditClick"
+        >修改</el-button
+      >
     </div>
   </div>
 </template>
@@ -132,6 +156,10 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
+      historyShow: sessionStorage.getItem("bookDetialHistory"),
+
+      loading: false,
+      editLoading: false,
       EBSSummaryForm: {
         balanceType: "",
         category: "",
@@ -261,6 +289,7 @@ export default {
         });
       });
       console.log(ebsModifyList, "ebsModifyListebsModifyListebsModifyList");
+      this.editLoading = true;
       $http
         .post(api.ebsInfoModify, {
           ebsModifyList: ebsModifyList,
@@ -271,20 +300,34 @@ export default {
           } else {
             this.$message.error(res.data.msg);
           }
+        })
+        .finally(() => {
+          this.editLoading = false;
         });
     },
     handleBackClick() {
       this.$router.go(-1);
     },
     handleCheck() {
+      this.loading = true;
       $http
-        .post(api.saveToFinance, {
+        .post(api.ebsInfoPush, {
+          contractKey: sessionStorage.getItem("contractKey"),
           estimateKey: sessionStorage.getItem("estimateKey"),
           estimateMonth: sessionStorage.getItem("estimateMonth"),
           accountType: sessionStorage.getItem("accountType"),
         })
         .then((res) => {
           console.log(res);
+          if (res.data.code === "0") {
+            this.$message.success("成功");
+            this.$router.go(-1);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     exportBtn(refProp, fname) {

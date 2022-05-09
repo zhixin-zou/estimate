@@ -142,7 +142,7 @@
           @next-click="nextPage"
           @current-change="handleCurrentChange"
           :page-size="this.pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="[10, 20, 50, 100, 1000]"
           :total="total"
         >
         </el-pagination>
@@ -206,18 +206,25 @@ export default {
     },
     handleSearchClick() {
       console.log(this.form, "form");
-      $http.post(api.orpContractListQuery, this.form).then((res) => {
-        if (res.data.code === "0") {
-          this.tableData = res.data.data.contractList;
-          this.total = res.data.data.contractList.length;
-          this.totalPage = Math.ceil(this.total / this.pageSize);
-          this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
-          console.log(this.totalPage, "this.totalPage");
-          this.setCurrentPageData();
-        } else {
-          this.$message.error(res.data.msg);
-        }
-      });
+      this.loading = true;
+
+      $http
+        .post(api.orpContractListQuery, this.form)
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.tableData = res.data.data.contractList;
+            this.total = res.data.data.contractList.length;
+            this.totalPage = Math.ceil(this.total / this.pageSize);
+            this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+            console.log(this.totalPage, "this.totalPage");
+            this.setCurrentPageData();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
       // this.setCurrentPageData();
     },
     setCurrentPageData() {

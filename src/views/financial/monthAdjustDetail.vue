@@ -7,6 +7,8 @@
     >
       <h2>{{ element.adjustMonth }}</h2>
       <el-divider></el-divider>
+      <!-- :ref="monthHistoryList" -->
+
       <el-table
         :data="element.EPIData"
         border
@@ -14,33 +16,38 @@
       >
         <el-table-column prop="calculatMonth" label="计算月份" width="180">
         </el-table-column>
-        <el-table-column prop="calculatedEPI" label="月最终预估保费">
+        <el-table-column
+          prop="calculatedEPI"
+          label="月最终预估保费"
+          width="200"
+        >
           <template slot-scope="scope">
             <span> {{ kiloSplitData(scope.row.calculatedEPI) }} </span>
           </template>
         </el-table-column>
-        <el-table-column prop="originEPI" label="月原始预估保费">
+        <el-table-column prop="originEPI" label="月原始预估保费" width="200">
           <template slot-scope="scope">
             <span> {{ kiloSplitData(scope.row.originEPI) }} </span>
           </template>
         </el-table-column>
-        <el-table-column prop="manualAdjustEPI" label="EPI调整">
-        </el-table-column>
-        <el-table-column prop="workSheetAdjustEPI" label="实际账单调整">
+        <el-table-column prop="manualAdjustEPI" label="EPI调整" width="200">
         </el-table-column>
         <el-table-column
+          prop="workSheetAdjustEPI"
+          label="实际账单调整"
+          width="200"
+        >
+        </el-table-column>
+        <el-table-column
+          width="200"
           v-for="(item, index) in element.monthList"
           :key="index"
           :prop="item.month"
           :label="item.month"
         >
-          <!-- <template slot-scope="scope">
-            <el-input
-              :disabled="scope.row[item.month] === ''"
-              placeholder=""
-              v-model="scope.row[item.month]"
-            ></el-input>
-          </template> -->
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.month]) }}</span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -71,7 +78,7 @@ export default {
           this.monthAdjustDetailList.forEach((item) => {
             this.dataProcess(item);
           });
-          console.log(this.monthAdjustDetailList, 'this.monthAdjustDetailList');
+          console.log(this.monthAdjustDetailList, "this.monthAdjustDetailList");
         });
       // let epiSplitInfo =
       // this.monthAdjustDetailList = data.data.monthAdjustDetail;
@@ -111,13 +118,31 @@ export default {
       let sumObj = {};
       let totalPremiumObj = {};
       let cumulativeAmount = {};
+      // 原始epi
+      let originEPIObj = {};
+      // 调整epi
+      let manualAdjustEPIObj = {};
+      // 实际账单金额
+      let workSheetAmount = {};
+      // 实际账单金额调整
+      let workSheetAdjustEPI = {};
+      // 精算计算金额
+      let actuarialAmount = {};
+      // 计算后epi
+      let calculatedEP = {};
       this.monthList.forEach((item) => {
         newEPIObj[item.month] = "";
         sumObj[item.month] = "";
         totalPremiumObj[item.month] = "";
         cumulativeAmount[item.month] = "";
+        originEPIObj[item.month] = "";
+        manualAdjustEPIObj[item.month] = "";
+        workSheetAmount[item.month] = "";
+        workSheetAdjustEPI[item.month] = "";
+        actuarialAmount[item.month] = "";
+        calculatedEP[item.month] = "";
       });
-      epiSplitInfo.monthList = this.monthList
+      epiSplitInfo.monthList = this.monthList;
       console.log(newEPIObj, "newEPIList");
       // epiSplitList中对象拼接
       epiSplitInfo.epiSplitList.forEach((item) => {
@@ -189,31 +214,71 @@ export default {
       });
       this.EPIData = epiSplitInfo.epiSplitList;
       // 合计累计预估加实际处理
+
       console.log(epiSplitInfo.epiSplitSumList, "??????????????????????");
       let epiSplitSumList = epiSplitInfo.epiSplitSumList;
       let sumHeaderObj = cumulativeAmount;
       let premiumHeaderObj = totalPremiumObj;
       let allHeaderObj = sumObj;
+      let originEPIHeaderObj = originEPIObj;
+      let manualAdjustEPIHeaderObj = manualAdjustEPIObj;
+      let workSheetAmountHeader = workSheetAmount;
+      let workSheetAdjustEPIHeader = workSheetAdjustEPI;
+      let actuarialAmountHeader = actuarialAmount;
+      let calculatedEPIHeader = calculatedEP;
       allHeaderObj.calculatMonth = "合计";
       sumHeaderObj.calculatMonth = "累计";
-      // sumHeaderObj.calculatedEPI = "";
-      // sumHeaderObj.originEPI = "";
-      // sumHeaderObj.manualAdjustEPI = "";
       premiumHeaderObj.calculatMonth = "预估+实际";
+      originEPIHeaderObj.calculatMonth = "原始epi";
+      manualAdjustEPIHeaderObj.calculatMonth = "调整epi";
+      workSheetAmountHeader.calculatMonth = "实际账单金额";
+      workSheetAdjustEPIHeader.calculatMonth = "实际账单金额调整";
+      actuarialAmountHeader.calculatMonth = "精算计算金额";
+      calculatedEPIHeader.calculatMonth = "计算后epi";
       epiSplitSumList.forEach((item) => {
         for (var key in sumHeaderObj) {
           if (item.calculatMonth === key) {
-            sumHeaderObj[key] = item.sumAmount;
+            sumHeaderObj[key] = item.cumulativeAmount;
           }
         }
-         for (var key1 in premiumHeaderObj) {
+        for (var key1 in premiumHeaderObj) {
           if (item.calculatMonth === key1) {
             premiumHeaderObj[key1] = item.totalPremium;
           }
         }
         for (var key2 in allHeaderObj) {
           if (item.calculatMonth === key2) {
-            allHeaderObj[key2] = item.cumulativeAmount;
+            allHeaderObj[key2] = item.sumAmount;
+          }
+        }
+        for (var key3 in originEPIHeaderObj) {
+          if (item.calculatMonth === key3) {
+            originEPIHeaderObj[key3] = item.originEPI;
+          }
+        }
+        for (var key4 in manualAdjustEPIHeaderObj) {
+          if (item.calculatMonth === key4) {
+            manualAdjustEPIHeaderObj[key4] = item.manualAdjustEPI;
+          }
+        }
+        for (var key5 in workSheetAmountHeader) {
+          if (item.calculatMonth === key5) {
+            workSheetAmountHeader[key5] = item.workSheetAmount;
+          }
+        }
+        for (var key6 in workSheetAdjustEPIHeader) {
+          if (item.calculatMonth === key6) {
+            workSheetAdjustEPIHeader[key6] = item.workSheetAdjustEPI;
+          }
+        }
+        for (var key7 in actuarialAmountHeader) {
+          if (item.calculatMonth === key7) {
+            actuarialAmountHeader[key7] = item.actuarialAmount;
+          }
+        }
+        for (var key8 in calculatedEPIHeader) {
+          if (item.calculatMonth === key8) {
+            calculatedEPIHeader[key8] = item.calculatedEPI;
           }
         }
       });
@@ -221,12 +286,18 @@ export default {
         sumObj,
         "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
       );
+      this.EPIData.push(calculatedEPIHeader);
+      this.EPIData.push(originEPIHeaderObj);
+      this.EPIData.push(manualAdjustEPIHeaderObj);
+      this.EPIData.push(workSheetAmountHeader);
+      this.EPIData.push(workSheetAdjustEPIHeader);
       this.EPIData.push(allHeaderObj);
       this.EPIData.push(premiumHeaderObj);
       this.EPIData.push(sumHeaderObj);
+      this.EPIData.push(actuarialAmountHeader);
       // console.log(epiSplitInfo.epiSplitList, "epiSplitInfo.epiSplitList");
       //epi调整结束
-      epiSplitInfo.EPIData = this.EPIData
+      epiSplitInfo.EPIData = this.EPIData;
     },
     kiloSplitData(data) {
       return kiloSplit(data);

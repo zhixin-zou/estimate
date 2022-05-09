@@ -91,15 +91,19 @@ export default {
       if (sessionStorage.getItem("enterType") === "in") {
         if (row.payType === "annual") {
           this.$router.push("/annualEstimates");
+          sessionStorage.setItem("licl", "1");
         } else {
           this.$router.push("/monthContractDetail");
+          sessionStorage.setItem("licl", "2");
         }
       } else if (sessionStorage.getItem("enterType") === "out") {
         this.$router.push("/separateEstimateDetial");
       } else if (sessionStorage.getItem("enterType") === "jsyear") {
         this.$router.push("/yearActuarial");
+        sessionStorage.setItem("licl", "4");
       } else if (sessionStorage.getItem("enterType") === "jsmonth") {
         this.$router.push("/monthActuarial");
+        sessionStorage.setItem("licl", "5");
       }
     },
     handleBack() {

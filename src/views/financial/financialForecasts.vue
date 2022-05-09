@@ -160,7 +160,7 @@
           @next-click="nextPage"
           @current-change="handleCurrentChange"
           :page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="[10, 20, 50, 100, 1000]"
           :total="total"
         >
         </el-pagination>
@@ -222,6 +222,7 @@ export default {
       console.log(row);
     },
     handleSearchClick() {
+      this.loading = true;
       console.log(this.form, "form");
       $http
         .post("/estimate/finance/contractListQuery", this.form)
@@ -244,6 +245,9 @@ export default {
           } else {
             this.$message.error(res.data.msg);
           }
+        })
+        .finally(() => {
+          this.loading = false;
         });
       this.setCurrentPageData();
     },
@@ -275,8 +279,8 @@ export default {
       this.setCurrentPageData();
     },
     handleSizeChange(val) {
-     this.pageSize = val
-     this.setCurrentPageData()
+      this.pageSize = val;
+      this.setCurrentPageData();
     },
     handleCurrentChange(page) {
       this.currentPage = page;
@@ -327,6 +331,7 @@ export default {
       console.log(scope);
     },
     handleFinancialClick(row) {
+      sessionStorage.removeItem("licl")
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);

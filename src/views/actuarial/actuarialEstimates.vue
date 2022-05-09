@@ -65,8 +65,15 @@
       </div>
     </div>
     <div class="listBox">
-      <el-table :data="currentPageData" border style="width: 100%">
-        <el-table-column fixed prop="contractNo" label="合同号">
+      <el-button
+        class="exportButton"
+        type="primary"
+        plain
+        @click="handleExport('listBox', '导出信息')"
+        >导出</el-button
+      >
+      <el-table :data="currentPageData" border style="width: 100%" ref="listBox">
+        <el-table-column prop="contractNo" label="合同号">
         </el-table-column>
         <el-table-column prop="sessionName" label="合同session">
         </el-table-column>
@@ -103,7 +110,7 @@
         <!-- <el-table-column prop="estimateStatus" label="预估状态">
         </el-table-column> -->
 
-        <el-table-column fixed="right" label="操作" width="200">
+        <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <el-button
               @click="handleFinancialClick(scope.row)"
@@ -126,11 +133,13 @@
       <div class="listPagination">
         <el-pagination
           background
-          layout="total, prev, pager, next"
+          layout="total, sizes, prev, pager, next"
+          @size-change="handleSizeChange"
           @prev-click="prevPage"
           @next-click="nextPage"
           @current-change="handleCurrentChange"
           :page-size="this.pageSize"
+          :page-sizes="[10, 20, 50, 100, 1000]"
           :total="total"
         >
         </el-pagination>
@@ -181,6 +190,8 @@ import { $http } from "@/utils/request";
 import { kiloSplit, toPercent } from "@/utils/utils";
 import { getText } from "@/utils/dict.js";
 import api from "@/utils/api";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
 
 // import { mapActions } from "vuex";
 
@@ -218,9 +229,36 @@ export default {
     init() {
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;
-        this.handleSearchClick()
-      })
-      
+        this.handleSearchClick();
+      });
+    },
+        // 导出方法
+    exportBtn(refProp, fname) {
+      // 获取表格元素
+      const el = this.$refs[refProp].$el;
+      // 文件名
+      console.log(this.$refs[refProp], "elelele");
+      const filename = fname + ".xlsx";
+      /* generate workbook object from table */
+      const wb = XLSX.utils.table_to_book(el);
+      /* get binary string as output */
+      const wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          filename
+        );
+      } catch (e) {
+        console.log(e);
+      }
+      return wbout;
+    },
+    handleExport(data, filename) {
+      this.exportBtn(data, filename);
     },
     toPercentData(data) {
       return toPercent(data);
@@ -232,6 +270,8 @@ export default {
       return getText("estimateStatus", data);
     },
     handleSearchClick() {
+          this.loading = true
+
       // api.contractListQuery
       $http
         .post("/estimate/actuarial/contractListQuery", this.form)
@@ -242,7 +282,9 @@ export default {
           this.totalPage = Math.ceil(this.total / this.pageSize);
           this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
           this.setCurrentPageData();
-        });
+        }).finally(() => {
+          this.loading = false
+        })
     },
     handleResetClick() {
       this.form = {
@@ -255,6 +297,7 @@ export default {
       };
     },
     handleFinancialClick(row) {
+      sessionStorage.removeItem('licl')
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
       sessionStorage.setItem("contractKey", row.contractKey);
@@ -302,6 +345,10 @@ export default {
     },
     handleCurrentChange(page) {
       this.currentPage = page;
+      this.setCurrentPageData();
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
       this.setCurrentPageData();
     },
     handleCalculate() {
@@ -433,7 +480,12 @@ export default {
     border-top: 3px solid #ccc;
     position: relative;
 
-    padding: 50px 20px;
+    padding: 20px 20px 50px 20px;
+
+    .exportButton {
+      float: right;
+      margin-bottom: 10px;
+    }
     .listPagination {
       // position: absolute;
       margin-top: 10px;

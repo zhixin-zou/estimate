@@ -38,12 +38,29 @@ export default {
           property: "manualAdjustEPI",
         },
         {
+          title: "实际账单金额",
+          property: "workSheetAmount",
+        },
+        {
           title: "实际账单调整",
           property: "workSheetAdjustEPI",
         },
         {
+          title: "合计",
+          property: "sumAmount",
+        },
+        {
+          title: "累计",
+          property: "cumulativeAmount",
+        },
+
+        {
           title: "预估+实际",
           property: "totalPremium",
+        },
+        {
+          title: "精算计算金额",
+          property: "actuarialAmount",
         },
       ],
       yearAdjustList: [],

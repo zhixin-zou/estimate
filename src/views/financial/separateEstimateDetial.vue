@@ -59,12 +59,13 @@
         show-summary
         style="width: 100%; margin-top: 20px"
       >
-        <el-table-column prop="company" label="公司" width="180">
+        <el-table-column prop="company" label="公司" width="200">
         </el-table-column>
-        <el-table-column prop="calculatItem" label="计算项目">
+        <el-table-column prop="calculatItem" label="计算项目" width="220">
         </el-table-column>
         <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
+          width="150"
           v-for="(item, index) in calculatedFeeList"
           :key="index"
           :prop="item.calculatMonth"
@@ -219,6 +220,7 @@ export default {
         {
           title: "账单类型名称",
           property: "entryName",
+          width: 200
         },
         {
           title: "帐单币种",
@@ -513,6 +515,7 @@ export default {
         });
     },
     handleDetial() {
+      sessionStorage.removeItem("bookDetialHistory")
       sessionStorage.setItem("accountType", "0");
       this.$router.push("/bookedDetial");
     },

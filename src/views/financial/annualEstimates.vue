@@ -30,12 +30,12 @@
       ></fs-list-panel>
     </div>
     <div class="monthHeader">
-      <el-button @click="handleExport('cwWorkSheet', '分入保费账单信息')"
+      <el-button @click="handleExport('cwWorkSheet', '分入账单信息')"
         >导出</el-button
       >
     </div>
     <div class="separateInfo">
-      <h2>分入保费账单信息</h2>
+      <h2>分入账单信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
         :ref="'cwWorkSheet'"
@@ -47,12 +47,14 @@
       <h2>EPI拆分</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox">
+        <div class="adjustBox" v-if="historyShow !== '1'">
           <div class="adjustName"><span>总EPI：</span></div>
           <div class="input"><el-input v-model="totalEPI"></el-input></div>
         </div>
         <el-button
+          v-if="historyShow !== '1'"
           type="primary"
+          :loading="adjustLoading"
           round
           class="adjustButton"
           @click="handleTotalEPI"
@@ -91,7 +93,11 @@
         </el-table-column>
         <el-table-column prop="manualAdjustEPI" label="EPI调整">
           <template slot-scope="scope">
+            <span v-if="historyShow === '1'">
+              {{ scope.row.manualAdjustEPI }}</span
+            >
             <el-input
+              v-else
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
               :disabled="Number(scope.row.calculatMonth) < estimateMonth"
@@ -100,11 +106,28 @@
             <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
           </template>
         </el-table-column>
+        <el-table-column prop="workSheetAmount" label="实际账单金额">
+        </el-table-column>
         <el-table-column prop="workSheetAdjustEPI" label="实际账单调整">
+        </el-table-column>
+        <el-table-column prop="sumAmount" label="合计">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.sumAmount) }} </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="cumulativeAmount" label="累计">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.cumulativeAmount) }} </span>
+          </template>
         </el-table-column>
         <el-table-column prop="totalPremium" label="预估+实际">
           <template slot-scope="scope">
             <span> {{ kiloSplitData(scope.row.totalPremium) }} </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="actuarialAmount" label="精算计算金额">
+          <template slot-scope="scope">
+            <span> {{ kiloSplitData(scope.row.actuarialAmount) }} </span>
           </template>
         </el-table-column>
       </el-table>
@@ -112,7 +135,11 @@
         >温馨提示：每月6号前调整的可调整上月EPI，每月6号后只能调整本月EPI</span
       >
       <br />
-      <el-button class="EPIbutton" @click="handleAdjustEPI"
+      <el-button
+        v-if="historyShow !== '1'"
+        class="EPIbutton"
+        @click="handleAdjustEPI"
+        :loading="saveLoading"
         >保存调整后的EPI</el-button
       >
     </div>
@@ -120,7 +147,7 @@
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox">
+        <div class="adjustBox" v-if="historyShow !== '1'">
           <div class="adjustName"><span>分入浮动因子：</span></div>
           <div class="input">
             <el-input v-model="iabSlidingScaleAdjustRate"></el-input>
@@ -131,7 +158,9 @@
           </div>
         </div>
         <el-button
+          v-if="historyShow !== '1'"
           type="primary"
+          :loading="checkLoading"
           round
           class="adjustButton"
           @click="handleFloatAdjust"
@@ -152,12 +181,13 @@
         show-summary
         style="width: 100%; margin-top: 20px"
       >
-        <el-table-column prop="company" label="公司" width="180">
+        <el-table-column prop="company" label="公司" width="200">
         </el-table-column>
-        <el-table-column prop="calculatItem" label="计算项目">
+        <el-table-column prop="calculatItem" label="计算项目" width="220">
         </el-table-column>
         <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
+          width="200"
           v-for="(item, index) in calculatedFeeList"
           :key="index"
           :prop="item.calculatMonth"
@@ -172,7 +202,6 @@
     <el-button plain class="checkDetial" @click="handleDetial"
       >查看入账明细</el-button
     >
-    <exportButton />
   </div>
 </template>
 
@@ -191,6 +220,11 @@ export default {
   data() {
     return {
       estimateMonth: sessionStorage.getItem("estimateMonth"),
+      historyShow: sessionStorage.getItem("licl"),
+
+      adjustLoading: false,
+      saveLoading: false,
+      checkLoading: false,
       totalEPI: "0",
       separateForm: {},
       columns: [
@@ -429,6 +463,7 @@ export default {
         this.$message.warning("请输入需要调整的总EPI");
         return;
       }
+      this.adjustLoading = true;
       $http
         .post(api.yearTotalEPIAdjust, {
           totalEPI: this.totalEPI,
@@ -454,11 +489,14 @@ export default {
           } else {
             this.$message.error(res.data.msg);
           }
+        })
+        .finally(() => {
+          this.adjustLoading = false;
         });
     },
     handleAdjustEPI() {
       // console.log(this.EPIData, "EPIData");
-
+      this.saveLoading = true;
       $http
         .post(api.yearDetailEPIAdjust, {
           yearEpiSplitList: this.EPIData,
@@ -481,7 +519,12 @@ export default {
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
             this.handleFloatChange();
             this.$message.success("修改成功");
+          } else {
+            this.$message.error(res.data.msg);
           }
+        })
+        .finally(() => {
+          this.saveLoading = false;
         });
     },
     handleFloatChange() {
@@ -594,6 +637,7 @@ export default {
       ) {
         this.$message.warning("浮动因子修改不能大于1");
       } else {
+        this.checkLoading = true;
         $http
           .post(api.yearSlidingScaleRateAdjust, {
             iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
@@ -601,27 +645,34 @@ export default {
             estimateKey: sessionStorage.getItem("estimateKey"),
           })
           .then((res) => {
-            this.contractInfoList = [];
-            this.contractInfoList.push(res.data.data.contractInfo);
-            this.cedentList = res.data.data.cedentList;
-            this.workSheetList = res.data.data.workSheetList;
-            this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
-            this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
-            this.calculatedFeeList = res.data.data.calculatedFeeList;
-            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
-            this.iabSlidingScaleAdjustRate =
-              res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-            this.orpSlidingScaleAdjustRate =
-              res.data.data.contractInfo.orpSlidingScaleAdjustRate;
-            this.handleFloatChange();
-            // this.$forceUpdate();
+            if (res.data.code === "0") {
+              this.contractInfoList = [];
+              this.contractInfoList.push(res.data.data.contractInfo);
+              this.cedentList = res.data.data.cedentList;
+              this.workSheetList = res.data.data.workSheetList;
+              this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
+              this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
+              this.calculatedFeeList = res.data.data.calculatedFeeList;
+              this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+              this.iabSlidingScaleAdjustRate =
+                res.data.data.contractInfo.iabSlidingScaleAdjustRate;
+              this.orpSlidingScaleAdjustRate =
+                res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.handleFloatChange();
+              this.$message.success("成功");
+
+              // this.$forceUpdate();
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          })
+          .finally(() => {
+            this.checkLoading = false;
           });
-        // .finally(() => {
-        //   this.handleFloatChange();
-        // });
       }
     },
     handleDetial() {
+      sessionStorage.removeItem("bookDetialHistory")
       sessionStorage.setItem("accountType", "0");
       this.$router.push("/bookedDetial");
     },
