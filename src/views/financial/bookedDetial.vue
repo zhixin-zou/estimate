@@ -65,7 +65,7 @@
         <el-table-column prop="credit" label="Credit" width="200">
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.credit }}</span>
-            <el-input v-else v-model="scope.row.credit"></el-input>
+            <el-input v-else v-model="scope.row.credit" :disabled="scope.row.updateFlag !== 'Y'"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="batchName" label="Batch Name" width="250">
@@ -321,7 +321,7 @@ export default {
           console.log(res);
           if (res.data.code === "0") {
             this.$message.success("成功");
-            this.$router.go(-1);
+            // this.$router.go(-1);
           } else {
             this.$message.error(res.data.msg);
           }

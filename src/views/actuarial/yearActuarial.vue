@@ -246,7 +246,13 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-button plain class="checkDetial" @click="handleSave">保存</el-button>
+    <el-button
+      plain
+      class="checkDetial"
+      @click="handleSave"
+      v-if="historyShow !== '4'"
+      >保存</el-button
+    >
   </div>
 </template>
 
@@ -812,21 +818,17 @@ export default {
     handleSave() {
       sessionStorage.removeItem("bookDetialHistory");
       sessionStorage.setItem("accountType", "1");
-      this.$router.push("/bookedDetial");
-
-      // $http
-      //   .post(api.ebsInfoPush, {
-      //     contractKey: sessionStorage.getItem("contractKey"),
-      //     estimateKey: sessionStorage.getItem("estimateKey"),
-      //     estimateMonth: sessionStorage.getItem("estimateMonth"),
-      //     accountType: "1",
-      //   })
-      //   .then((res) => {
-      //     if (res.data.code === "0") {
-      //       this.$message.success("成功");
-      //       this.$router.push("/bookDetial");
-      //     }
-      //   });
+      // this.$router.push("/bookedDetial");
+      $http
+        .post(api.saveAdjust, {
+          estimateKey: sessionStorage.getItem("estimateKey"),
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("成功");
+            // this.$router.push("/bookDetial");
+          }
+        });
     },
   },
   beforeRouteEnter(to, from, next) {
