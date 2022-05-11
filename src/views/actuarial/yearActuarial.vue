@@ -283,7 +283,7 @@ export default {
         },
         {
           title: "主险种",
-          property: "planCode",
+          property: "planName",
         },
         {
           title: "分入公司",
@@ -454,6 +454,19 @@ export default {
           this.cedentList = res.data.data.cedentList;
           let obj = { policyMonth: "UPR 分布" };
           this.uprRateList = res.data.data.uprRateList;
+          // 对this.uprRAteList进行冒泡排序
+          for (var i = 0; i < this.uprRateList.length; i++) {
+            for (var j = 0; j < this.uprRateList.length - 1 - i; j++) {
+              console.log(this.uprRateList.length[j], 'this.uprRateList.length[j]');
+              if (Number(this.uprRateList[j].policyMonth) > Number(this.uprRateList[j + 1].policyMonth)) {//相邻元素两两对比
+                var temp = this.uprRateList[j + 1]; //元素交换
+                this.uprRateList[j + 1] = this.uprRateList[j];
+                this.uprRateList[j] = temp;
+              }
+            }
+          }
+          // 排序结束
+          // console.log(this.uprRateList, 'this.uprRateListthis.uprRateListthis.uprRateListthis.uprRateList');
           this.uprRateList.map((item) => {
             obj[item.policyMonth] = item.uprRate;
           });

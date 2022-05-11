@@ -72,7 +72,7 @@
         >
       </div>
       <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
-        <el-table-column prop="calculatMonth" label="计算月份" width="180">
+        <el-table-column fixed="left" prop="calculatMonth" label="计算月份" width="180">
         </el-table-column>
         <el-table-column
           prop="calculatedEPI"

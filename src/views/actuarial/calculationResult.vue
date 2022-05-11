@@ -15,6 +15,13 @@
         ></el-option>
       </el-select>
       <el-button type="primary" round @click="handleClick">确认</el-button>
+      <div
+        v-if="this.estimateMonth !== ''"
+        class="headerRight"
+        style="float: right; line-height: 36px"
+      >
+        <h3>预估月份：{{ this.estimateMonth }}</h3>
+      </div>
     </div>
     <div class="calculationResultBody" v-show="showTable">
       <div class="sectionResult" style="margin-top: 30px">
@@ -46,9 +53,9 @@
               width="180"
             >
             </el-table-column>
-            <el-table-column prop="Retro" label="Retro"> </el-table-column>
             <el-table-column prop="Gross" label="Gross"> </el-table-column>
             <el-table-column prop="Net" label="Net"> </el-table-column>
+            <el-table-column prop="Retro" label="Retro"> </el-table-column>
           </el-table>
         </div>
       </div>
@@ -80,9 +87,9 @@
               width="180"
             >
             </el-table-column>
-            <el-table-column prop="Retro" label="Retro"> </el-table-column>
             <el-table-column prop="Gross" label="Gross"> </el-table-column>
             <el-table-column prop="Net" label="Net"> </el-table-column>
+            <el-table-column prop="Retro" label="Retro"> </el-table-column>
           </el-table>
         </div>
       </div>
@@ -114,9 +121,9 @@
               width="180"
             >
             </el-table-column>
-            <el-table-column prop="Retro" label="Retro"> </el-table-column>
             <el-table-column prop="Gross" label="Gross"> </el-table-column>
             <el-table-column prop="Net" label="Net"> </el-table-column>
+            <el-table-column prop="Retro" label="Retro"> </el-table-column>
           </el-table>
         </div>
       </div>
@@ -309,6 +316,7 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleClick() {
+      this.estimateMonth = "";
       this.showTable = true;
       $http
         .post(api.summaryAllocatCalculat, {

@@ -266,7 +266,7 @@ export default {
         },
         {
           title: "主险种",
-          property: "planCode",
+          property: "planName",
         },
         {
           title: "分入公司",
