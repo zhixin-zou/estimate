@@ -1,7 +1,10 @@
 <template>
   <div class="calculationResult">
     <div class="searchHeader">
-      <span>请选择汇算class</span>
+      <span style="padding-right: 20px">预估月份</span>
+      <el-date-picker v-model="estimateMonth" type="month" placeholder="选择月">
+      </el-date-picker>
+      <span style="padding-left: 20px">请选择汇算class</span>
       <el-select
         v-model="classCode"
         placeholder="请选择"
@@ -16,11 +19,11 @@
       </el-select>
       <el-button type="primary" round @click="handleClick">确认</el-button>
       <div
-        v-if="this.estimateMonth !== ''"
+        v-if="this.estimateMonthShow !== ''"
         class="headerRight"
         style="float: right; line-height: 36px"
       >
-        <h3>预估月份：{{ this.estimateMonth }}</h3>
+        <h3>预估月份：{{ this.estimateMonthShow }}</h3>
       </div>
     </div>
     <div class="calculationResultBody" v-show="showTable">
@@ -180,7 +183,7 @@
 
 <script>
 import { $http } from "@/utils/request";
-import { kiloSplit } from "@/utils/utils";
+import { kiloSplit, getYearMonthDate } from "@/utils/utils";
 // import { getText } from "@/utils/dict.js";
 import api from "@/utils/api";
 import { mapState, mapActions } from "vuex";
@@ -191,6 +194,7 @@ export default {
   data() {
     return {
       classCode: "",
+
       // productList: [],
       hsqColumns: [
         {
@@ -270,6 +274,7 @@ export default {
       calculatedFeeList2: [],
       showTable: false,
       estimateMonth: "",
+      estimateMonthShow: '',
     };
   },
   computed: {
@@ -316,11 +321,12 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleClick() {
-      this.estimateMonth = "";
+      this.estimateMonthShow = "";
       this.showTable = true;
       $http
         .post(api.summaryAllocatCalculat, {
           classCode: this.classCode,
+          estimateMonth: getYearMonthDate(this.estimateMonth)
         })
         .then((res) => {
           this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
@@ -333,7 +339,7 @@ export default {
           this.calculatedFeeList = res.data.data.calculatedFeeList;
           this.calculatedFeeList2 = res.data.data.calculatedFeeList;
           this.handleFloatChange();
-          this.estimateMonth = res.data.data.estimateMonth;
+          this.estimateMonthShow = res.data.data.estimateMonth;
         });
     },
     handleHshz(hshz) {

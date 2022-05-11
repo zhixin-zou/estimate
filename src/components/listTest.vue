@@ -27,7 +27,7 @@
 import { getText } from '@/utils/dict.js'
 
 export default {
-  name: "fs-list-panel",
+  name: "fs-list-test-panel",
   props: {
     columns: Array,
     listData: Array,

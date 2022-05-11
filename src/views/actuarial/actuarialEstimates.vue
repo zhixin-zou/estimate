@@ -80,6 +80,7 @@
         <el-table-column prop="contractType" label="合同类型">
         </el-table-column>
         <el-table-column prop="planName" label="主险种"> </el-table-column>
+        <el-table-column prop="productName" label="产品名称"> </el-table-column>
         <el-table-column prop="cedent" label="分入公司"> </el-table-column>
         <el-table-column prop="effectivePeriodBegin" label="开始日期">
         </el-table-column>

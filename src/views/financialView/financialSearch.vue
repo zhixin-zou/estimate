@@ -54,7 +54,13 @@
             </el-select>
           </el-form-item>
           <el-form-item label="做账时间">
-            <el-input v-model="form.estimateMonth"></el-input>
+            <!-- <el-input v-model="form.estimateMonth"></el-input> -->
+            <el-date-picker
+              v-model="form.estimateMonth"
+              type="month"
+              placeholder="选择月"
+            >
+            </el-date-picker>
           </el-form-item>
         </el-form>
       </div>
@@ -82,6 +88,22 @@
       </div>
     </div>
     <div class="listBox">
+      <!-- <el-button
+        class="selfButton"
+        type="primary"
+        plain
+        @click="handleSelfList()"
+        >自定义列</el-button
+      > -->
+      <el-popover ref="config" placement="bottom" width="200" trigger="click">
+        <el-checkbox
+          class="table-col"
+          v-for="col in columns"
+          :key="col.property"
+          v-model="col.show"
+          >{{ col.title }}</el-checkbox
+        >
+      </el-popover>
       <el-button
         class="exportButton"
         type="primary"
@@ -89,40 +111,93 @@
         @click="handleExport('listBox', '导出信息')"
         >导出</el-button
       >
+      <el-button
+        v-popover:config
+        class="exportButton"
+        style="margin-right: 10px"
+        >自定义列</el-button
+      >
+
       <el-table
         :data="currentPageData"
         border
         style="width: 100%"
         ref="listBox"
       >
-        <el-table-column prop="contractNo" label="合同号"> </el-table-column>
-        <el-table-column prop="sessionName" label="合同session">
+        <el-table-column
+          prop="contractNo"
+          label="合同号"
+          v-if="columns[0].show"
+        >
         </el-table-column>
-        <el-table-column prop="contractType" label="合同类型">
+        <el-table-column
+          prop="sessionName"
+          label="合同session"
+          v-if="columns[1].show"
+        >
         </el-table-column>
-        <el-table-column prop="planName" label="主险种"> </el-table-column>
-        <el-table-column prop="cedentName" label="分入公司"> </el-table-column>
-        <el-table-column prop="effectivePeriodBegin" label="开始日期">
+        <el-table-column
+          prop="contractType"
+          label="合同类型"
+          v-if="columns[2].show"
+        >
         </el-table-column>
-        <el-table-column prop="effectivePeriodEnd" label="结束日期">
+        <el-table-column prop="planName" label="主险种" v-if="columns[3].show">
         </el-table-column>
-        <el-table-column prop="payType" label="缴费方式"> </el-table-column>
-        <el-table-column prop="epi" label="预估保费" width="200">
+                  <el-table-column prop="productName" label="产品名称" v-if="columns[4].show"> </el-table-column>
+        <el-table-column
+          prop="cedentName"
+          label="分入公司"
+          v-if="columns[5].show"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="effectivePeriodBegin"
+          label="开始日期"
+          v-if="columns[6].show"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="effectivePeriodEnd"
+          label="结束日期"
+          v-if="columns[7].show"
+        >
+        </el-table-column>
+        <el-table-column prop="payType" label="缴费方式" v-if="columns[8].show">
+        </el-table-column>
+        <el-table-column
+          prop="epi"
+          label="预估保费"
+          width="200"
+          v-if="columns[9].show"
+        >
           <template slot-scope="scope">
             <span>{{ kiloSplitData(scope.row.epi) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="commissionRate" label="手续费比例">
+        <el-table-column
+          prop="commissionRate"
+          label="手续费比例"
+          v-if="columns[10].show"
+        >
           <template slot-scope="scope">
             <span>{{ toPercentData(scope.row.commissionRate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="brokerageRate" label="经纪费比例">
+        <el-table-column
+          prop="brokerageRate"
+          label="经纪费比例"
+          v-if="columns[11].show"
+        >
           <template slot-scope="scope">
             <span>{{ toPercentData(scope.row.brokerageRate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="cedentRate" label="分出比例">
+        <el-table-column
+          prop="cedentRate"
+          label="分出比例"
+          v-if="columns[12].show"
+        >
           <template slot-scope="scope">
             <span>{{ toPercentData(scope.row.cedentRate) }}</span>
           </template></el-table-column
@@ -174,7 +249,7 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
-import { kiloSplit, toPercent } from "@/utils/utils";
+import { kiloSplit, toPercent, getYearMonthDate } from "@/utils/utils";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
 // import { mapActions } from "vuex";
@@ -197,6 +272,73 @@ export default {
         estimateMonth: "",
         contractClass: "",
       },
+      columns: [
+        {
+          title: "合同号",
+          property: "contractNo",
+          show: true,
+        },
+        {
+          title: "合同session",
+          property: "sessionName",
+          show: true,
+        },
+        {
+          title: "合同类型",
+          property: "contractType",
+          show: true,
+        },
+        {
+          title: "主险种",
+          property: "planName",
+          show: true,
+        },
+          {
+          title: "产品名称",
+          property: "productName",
+          show: true,
+        },
+        {
+          title: "分入公司",
+          property: "cedentName",
+          show: true,
+        },
+        {
+          title: "开始日期",
+          property: "effectivePeriodBegin",
+          show: true,
+        },
+        {
+          title: "结束日期",
+          property: "effectivePeriodEnd",
+          show: true,
+        },
+        {
+          title: " 缴费方式",
+          property: "payType",
+          show: true,
+        },
+        {
+          title: "预估保费",
+          property: "epi",
+          show: true,
+        },
+        {
+          title: "手续费比例",
+          property: "commissionRate",
+          show: true,
+        },
+        {
+          title: "经纪费比例",
+          property: "brokerageRate",
+          show: true,
+        },
+        {
+          title: "分出比例",
+          property: "cedentRate",
+          show: true,
+        },
+      ],
       currentPageData: [],
       tableData: [],
       companyList: [],
@@ -224,6 +366,7 @@ export default {
       return kiloSplit(data);
     },
     handleSearchClick() {
+      this.form.estimateMonth = "";
       if (this.form.estimateMonth === "") {
         this.loading = true;
 
@@ -252,7 +395,10 @@ export default {
       if (this.form.estimateMonth !== "") {
         sessionStorage.setItem("estimateKey", ""),
           sessionStorage.setItem("contractKey", ""),
-          sessionStorage.setItem("estimateMonth", this.form.estimateMonth),
+          sessionStorage.setItem(
+            "estimateMonth",
+            getYearMonthDate(this.form.estimateMonth)
+          ),
           sessionStorage.setItem("accountType", ""),
           this.$router.push("/bookedDetial");
       } else {
@@ -449,7 +595,8 @@ export default {
     position: relative;
 
     padding: 20px 20px 50px 20px;
-    .exportButton {
+    .exportButton,
+    .selfButton {
       float: right;
       margin-bottom: 10px;
     }

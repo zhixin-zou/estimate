@@ -84,6 +84,7 @@
         <el-table-column prop="contractType" label="合同类型">
         </el-table-column>
         <el-table-column prop="planName" label="主险种"> </el-table-column>
+        <el-table-column prop="productName" label="产品名称"> </el-table-column>
         <el-table-column prop="cedentName" label="分入公司"> </el-table-column>
         <el-table-column prop="effectivePeriodBegin" label="开始日期">
         </el-table-column>
@@ -228,7 +229,7 @@ export default {
         .post("/estimate/finance/contractListQuery", this.form)
         .then((res) => {
           // this.$message.success(res.data.msg);
-          if (res.data.code == "0") {
+          if (res.data.code === "0") {
             this.tableData = res.data.data.contractList;
             // console.log(this.tableData, "tableData");
             // this.tableData.forEach((item) => {
@@ -331,6 +332,7 @@ export default {
       console.log(scope);
     },
     handleFinancialClick(row) {
+      console.log(row.payType, 'row.payTyperow.payTyperow.payType');
       sessionStorage.removeItem("licl")
       sessionStorage.setItem("estimateKey", row.estimateKey);
       sessionStorage.setItem("estimateMonth", row.estimateMonth);
@@ -338,7 +340,7 @@ export default {
       console.log(row);
       if (row.payType === "annual") {
         this.$router.push("/annualEstimates");
-      } else {
+      } else if (row.payType === "monthly") {
         this.$router.push("/monthContractDetail");
       }
     },
