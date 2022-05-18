@@ -69,7 +69,7 @@ export default {
     init() {
       $http
         .post(api.monthAdjustDetail, {
-          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
         })
         .then((res) => {
           // console.log(res);

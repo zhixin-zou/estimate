@@ -13,96 +13,178 @@
         :listData="contractInfoList"
       ></fs-list-panel>
     </div>
-    <div class="monthHeader">
-      <el-button @click="handleExport('feeInfo', '费用信息')">导出</el-button>
-    </div>
-    <div class="separateInfo">
-      <h2>费用信息</h2>
-      <el-divider></el-divider>
-      <fs-list-panel
-        v-show="false"
-        :ref="'feeInfo'"
-        :columns="feeColumns"
-        :listData="feeInfoList"
-      ></fs-list-panel>
-      <el-table
-        :data="feeInfoList"
-        border
-        style="width: 100%; margin-top: 20px"
-      >
-        <el-table-column prop="calculatMonth" label="计算月份">
-        </el-table-column>
-        <el-table-column prop="dacRate" label="DAC比例">
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{ scope.row.dacRate }}</span>
-            <el-input v-else v-model="scope.row.dacRate"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="expectClaimRate" label="预计赔付率">
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{
-              scope.row.expectClaimRate
-            }}</span>
-            <el-input v-else v-model="scope.row.expectClaimRate"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="expectXOLRate" label="预期XOL費用率">
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{
-              scope.row.expectXOLRate
-            }}</span>
-            <el-input v-else v-model="scope.row.expectXOLRate"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="expectMaintainRate" label="预计维持費用">
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{
-              scope.row.expectMaintainRate
-            }}</span>
-            <el-input v-else v-model="scope.row.expectMaintainRate"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="riskMargin" label="Risk Margin">
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{ scope.row.riskMargin }}</span>
-            <el-input v-else v-model="scope.row.riskMargin"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="discounting" label="Discounting">
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{ scope.row.discounting }}</span>
-            <el-input v-else v-model="scope.row.discounting"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="adjustedRiskMarginFactor"
-          label="Adjusted Risk Margin factor"
+    <div class="twoMain" style="background-color: #fff">
+      <div class="monthHeader">
+        <el-button @click="handlefill()">一键填充</el-button>
+        <el-button @click="handleExport('feeInfo', '费用信息')">导出</el-button>
+      </div>
+      <div class="separateInfo">
+        <h2>费用信息</h2>
+        <el-divider></el-divider>
+        <fs-list-panel
+          v-show="false"
+          :ref="'feeInfo'"
+          :columns="feeColumns"
+          :listData="feeInfoList"
+        ></fs-list-panel>
+        <el-table
+          :data="feeInfoList"
+          border
+          style="width: 100%; margin-top: 20px"
         >
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{
-              scope.row.adjustedRiskMarginFactor
-            }}</span>
-            <el-input
-              v-else
-              v-model="scope.row.adjustedRiskMarginFactor"
-            ></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="cedentRate" label="比例分出">
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{ scope.row.cedentRate }}</span>
-            <el-input
-              v-else
-              v-model="scope.row.cedentRate"
-            ></el-input> </template
-        ></el-table-column>
-        <el-table-column prop="retroDacRate" label="转分保DAC比例">
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{ scope.row.retroDacRate }}</span>
-            <el-input v-else v-model="scope.row.retroDacRate"></el-input>
-          </template>
-        </el-table-column>
-      </el-table>
+          <el-table-column prop="calculatMonth" label="计算月份">
+          </el-table-column>
+          <el-table-column prop="dacRate" label="DAC比例">
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{ scope.row.dacRate }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.dacRate"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="expectClaimRate" label="预计赔付率">
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{
+                scope.row.expectClaimRate
+              }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.expectClaimRate"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="expectXOLRate" label="预期XOL費用率">
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{
+                scope.row.expectXOLRate
+              }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.expectXOLRate"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="expectMaintainRate" label="预计维持費用">
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{
+                scope.row.expectMaintainRate
+              }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.expectMaintainRate"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="riskMargin" label="Risk Margin">
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{ scope.row.riskMargin }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.riskMargin"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="discounting" label="Discounting">
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{
+                scope.row.discounting
+              }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.discounting"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="adjustedRiskMarginFactor"
+            label="Adjusted Risk Margin factor"
+          >
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{
+                scope.row.adjustedRiskMarginFactor
+              }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.adjustedRiskMarginFactor"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="cedentRate" label="比例分出">
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{ scope.row.cedentRate }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.cedentRate"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input> </template
+          ></el-table-column>
+          <el-table-column prop="retroDacRate" label="转分保DAC比例">
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{
+                scope.row.retroDacRate
+              }}</span>
+              <el-input
+                v-else
+                v-model="scope.row.retroDacRate"
+                @change="getIndex(scope.row, scope.$index)"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="monthHeader">
+        <el-button @click="handleExport('uprRate', 'UPR计算比例')"
+          >导出</el-button
+        >
+      </div>
+      <div class="separateInfo">
+        <h2>UPR计算比例</h2>
+        <el-divider></el-divider>
+        <el-table
+          ref="uprRate"
+          :data="uprRateListData"
+          border
+          style="width: 100%; margin-top: 20px"
+        >
+          <el-table-column prop="policyMonth" label="Policy month" width="180">
+          </el-table-column>
+          <el-table-column
+            v-for="(item, index) in uprRateList"
+            :key="index"
+            :prop="item.policyMonth"
+            :label="item.policyMonth"
+          >
+            <template slot-scope="scope">
+              <span v-if="historyShow === '5'">{{
+                scope.row[item.policyMonth]
+              }}</span>
+              <el-input
+                v-else
+                @change="handleChange"
+                placeholder="请输入内容"
+                v-model="scope.row[item.policyMonth]"
+              ></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-button
+          v-if="historyShow !== '5'"
+          :loading="adjustLoading"
+          type="primary"
+          plain
+          @click="handleUprRate"
+          style="margin-top: 10px; margin-left: 45%"
+          >确认调整</el-button
+        >
+      </div>
     </div>
     <div class="monthHeader">
       <el-button @click="handleExport('cedentInfo', '分出信息')"
@@ -118,60 +200,37 @@
         :listData="cedentList"
       ></fs-list-panel>
     </div>
-    <div class="monthHeader">
-      <el-button @click="handleExport('uprRate', 'UPR计算比例')"
-        >导出</el-button
-      >
-    </div>
-    <div class="separateInfo">
-      <h2>UPR计算比例</h2>
-      <el-divider></el-divider>
-      <el-table
-        ref="uprRate"
-        :data="uprRateListData"
-        border
-        style="width: 100%; margin-top: 20px"
-      >
-        <el-table-column prop="policyMonth" label="Policy month" width="180">
-        </el-table-column>
-        <el-table-column
-          v-for="(item, index) in uprRateList"
-          :key="index"
-          :prop="item.policyMonth"
-          :label="item.policyMonth"
-        >
-          <template slot-scope="scope">
-            <span v-if="historyShow === '5'">{{
-              scope.row[item.policyMonth]
-            }}</span>
-            <el-input
-              v-else
-              @change="handleChange"
-              placeholder="请输入内容"
-              v-model="scope.row[item.policyMonth]"
-            ></el-input>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-button
-        v-if="historyShow !== '5'"
-        :loading="adjustLoading"
-        type="primary"
-        plain
-        @click="handleUprRate"
-        style="margin-top: 10px; margin-left: 45%"
-        >确认调整</el-button
-      >
-    </div>
+
     <div class="monthHeader">
       <el-button @click="handleExport('upr', 'upr预估')">导出</el-button>
     </div>
     <div class="separateInfo">
       <h2>UPR预估</h2>
       <el-divider></el-divider>
+      <el-table :data="UPRData" border style="width: 100%; margin-top: 20px">
+        <el-table-column prop="class" label=" " width="180" fixed="left">
+        </el-table-column>
+        <el-table-column
+          v-for="(item, index) in uprEstimateList"
+          :key="index"
+          :prop="item.calculatMonth"
+          :label="item.calculatMonth"
+          width="130"
+        >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+            <!-- <el-input
+              placeholder=""
+              v-model="scope.row[item.calculatMonth]"
+            ></el-input> -->
+            <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
+          </template>
+        </el-table-column>
+      </el-table>
       <el-table
         :data="UPRData"
         ref="upr"
+        v-show="false"
         border
         style="width: 100%; margin-top: 20px"
       >
@@ -202,13 +261,29 @@
     <div class="separateInfo">
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
-
+      <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
+        <el-table-column prop="company" label="公司" width="200" fixed="left">
+        </el-table-column>
+        <el-table-column prop="calculatItem" label="计算项目" width="200" fixed="left">
+        </el-table-column>
+        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
+        <el-table-column
+          width="150"
+          v-for="(item, index) in calculatedFeeList"
+          :key="index"
+          :prop="item.calculatMonth"
+          :label="item.calculatMonth"
+        >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-table
         :ref="'adjustForm'"
         :data="lastList"
+        v-show="false"
         border
-        :summary-method="getSummaries"
-        show-summary
         style="width: 100%; margin-top: 20px"
       >
         <el-table-column prop="company" label="公司" width="200">
@@ -249,6 +324,7 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
+      feeIndex: Number,
       adjustLoading: false,
       historyShow: sessionStorage.getItem("licl"),
       columns: [
@@ -416,6 +492,9 @@ export default {
       ],
       contractInfoList: [],
       feeInfoList: [],
+
+      feeInfoListCopy: JSON.parse(localStorage.getItem("feeInfoListCopy")),
+
       cedentList: [],
       uprRateList: [],
       uprRateListData: [],
@@ -431,7 +510,7 @@ export default {
     init() {
       $http
         .post(api.actuarialMonthContractDetail, {
-          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
         })
         .then((res) => {
           // console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
@@ -439,6 +518,12 @@ export default {
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
           this.feeInfoList = res.data.data.feeList;
+          if (res.data.data.feeList.length !== 0) {
+            localStorage.setItem(
+              "feeInfoListCopy",
+              JSON.stringify(res.data.data.feeList)
+            );
+          }
           this.cedentList = res.data.data.cedentList;
           let obj = { policyMonth: "UPR 分布" };
           this.uprRateList = res.data.data.uprRateList;
@@ -592,7 +677,9 @@ export default {
       // this.$forceUpdate()
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push('/actuarialEstimates')
+      
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -622,6 +709,47 @@ export default {
     handleExport(data, filename) {
       this.exportBtn(data, filename);
     },
+    getIndex(el, index) {
+      console.log(el, index);
+      this.feeIndex = index;
+    },
+    handlefill() {
+      // let arr = [];
+      // let finI = Number;
+      // if (localStorage.getItem("feeInfoListCopy") !== "") {
+      //   arr = JSON.parse(localStorage.getItem("feeInfoListCopy"));
+      // }
+      // for (var i = 0; i < this.feeInfoList.length; i++) {
+      //   if (JSON.stringify(arr[i]) !== JSON.stringify(this.feeInfoList[i])) {
+      //     console.log(
+      //       JSON.stringify(arr[i]),
+      //       JSON.stringify(this.feeInfoList[i]),
+      //       "JSON.stringify(this.feeInfoList[i])JSON.stringify(this.feeInfoList[i])"
+      //     );
+      //     // console.log(i, "iii");
+      //     finI = i;
+      //   }
+      // }
+      console.log(this.feeIndex, "finI");
+      for (var k = this.feeIndex + 1; k < this.feeInfoList.length; k++) {
+        this.feeInfoList[k].dacRate = this.feeInfoList[this.feeIndex].dacRate;
+        this.feeInfoList[k].expectClaimRate =
+          this.feeInfoList[this.feeIndex].expectClaimRate;
+        this.feeInfoList[k].expectXOLRate =
+          this.feeInfoList[this.feeIndex].expectXOLRate;
+        this.feeInfoList[k].expectMaintainRate =
+          this.feeInfoList[this.feeIndex].expectMaintainRate;
+        this.feeInfoList[k].riskMargin =
+          this.feeInfoList[this.feeIndex].riskMargin;
+        this.feeInfoList[k].discounting =
+          this.feeInfoList[this.feeIndex].discounting;
+        this.feeInfoList[k].retroDacRate =
+          this.feeInfoList[this.feeIndex].retroDacRate;
+        this.feeInfoList[k].adjustedRiskMarginFactor =
+          this.feeInfoList[this.feeIndex].adjustedRiskMarginFactor;
+      }
+      console.log(this.feeInfoList, " this.feeInfoList this.feeInfoList");
+    },
     handleUprRate() {
       for (var key in this.uprRateListData[0]) {
         this.uprRateList.forEach((item) => {
@@ -633,7 +761,7 @@ export default {
       this.adjustLoading = true;
       this.$http
         .post(api.monthFeeRateAdjust, {
-          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
           feeList: this.feeInfoList,
           uprRateList: this.uprRateList,
         })
@@ -690,16 +818,13 @@ export default {
     handleSave() {
       sessionStorage.removeItem("bookDetialHistory");
       sessionStorage.setItem("accountType", "1");
-
-      // this.$router.push("/bookedDetial");
       $http
         .post(api.saveAdjust, {
-          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
         })
         .then((res) => {
           if (res.data.code === "0") {
             this.$message.success("成功");
-            // this.$router.push("/bookDetial");
           }
         });
     },

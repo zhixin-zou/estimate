@@ -68,9 +68,19 @@ export default {
 
   methods: {
     init() {
+      let params = "";
+      if (this.$route.query.type == 1) {
+        params = sessionStorage.getItem("finHistoryContractKey");
+      } else if (this.$route.query.type == 2) {
+        params = sessionStorage.getItem("sepHistoryContractKey");
+      }else if (this.$route.query.type == 3) {
+        params = sessionStorage.getItem("jsNcontractKey");
+      }else if (this.$route.query.type == 4) {
+        params = sessionStorage.getItem("jsYcontractKey");
+      }
       $http
         .post(api.estimateHistoryQuery, {
-          contractKey: sessionStorage.getItem("contractKey"),
+          contractKey: params,
         })
         .then((res) => {
           console.log(res, "res");
@@ -90,9 +100,11 @@ export default {
       console.log(row);
       if (sessionStorage.getItem("enterType") === "in") {
         if (row.payType === "annual") {
+          sessionStorage.setItem("finAnnualEstimateKey", row.estimateKey);
           this.$router.push("/annualEstimates");
           sessionStorage.setItem("licl", "1");
         } else {
+          sessionStorage.setItem("finMonthEstimateKey", row.estimateKey);
           this.$router.push("/monthContractDetail");
           sessionStorage.setItem("licl", "2");
         }

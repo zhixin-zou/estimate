@@ -173,13 +173,30 @@
         >
       </div>
       <!-- {{ this.lastList }} -->
+      <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
+        <el-table-column prop="company" label="公司" width="200" fixed="left">
+        </el-table-column>
+        <el-table-column prop="calculatItem" label="计算项目" width="220" fixed="left">
+        </el-table-column>
+        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
+        <el-table-column
+          width="200"
+          v-for="(item, index) in calculatedFeeList"
+          :key="index"
+          :prop="item.calculatMonth"
+          :label="item.calculatMonth"
+        >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-table
         ref="adjustForm"
         :data="lastList"
         border
-        :summary-method="getSummaries"
-        show-summary
         style="width: 100%; margin-top: 20px"
+        v-show="false"
       >
         <el-table-column prop="company" label="公司" width="200">
         </el-table-column>
@@ -255,6 +272,11 @@ export default {
         {
           title: "经纪人",
           property: "broker",
+        },
+        {
+          title: "经纪费比例",
+          property: "brokerageRate",
+          formatter: "toPercent",
         },
         {
           title: "合同有效期开始",
@@ -390,7 +412,7 @@ export default {
 
   methods: {
     init() {
-      let params = sessionStorage.getItem("estimateKey");
+      let params = sessionStorage.getItem("finAnnualEstimateKey");
       $http
         .post(api.yearContractDetailQuery, {
           estimateKey: params,
@@ -425,7 +447,8 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push('/financialForecasts')
     },
     getSummaries(param) {
       const { columns, data } = param;
@@ -467,8 +490,8 @@ export default {
       $http
         .post(api.yearTotalEPIAdjust, {
           totalEPI: this.totalEPI,
-          estimateKey: sessionStorage.getItem("estimateKey"),
-          estimateMonth: sessionStorage.getItem("estimateMonth"),
+          estimateKey: sessionStorage.getItem("finAnnualEstimateKey"),
+          estimateMonth: sessionStorage.getItem("finAnnualEstimateMonth"),
         })
         .then((res) => {
           if (res.data.code === "0") {
@@ -500,7 +523,7 @@ export default {
       $http
         .post(api.yearDetailEPIAdjust, {
           yearEpiSplitList: this.EPIData,
-          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateKey: sessionStorage.getItem("finAnnualEstimateKey"),
           // estimateMonth: sessionStorage.getItem("estimateMonth"),
         })
         .then((res) => {
@@ -642,7 +665,7 @@ export default {
           .post(api.yearSlidingScaleRateAdjust, {
             iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
             orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
-            estimateKey: sessionStorage.getItem("estimateKey"),
+            estimateKey: sessionStorage.getItem("finAnnualEstimateKey"),
           })
           .then((res) => {
             if (res.data.code === "0") {
@@ -672,9 +695,9 @@ export default {
       }
     },
     handleDetial() {
-      sessionStorage.removeItem("bookDetialHistory")
+      sessionStorage.removeItem("bookDetialHistory");
       sessionStorage.setItem("accountType", "0");
-      this.$router.push("/bookedDetial");
+      this.$router.push({path: '/bookedDetial', query: {type: 1}});
     },
     changtext(scope) {
       console.log(scope, "scope");

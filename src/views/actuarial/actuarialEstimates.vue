@@ -72,9 +72,13 @@
         @click="handleExport('listBox', '导出信息')"
         >导出</el-button
       >
-      <el-table :data="currentPageData" border style="width: 100%" ref="listBox">
-        <el-table-column prop="contractNo" label="合同号">
-        </el-table-column>
+      <el-table
+        :data="currentPageData"
+        border
+        style="width: 100%"
+        ref="listBox"
+      >
+        <el-table-column prop="contractNo" label="合同号"> </el-table-column>
         <el-table-column prop="sessionName" label="合同session">
         </el-table-column>
         <el-table-column prop="contractType" label="合同类型">
@@ -158,18 +162,32 @@
       <el-table :data="contractBreakList" border style="width: 100%">
         <el-table-column prop="productCode" label="产品编码">
           <template slot-scope="scope">
-            <el-input
+            <el-select v-model="scope.row.productCode" placeholder="请选择">
+              <el-option
+                v-for="item in productList"
+                :key="item.productCode"
+                :label="item.productCode"
+                :value="item.productCode"
+              >
+              </el-option>
+            </el-select>
+            <!-- <el-input
               placeholder="请输入内容"
               v-model="scope.row.productCode"
-            ></el-input>
+            ></el-input> -->
           </template>
         </el-table-column>
         <el-table-column prop="productName" label="产品名称">
           <template slot-scope="scope">
-            <el-input
-              placeholder="请输入内容"
-              v-model="scope.row.productName"
-            ></el-input>
+            <el-select v-model="scope.row.productName" placeholder="请选择">
+              <el-option
+                v-for="item in productList"
+                :key="item.productName"
+                :label="item.productName"
+                :value="item.productName"
+              >
+              </el-option>
+            </el-select>
           </template>
           ></el-table-column
         >
@@ -215,6 +233,7 @@ export default {
       currentPageData: [],
       tableData: [],
       companyList: [],
+      productList: [],
       contractBreak: false,
       contractBreakList: [
         {
@@ -228,12 +247,19 @@ export default {
   methods: {
     // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
+      $http.post(api.productListQuery).then((res) => {
+        this.productList = res.data.data.productList;
+        console.log(
+          this.productList,
+          " this.productList this.productList this.productList this.productList"
+        );
+      });
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;
         this.handleSearchClick();
       });
     },
-        // 导出方法
+    // 导出方法
     exportBtn(refProp, fname) {
       // 获取表格元素
       const el = this.$refs[refProp].$el;
@@ -271,7 +297,7 @@ export default {
       return getText("estimateStatus", data);
     },
     handleSearchClick() {
-          this.loading = true
+      this.loading = true;
 
       // api.contractListQuery
       $http
@@ -283,9 +309,10 @@ export default {
           this.totalPage = Math.ceil(this.total / this.pageSize);
           this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
           this.setCurrentPageData();
-        }).finally(() => {
-          this.loading = false
         })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     handleResetClick() {
       this.form = {
@@ -298,27 +325,34 @@ export default {
       };
     },
     handleFinancialClick(row) {
-      sessionStorage.removeItem('licl')
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", row.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.removeItem("licl");
       console.log(row);
       if (row.payType === "annual") {
+        sessionStorage.setItem("jsAnnualEstimateKey", row.estimateKey);
+        sessionStorage.setItem("jsAnnualEstimateMonth", row.estimateMonth);
+        sessionStorage.setItem("jsAnnualContractKey", row.contractKey);
         this.$router.push("/yearActuarial");
       } else {
+        sessionStorage.setItem("jsMonthEstimateKey", row.estimateKey);
+        sessionStorage.setItem("jsMonthEstimateMonth", row.estimateMonth);
+        sessionStorage.setItem("jsMonthContractKey", row.contractKey);
         this.$router.push("/monthActuarial");
       }
     },
     handleHistoryClick(row) {
       if (row.payType === "annual") {
         sessionStorage.setItem("enterType", "jsyear");
+        sessionStorage.setItem("jsNestimateKey", row.estimateKey);
+        sessionStorage.setItem("jsNestimateMonth", row.estimateMonth);
+        sessionStorage.setItem("jsNcontractKey", row.contractKey);
+        this.$router.push({ path: "/viewHistory", query: { type: 3 } });
       } else {
         sessionStorage.setItem("enterType", "jsmonth");
+        sessionStorage.setItem("jsYestimateKey", row.estimateKey);
+        sessionStorage.setItem("jsYestimateMonth", row.estimateMonth);
+        sessionStorage.setItem("jsYcontractKey", row.contractKey);
+        this.$router.push({ path: "/viewHistory", query: { type: 4 } });
       }
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", row.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
-      this.$router.push("/viewHistory");
     },
     // 合同拆分
     handleBreak(row) {

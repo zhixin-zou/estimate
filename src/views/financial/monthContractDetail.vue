@@ -72,7 +72,12 @@
         >
       </div>
       <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
-        <el-table-column fixed="left" prop="calculatMonth" label="计算月份" width="180">
+        <el-table-column
+          fixed="left"
+          prop="calculatMonth"
+          label="计算月份"
+          width="180"
+        >
         </el-table-column>
         <el-table-column
           prop="calculatedEPI"
@@ -248,12 +253,34 @@
           >导出</el-button
         >
       </div>
+      <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
+        <el-table-column prop="company" label="公司" width="200" fixed="left">
+        </el-table-column>
+        <el-table-column
+          prop="calculatItem"
+          label="计算项目"
+          width="220"
+          fixed="left"
+        >
+        </el-table-column>
+        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
+        <el-table-column
+          width="200"
+          v-for="(item, index) in calculatedFeeList"
+          :key="index"
+          :prop="item.calculatMonth"
+          :label="item.calculatMonth"
+        >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-table
         :ref="'adjustForm'"
         :data="lastList"
         border
-        :summary-method="getSummaries"
-        show-summary
+        v-show="false"
         style="width: 100%; margin-top: 20px"
       >
         <el-table-column prop="company" label="公司" width="200">
@@ -294,7 +321,7 @@ export default {
       dropLoading: false,
       adjustLoading: false,
       // adjustLoading: false,
-      estimateMonth: sessionStorage.getItem("estimateMonth"),
+      estimateMonth: sessionStorage.getItem("finMonthEstimateMonth"),
       totalEPI: "0",
       floatingFactor: "",
       columns: [
@@ -325,6 +352,12 @@ export default {
         {
           title: "经纪人",
           property: "broker",
+        },
+
+        {
+          title: "经纪费比例",
+          property: "brokerageRate",
+          formatter: "toPercent",
         },
         {
           title: "合同有效期开始",
@@ -461,7 +494,7 @@ export default {
     init() {
       $http
         .post(api.monthContractDetailQuery, {
-          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
         })
         .then((res) => {
           if (res.data.code == "0") {
@@ -494,7 +527,8 @@ export default {
       return kiloSplit(data);
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push("/financialForecasts");
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -783,7 +817,7 @@ export default {
       $http
         .post(api.monthTotalEPIAdjust, {
           totalEPI: this.totalEPI,
-          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
         })
         .then((res) => {
           if (res.data.code == "0") {
@@ -848,7 +882,7 @@ export default {
         });
         $http
           .post(api.monthDetailEPIAdjust, {
-            estimateKey: sessionStorage.getItem("estimateKey"),
+            estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
             monthAdjustType: this.commandFlag,
             monthEpiSplitList: monthEpiSplitList,
           })
@@ -921,7 +955,7 @@ export default {
         });
         $http
           .post(api.monthDetailEPIAdjust, {
-            estimateKey: sessionStorage.getItem("estimateKey"),
+            estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
             monthAdjustType: this.commandFlag,
             monthEpiSplitList: monthEpiSplitList,
           })
@@ -1121,9 +1155,9 @@ export default {
       }
     },
     handleDetial() {
-      sessionStorage.removeItem("bookDetialHistory")
+      sessionStorage.removeItem("bookDetialHistory");
       sessionStorage.setItem("accountType", "0");
-      this.$router.push("/bookedDetial");
+      this.$router.push({ path: "/bookedDetial", query: { type: 2 } });
     },
   },
   beforeRouteEnter(to, from, next) {

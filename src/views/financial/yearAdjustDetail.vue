@@ -70,7 +70,7 @@ export default {
     init() {
       $http
         .post(api.yearAdjustDetail, {
-          estimateKey: sessionStorage.getItem("estimateKey"),
+          estimateKey: sessionStorage.getItem("finAnnualEstimateKey"),
         })
         .then((res) => {
           this.yearAdjustList = res.data.data.yearAdjustDetail;

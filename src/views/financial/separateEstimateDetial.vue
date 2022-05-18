@@ -1,13 +1,28 @@
 <template>
   <div class="separateEstimateDetial">
     <div class="monthHeader">
-      <el-button @click="handleExport('cwfcContract', '分出合同信息')"
+      <el-button @click="handleExport('fccontract', '分出合同信息')"
         >导出</el-button
       >
       <el-button @click="handleBack">返回</el-button>
     </div>
     <div class="separateInfo">
       <h2>分出合同信息</h2>
+      <el-divider></el-divider>
+      <fs-list-panel
+        :ref="'fccontract'"
+        :columns="fcolumns"
+        :listData="fccontractInfoList"
+      ></fs-list-panel>
+    </div>
+    <div class="monthHeader">
+      <el-button @click="handleExport('cwfcContract', '分出比例信息')"
+        >导出</el-button
+      >
+      <!-- <el-button @click="handleBack">返回</el-button> -->
+    </div>
+    <div class="separateInfo">
+      <h2>分出比例信息</h2>
       <el-divider></el-divider>
       <fs-list-panel
         :ref="'cwfcContract'"
@@ -44,6 +59,9 @@
       ></fs-list-panel>
     </div>
     <div class="monthHeader">
+      <el-button :loading="loading" @click="handleDownload()"
+        >下载分入费用信息</el-button
+      >
       <el-button @click="handleExport('cwfcAdjust', '计算后预估费用明细')"
         >导出</el-button
       >
@@ -51,12 +69,29 @@
     <div class="separateInfo">
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
+      <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
+        <el-table-column prop="company" label="公司" width="200" fixed="left">
+        </el-table-column>
+        <el-table-column prop="calculatItem" label="计算项目" width="220" fixed="left">
+        </el-table-column>
+        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
+        <el-table-column
+          width="150"
+          v-for="(item, index) in calculatedFeeList"
+          :key="index"
+          :prop="item.calculatMonth"
+          :label="item.calculatMonth"
+        >
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-table
         :ref="'cwfcAdjust'"
         :data="lastList"
+        v-show="false"
         border
-        :summary-method="getSummaries"
-        show-summary
         style="width: 100%; margin-top: 20px"
       >
         <el-table-column prop="company" label="公司" width="200">
@@ -77,6 +112,12 @@
         </el-table-column>
       </el-table>
     </div>
+    <fs-list-panel
+      v-show="false"
+      :ref="'frfee'"
+      :columns="frfeeColumns"
+      :listData="frfeeList"
+    ></fs-list-panel>
     <el-button plain class="checkDetial" @click="handleDetial"
       >查看入账明细</el-button
     >
@@ -93,9 +134,154 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
-      estimateMonth: sessionStorage.getItem("estimateMonth"),
+      loading: false,
+      estimateMonth: sessionStorage.getItem("sepEstimateMonth"),
       totalEPI: "0",
       separateForm: {},
+      frfeeColumns: [
+        {
+          title: "合同号",
+          property: "contractNo",
+        },
+        {
+          title: "合同标题",
+          property: "contractTitle",
+        },
+        {
+          title: "合同session",
+          property: "classificName",
+        },
+        {
+          title: "合同类型",
+          property: "contractType",
+        },
+        {
+          title: "合同类别",
+          property: "contractClass",
+        },
+        {
+          title: "合同开始时间",
+          property: "effectivePeriodBegin",
+        },
+        {
+          title: "合同结束时间",
+          property: "effectivePeriodEnd",
+        },
+        {
+          title: "预估月份",
+          property: "estimateMonth",
+        },
+        {
+          title: "计算月份",
+          property: "calculatMonth",
+        },
+        {
+          title: "计算公司",
+          property: "partnerName",
+        },
+        {
+          title: "计算项目",
+          property: "calculatItem",
+        },
+        {
+          title: "币种",
+          property: "currencyCode",
+        },
+        {
+          title: "分出合同号",
+          property: "orpContractNo",
+        },
+        {
+          title: "计算金额",
+          property: "confirmAmount",
+        },
+      ],
+      frfeeList: [],
+      fcolumns: [
+        {
+          title: "合同号",
+          property: "contractNo",
+        },
+        {
+          title: "合同session",
+          property: "sessionName",
+        },
+        {
+          title: "合同类型",
+          property: "contractType",
+        },
+        {
+          title: "主险种",
+          property: "planName",
+        },
+        {
+          title: "分出公司",
+          property: "cedentName",
+        },
+        {
+          title: "再保公司",
+          property: "reinsurerName",
+        },
+        {
+          title: "经纪人",
+          property: "broker",
+        },
+        {
+          title: "经纪费比例",
+          property: "brokerageRate",
+          formatter: "toPercent",
+        },
+        {
+          title: "合同有效期开始",
+          property: "effectivePeriodBegin",
+        },
+        {
+          title: "合同有效期结束",
+          property: "effectivePeriodEnd",
+        },
+        {
+          title: "缴费方式",
+          property: "payType",
+        },
+        {
+          title: "预估保费",
+          property: "epi",
+          formatter: "kiloSplit",
+        },
+        {
+          title: "手续费比例",
+          property: "commissionRate",
+          formatter: "toPercent",
+        },
+        {
+          title: "分出比例",
+          property: "cedentRate",
+          formatter: "toPercent",
+        },
+        {
+          title: "预估状态",
+          property: "estimateStatus",
+          formatter: "dict",
+          dictName: "estimateStatus",
+        },
+        // {
+        //   title: "预估维度键值",
+        //   property: "estimateKey",
+        // },
+        // {
+        //   title: "分入浮动因子",
+        //   property: "iabSlidingScaleAdjustRate",
+        // },
+        // {
+        //   title: "分出浮动因子",
+        //   property: "orpSlidingScaleAdjustRate",
+        // },
+        {
+          title: "预估月份",
+          property: "estimateMonth",
+        },
+      ],
+      fccontractInfoList: [],
       columns: [
         {
           title: "转分合同",
@@ -148,6 +334,11 @@ export default {
         {
           title: "经纪人",
           property: "broker",
+        },
+        {
+          title: "经纪费比例",
+          property: "brokerageRate",
+          formatter: "toPercent",
         },
         {
           title: "合同有效期开始",
@@ -220,7 +411,7 @@ export default {
         {
           title: "账单类型名称",
           property: "entryName",
-          width: 200
+          width: 200,
         },
         {
           title: "帐单币种",
@@ -257,13 +448,19 @@ export default {
   },
   methods: {
     init() {
-      let params = sessionStorage.getItem("estimateKey");
+      let params = sessionStorage.getItem("sepEstimateKey");
       $http
         .post(api.orpContractDetailQuery, {
           estimateKey: params,
         })
         .then((res) => {
           if (res.data.code === "0") {
+            if (Array.isArray(res.data.data.contractInfo)) {
+              this.fccontractInfoList = res.data.data.contractInfo;
+            } else {
+              this.fccontractInfoList = [];
+              this.fccontractInfoList.push(res.data.data.contractInfo);
+            }
             this.contractInfoList = res.data.data.orpCedentList;
             this.cedentList = res.data.data.iabContractInfo;
             this.workSheetList = res.data.data.orpWorkSheetList;
@@ -280,7 +477,9 @@ export default {
       return kiloSplit(data);
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push('/separateEstimates')
+
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -309,6 +508,25 @@ export default {
     },
     handleExport(data, filename) {
       this.exportBtn(data, filename);
+    },
+    handleDownload() {
+      this.loading = true;
+      let params = sessionStorage.getItem("sepEstimateKey");
+      $http
+        .post(api.orpIabContractFeeQuery, {
+          estimateKey: params,
+        })
+        .then((res) => {
+          console.log(
+            res.data.data.iabCalculatedFeeList,
+            "res.data.data.iabCalculatedFeeList"
+          );
+          this.frfeeList = res.data.data.iabCalculatedFeeList;
+        })
+        .finally(() => {
+          this.handleExport("frfee", "分入费用信息");
+          this.loading = false;
+        });
     },
     getSummaries(param) {
       const { columns, data } = param;
@@ -494,30 +712,10 @@ export default {
       console.log(this.lastList, "lastListaaaa");
       // this.$forceUpdate()
     },
-    handleFloatAdjust() {
-      $http
-        .post(api.yearSlidingScaleRateAdjust, {
-          iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
-          orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
-          estimateKey: sessionStorage.getItem("estimateKey"),
-        })
-        .then((res) => {
-          this.contractInfoList.push(res.data.data.contractInfo);
-          this.cedentList = res.data.data.cedentList;
-          this.workSheetList = res.data.data.workSheetList;
-          this.totalEPI = res.data.data.epiSplitInfo.totalEPI;
-          this.EPIData = res.data.data.epiSplitInfo.epiSplitList;
-          this.iabSlidingScaleAdjustRate =
-            res.data.data.contractInfo.iabSlidingScaleAdjustRate;
-          this.orpSlidingScaleAdjustRate =
-            res.data.data.contractInfo.orpSlidingScaleAdjustRate;
-          this.handleFloatChange();
-        });
-    },
     handleDetial() {
-      sessionStorage.removeItem("bookDetialHistory")
+      sessionStorage.removeItem("bookDetialHistory");
       sessionStorage.setItem("accountType", "0");
-      this.$router.push("/bookedDetial");
+      this.$router.push({ path: "/bookedDetial", query: { type: 3 } });
     },
     changtext(scope) {
       console.log(scope, "scope");

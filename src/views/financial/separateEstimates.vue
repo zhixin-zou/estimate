@@ -284,27 +284,18 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleFinancialClick(row) {
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", row.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.setItem("sepEstimateKey", row.estimateKey);
+      sessionStorage.setItem("sepEstimateMonth", row.estimateMonth);
+      sessionStorage.setItem("sepContractKey", row.contractKey);
       console.log(row);
-      // if (row.payType === "annual") {
-      //   this.$router.push("/annualEstimates");
-      // } else {
-      //   this.$router.push("/monthContractDetail");
-      // }
       this.$router.push("/separateEstimateDetial");
     },
     handleHistoryClick(row) {
       sessionStorage.setItem("enterType", "out");
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", row.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
-      // if (row.payType === "annual") {
-      this.$router.push("/viewHistory");
-      // } else {
-      //   this.$router.push("/monthHistory");
-      // }
+      sessionStorage.setItem("sepHistoryEstimateKey", row.estimateKey);
+      sessionStorage.setItem("sepHistoryEstimateMonth", row.estimateMonth);
+      sessionStorage.setItem("sepHistoryContractKey", row.contractKey);
+      this.$router.push({ path: "/viewHistory", query: { type: 2 } });
     },
     handleResetClick() {
       this.form = {

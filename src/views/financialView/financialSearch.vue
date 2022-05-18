@@ -144,7 +144,12 @@
         </el-table-column>
         <el-table-column prop="planName" label="主险种" v-if="columns[3].show">
         </el-table-column>
-                  <el-table-column prop="productName" label="产品名称" v-if="columns[4].show"> </el-table-column>
+        <el-table-column
+          prop="productName"
+          label="产品名称"
+          v-if="columns[4].show"
+        >
+        </el-table-column>
         <el-table-column
           prop="cedentName"
           label="分入公司"
@@ -293,7 +298,7 @@ export default {
           property: "planName",
           show: true,
         },
-          {
+        {
           title: "产品名称",
           property: "productName",
           show: true,
@@ -393,14 +398,14 @@ export default {
     },
     handleSearchAll() {
       if (this.form.estimateMonth !== "") {
-        sessionStorage.setItem("estimateKey", ""),
-          sessionStorage.setItem("contractKey", ""),
+        sessionStorage.setItem("fsallEstimateKey", ""),
+          sessionStorage.setItem("fsallContractKey", ""),
           sessionStorage.setItem(
-            "estimateMonth",
+            "fsallEstimateMonth",
             getYearMonthDate(this.form.estimateMonth)
           ),
           sessionStorage.setItem("accountType", ""),
-          this.$router.push("/bookedDetial");
+          this.$router.push({ path: "/bookedDetial", query: { type: 4 } });
       } else {
         this.$message.warning("请输入做账月份");
       }
@@ -416,30 +421,30 @@ export default {
       };
     },
     handleFinancialAccounting(row) {
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.setItem("faEstimateKey", row.estimateKey);
+      sessionStorage.setItem("faEstimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("faContractKey", row.contractKey);
       sessionStorage.setItem("accountType", "0");
       sessionStorage.removeItem("bookDetialHistory");
 
-      this.$router.push("/bookedDetial");
+      this.$router.push({ path: "/bookedDetial", query: { type: 5 } });
     },
     handleCalculateAccounting(row) {
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.setItem("caEstimateKey", row.estimateKey);
+      sessionStorage.setItem("caEstimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("caContractKey", row.contractKey);
       sessionStorage.setItem("accountType", "1");
       sessionStorage.removeItem("bookDetialHistory");
 
-      this.$router.push("/bookedDetial");
+      this.$router.push({ path: "/bookedDetial", query: { type: 6 } });
     },
     historyAccounting(row) {
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", this.form.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.setItem("aEstimateKey", row.estimateKey);
+      sessionStorage.setItem("aEstimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("aContractKey", row.contractKey);
       sessionStorage.setItem("accountType", "");
       sessionStorage.setItem("bookDetialHistory", "0");
-      this.$router.push("/bookedDetial");
+      this.$router.push({ path: "/bookedDetial", query: { type: 7 } });
     },
     // 假分页
     setCurrentPageData() {

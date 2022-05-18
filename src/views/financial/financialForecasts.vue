@@ -332,25 +332,31 @@ export default {
       console.log(scope);
     },
     handleFinancialClick(row) {
-      console.log(row.payType, 'row.payTyperow.payTyperow.payType');
-      sessionStorage.removeItem("licl")
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", row.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
+      console.log(row.payType, "row.payTyperow.payTyperow.payType");
+      sessionStorage.removeItem("licl");
+      // sessionStorage.setItem("estimateKey", row.estimateKey);
+      // sessionStorage.setItem("estimateMonth", row.estimateMonth);
+      // sessionStorage.setItem("contractKey", row.contractKey);
       console.log(row);
       if (row.payType === "annual") {
+        sessionStorage.setItem("finAnnualEstimateKey", row.estimateKey);
+        sessionStorage.setItem("finAnnualEstimateMonth", row.estimateMonth);
+        sessionStorage.setItem("finAnnualContractKey", row.contractKey);
         this.$router.push("/annualEstimates");
       } else if (row.payType === "monthly") {
+        sessionStorage.setItem("finMonthEstimateKey", row.estimateKey);
+        sessionStorage.setItem("finMonthEstimateMonth", row.estimateMonth);
+        sessionStorage.setItem("finMonthContractKey", row.contractKey);
         this.$router.push("/monthContractDetail");
       }
     },
     handleHistoryClick(row) {
       sessionStorage.setItem("enterType", "in");
-      sessionStorage.setItem("estimateKey", row.estimateKey);
-      sessionStorage.setItem("estimateMonth", row.estimateMonth);
-      sessionStorage.setItem("contractKey", row.contractKey);
+      sessionStorage.setItem("finHistoryEstimateKey", row.estimateKey);
+      sessionStorage.setItem("finHistoryEstimateMonth", row.estimateMonth);
+      sessionStorage.setItem("finHistoryContractKey", row.contractKey);
       // if (row.payType === "annual") {
-      this.$router.push("/viewHistory");
+      this.$router.push({path: "/viewHistory", query: {type: 1}});
       // } else {
       //   this.$router.push("/monthHistory");
       // }

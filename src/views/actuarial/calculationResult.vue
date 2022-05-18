@@ -145,6 +145,34 @@
             :listData="lastList"
           ></fs-list-panel> -->
           <el-table
+            :data="lastList"
+            border
+            style="width: 100%; margin-top: 20px"
+          >
+            <el-table-column
+              prop="company"
+              label="公司"
+              width="180"
+              fixed="left"
+            >
+            </el-table-column>
+            <el-table-column prop="calculatItem" label="计算项目" fixed="left">
+            </el-table-column>
+            <el-table-column prop="currencyCode" label="币种">
+            </el-table-column>
+            <el-table-column
+              v-for="(item, index) in calculatedFeeList"
+              :key="index"
+              :prop="item.contractNo"
+              :label="item.contractNo"
+            >
+              <!-- <template slot-scope="scope">
+                <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
+              </template> -->
+            </el-table-column>
+          </el-table>
+          <el-table
+            v-show="false"
             ref="xfcwInfo"
             :data="lastList"
             border
@@ -274,7 +302,7 @@ export default {
       calculatedFeeList2: [],
       showTable: false,
       estimateMonth: "",
-      estimateMonthShow: '',
+      estimateMonthShow: "",
     };
   },
   computed: {
@@ -286,7 +314,8 @@ export default {
       this.getClassList();
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push("/actuarialEstimates");
     },
     kiloSplitData(data) {
       return kiloSplit(data);
@@ -326,7 +355,7 @@ export default {
       $http
         .post(api.summaryAllocatCalculat, {
           classCode: this.classCode,
-          estimateMonth: getYearMonthDate(this.estimateMonth)
+          estimateMonth: getYearMonthDate(this.estimateMonth),
         })
         .then((res) => {
           this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
@@ -560,7 +589,8 @@ export default {
         .then((res) => {
           if (res.data.code === "0") {
             this.$message.success("成功");
-            this.$router.go(-1);
+            // this.$router.go(-1);
+            this.$router.push("/actuarialEstimates");
           }
         });
     },
