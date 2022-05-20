@@ -271,10 +271,10 @@ export default {
     init() {
       $http
         .post(api.ebsInfoQuery, {
-          estimateKey: sessionStorage.getItem("finEstimateKey"),
-          contractKey: sessionStorage.getItem("finContractKey"),
-          estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-          accountType: "1",
+          estimateKey: sessionStorage.getItem("sepEstimateKey"),
+          contractKey: sessionStorage.getItem("sepContractKey"),
+          estimateMonth: sessionStorage.getItem("sepEstimateMonth"),
+          accountType: "0",
         })
         .then((res) => {
           if (res.data.code === "0") {
@@ -318,19 +318,15 @@ export default {
     },
     handleCheck() {
       this.loading = true;
-      // let params =  {
-      //   estimateKey: sessionStorage.getItem("finEstimateKey"),
-      //   contractKey: sessionStorage.getItem("finContractKey"),
-      //   estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-      //   accountType: '1',
-      // }
+      let params = {
+        estimateKey: sessionStorage.getItem("sepEstimateKey"),
+        contractKey: sessionStorage.getItem("sepContractKey"),
+        estimateMonth: sessionStorage.getItem("sepEstimateMonth"),
+        accountType: "0",
+      };
+
       $http
-        .post(api.ebsInfoPush, {
-          estimateKey: sessionStorage.getItem("finEstimateKey"),
-          contractKey: sessionStorage.getItem("finContractKey"),
-          estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-          accountType: "1",
-        })
+        .post(api.ebsInfoPush, params)
         .then((res) => {
           console.log(res);
           if (res.data.code === "0") {

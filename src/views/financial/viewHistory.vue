@@ -68,6 +68,7 @@ export default {
 
   methods: {
     init() {
+      console.log(this.$route.query.type, 'this.$route.query.typethis.$route.query.type');
       let params = "";
       if (this.$route.query.type == 1) {
         params = sessionStorage.getItem("finHistoryContractKey");

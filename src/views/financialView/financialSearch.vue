@@ -421,30 +421,29 @@ export default {
       };
     },
     handleFinancialAccounting(row) {
-      sessionStorage.setItem("faEstimateKey", row.estimateKey);
-      sessionStorage.setItem("faEstimateMonth", this.form.estimateMonth);
-      sessionStorage.setItem("faContractKey", row.contractKey);
+      sessionStorage.setItem("fsEstimateKey", row.estimateKey);
+      sessionStorage.setItem("fsEstimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("fsContractKey", row.contractKey);
       sessionStorage.setItem("accountType", "0");
       sessionStorage.removeItem("bookDetialHistory");
-
-      this.$router.push({ path: "/bookedDetial", query: { type: 5 } });
+      this.$router.push({ path: "/fsBookedDetial" });
     },
     handleCalculateAccounting(row) {
-      sessionStorage.setItem("caEstimateKey", row.estimateKey);
-      sessionStorage.setItem("caEstimateMonth", this.form.estimateMonth);
-      sessionStorage.setItem("caContractKey", row.contractKey);
+      sessionStorage.setItem("fsEstimateKey", row.estimateKey);
+      sessionStorage.setItem("fsEstimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("fsContractKey", row.contractKey);
       sessionStorage.setItem("accountType", "1");
       sessionStorage.removeItem("bookDetialHistory");
 
-      this.$router.push({ path: "/bookedDetial", query: { type: 6 } });
+      this.$router.push({ path: "/fsBookedDetial"});
     },
     historyAccounting(row) {
-      sessionStorage.setItem("aEstimateKey", row.estimateKey);
-      sessionStorage.setItem("aEstimateMonth", this.form.estimateMonth);
-      sessionStorage.setItem("aContractKey", row.contractKey);
+      sessionStorage.setItem("fsEstimateKey", row.estimateKey);
+      sessionStorage.setItem("fsEstimateMonth", this.form.estimateMonth);
+      sessionStorage.setItem("fsContractKey", row.contractKey);
       sessionStorage.setItem("accountType", "");
       sessionStorage.setItem("bookDetialHistory", "0");
-      this.$router.push({ path: "/bookedDetial", query: { type: 7 } });
+      this.$router.push({ path: "/fsBookedDetial" });
     },
     // 假分页
     setCurrentPageData() {

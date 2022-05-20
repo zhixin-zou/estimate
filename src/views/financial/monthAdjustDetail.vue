@@ -18,7 +18,7 @@
         </el-table-column>
         <el-table-column
           prop="calculatedEPI"
-          label="月最终预估保费"
+          label="月最终预估保费/合计"
           width="200"
         >
           <template slot-scope="scope">
@@ -235,6 +235,8 @@ export default {
       workSheetAdjustEPIHeader.calculatMonth = "实际账单金额调整";
       actuarialAmountHeader.calculatMonth = "精算计算金额";
       calculatedEPIHeader.calculatMonth = "计算后epi";
+      let workSheetAmountHeaderSum = 0;
+      let workSheetAdjustEPIHeaderSum = 0;
       epiSplitSumList.forEach((item) => {
         for (var key in sumHeaderObj) {
           if (item.calculatMonth === key) {
@@ -264,11 +266,15 @@ export default {
         for (var key5 in workSheetAmountHeader) {
           if (item.calculatMonth === key5) {
             workSheetAmountHeader[key5] = item.workSheetAmount;
+            workSheetAmountHeaderSum =
+              workSheetAmountHeaderSum + Number(item.workSheetAmount);
           }
         }
         for (var key6 in workSheetAdjustEPIHeader) {
           if (item.calculatMonth === key6) {
             workSheetAdjustEPIHeader[key6] = item.workSheetAdjustEPI;
+            workSheetAdjustEPIHeaderSum =
+              workSheetAdjustEPIHeaderSum + Number(item.workSheetAdjustEPI);
           }
         }
         for (var key7 in actuarialAmountHeader) {
@@ -286,6 +292,8 @@ export default {
         sumObj,
         "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
       );
+      workSheetAmountHeader.calculatedEPI = workSheetAmountHeaderSum;
+      workSheetAdjustEPIHeader.calculatedEPI = workSheetAdjustEPIHeaderSum;
       this.EPIData.push(calculatedEPIHeader);
       this.EPIData.push(originEPIHeaderObj);
       this.EPIData.push(manualAdjustEPIHeaderObj);

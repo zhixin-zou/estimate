@@ -108,7 +108,7 @@
         </el-table-column>
         <el-table-column prop="cedentRate" label="分出比例">
           <template slot-scope="scope">
-            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+            <span>{{ toPercentData(scope.row.cedentRate) }}</span>
           </template>
         </el-table-column>
 

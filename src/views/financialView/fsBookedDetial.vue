@@ -269,23 +269,23 @@ export default {
   },
   methods: {
     init() {
-      $http
-        .post(api.ebsInfoQuery, {
-          estimateKey: sessionStorage.getItem("finEstimateKey"),
-          contractKey: sessionStorage.getItem("finContractKey"),
-          estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-          accountType: "1",
-        })
-        .then((res) => {
-          if (res.data.code === "0") {
-            console.log(res, "res");
-            this.EBSSummaryForm = res.data.data.ebsSummary;
-            this.listData = res.data.data.ebsDetail;
-          } else {
-            console.log(res);
-            this.$message.error(res.data.msg);
-          }
-        });
+      let params = {};
+      params = {
+        estimateKey: sessionStorage.getItem("fsEstimateKey"),
+        contractKey: sessionStorage.getItem("fsContractKey"),
+        estimateMonth: sessionStorage.getItem("fsEstimateMonth"),
+        accountType: sessionStorage.getItem("accountType"),
+      };
+      $http.post(api.ebsInfoQuery, params).then((res) => {
+        if (res.data.code === "0") {
+          console.log(res, "res");
+          this.EBSSummaryForm = res.data.data.ebsSummary;
+          this.listData = res.data.data.ebsDetail;
+        } else {
+          console.log(res);
+          this.$message.error(res.data.msg);
+        }
+      });
     },
     handleEditClick() {
       let ebsModifyList = [];
@@ -318,19 +318,59 @@ export default {
     },
     handleCheck() {
       this.loading = true;
-      // let params =  {
-      //   estimateKey: sessionStorage.getItem("finEstimateKey"),
-      //   contractKey: sessionStorage.getItem("finContractKey"),
-      //   estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-      //   accountType: '1',
-      // }
+      let params = {};
+      if (this.$route.query.type == 1) {
+        params = {
+          estimateKey: sessionStorage.getItem("finAnnualEstimateKey"),
+          contractKey: sessionStorage.getItem("finAnnualContractKey"),
+          estimateMonth: sessionStorage.getItem("finAnnualEstimateMonth"),
+          accountType: sessionStorage.getItem("accountType"),
+        };
+      } else if (this.$route.query.type == 2) {
+        params = {
+          estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
+          contractKey: sessionStorage.getItem("finMonthContractKey"),
+          estimateMonth: sessionStorage.getItem("finMonthEstimateMonth"),
+          accountType: sessionStorage.getItem("accountType"),
+        };
+      } else if (this.$route.query.type == 3) {
+        params = {
+          estimateKey: sessionStorage.getItem("sepHistoryEstimateKey"),
+          contractKey: sessionStorage.getItem("sepHistoryContractKey"),
+          estimateMonth: sessionStorage.getItem("sepHistoryEstimateMonth"),
+          accountType: sessionStorage.getItem("accountType"),
+        };
+      } else if (this.$route.query.type == 4) {
+        params = {
+          estimateKey: sessionStorage.getItem("fsallEstimateKey"),
+          contractKey: sessionStorage.getItem("fsallContractKey"),
+          estimateMonth: sessionStorage.getItem("fsallEstimateMonth"),
+          accountType: sessionStorage.getItem("accountType"),
+        };
+      } else if (this.$route.query.type == 5) {
+        params = {
+          estimateKey: sessionStorage.getItem("faEstimateKey"),
+          contractKey: sessionStorage.getItem("faEstimateMonth"),
+          estimateMonth: sessionStorage.getItem("faEstimateMonth"),
+          accountType: sessionStorage.getItem("accountType"),
+        };
+      } else if (this.$route.query.type == 6) {
+        params = {
+          estimateKey: sessionStorage.getItem("caEstimateKey"),
+          contractKey: sessionStorage.getItem("caEstimateMonth"),
+          estimateMonth: sessionStorage.getItem("caEstimateMonth"),
+          accountType: sessionStorage.getItem("accountType"),
+        };
+      } else if (this.$route.query.type == 7) {
+        params = {
+          estimateKey: sessionStorage.getItem("aEstimateKey"),
+          contractKey: sessionStorage.getItem("aEstimateMonth"),
+          estimateMonth: sessionStorage.getItem("aEstimateMonth"),
+          accountType: sessionStorage.getItem("accountType"),
+        };
+      }
       $http
-        .post(api.ebsInfoPush, {
-          estimateKey: sessionStorage.getItem("finEstimateKey"),
-          contractKey: sessionStorage.getItem("finContractKey"),
-          estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-          accountType: "1",
-        })
+        .post(api.ebsInfoPush, params)
         .then((res) => {
           console.log(res);
           if (res.data.code === "0") {

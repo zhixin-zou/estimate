@@ -59,6 +59,9 @@
       ></fs-list-panel>
     </div>
     <div class="monthHeader">
+      <span style="padding-right: 20px">计算月份</span>
+      <el-date-picker v-model="cMonth" type="month" placeholder="选择月">
+      </el-date-picker>
       <el-button :loading="loading" @click="handleDownload()"
         >下载分入费用信息</el-button
       >
@@ -72,7 +75,12 @@
       <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
-        <el-table-column prop="calculatItem" label="计算项目" width="220" fixed="left">
+        <el-table-column
+          prop="calculatItem"
+          label="计算项目"
+          width="220"
+          fixed="left"
+        >
         </el-table-column>
         <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
@@ -127,13 +135,15 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
-import { kiloSplit } from "@/utils/utils";
+import { kiloSplit, getYearMonthDate } from "@/utils/utils";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
+
 
 export default {
   data() {
     return {
+      cMonth: "",
       loading: false,
       estimateMonth: sessionStorage.getItem("sepEstimateMonth"),
       totalEPI: "0",
@@ -478,8 +488,7 @@ export default {
     },
     handleBack() {
       // this.$router.go(-1);
-      this.$router.push('/separateEstimates')
-
+      this.$router.push("/separateEstimates");
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -515,6 +524,7 @@ export default {
       $http
         .post(api.orpIabContractFeeQuery, {
           estimateKey: params,
+          calculat_month: getYearMonthDate(this.cMonth),
         })
         .then((res) => {
           console.log(
@@ -714,8 +724,8 @@ export default {
     },
     handleDetial() {
       sessionStorage.removeItem("bookDetialHistory");
-      sessionStorage.setItem("accountType", "0");
-      this.$router.push({ path: "/bookedDetial", query: { type: 3 } });
+      // sessionStorage.setItem("accountType", "0");
+      this.$router.push({ path: "/seBookedDetial" });
     },
     changtext(scope) {
       console.log(scope, "scope");

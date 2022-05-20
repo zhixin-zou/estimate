@@ -176,7 +176,12 @@
       <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
-        <el-table-column prop="calculatItem" label="计算项目" width="220" fixed="left">
+        <el-table-column
+          prop="calculatItem"
+          label="计算项目"
+          width="220"
+          fixed="left"
+        >
         </el-table-column>
         <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
@@ -412,7 +417,7 @@ export default {
 
   methods: {
     init() {
-      let params = sessionStorage.getItem("finAnnualEstimateKey");
+      let params = sessionStorage.getItem("finEstimateKey");
       $http
         .post(api.yearContractDetailQuery, {
           estimateKey: params,
@@ -448,7 +453,7 @@ export default {
     },
     handleBack() {
       // this.$router.go(-1);
-      this.$router.push('/financialForecasts')
+      this.$router.push("/financialForecasts");
     },
     getSummaries(param) {
       const { columns, data } = param;
@@ -468,8 +473,12 @@ export default {
               return prev;
             }
           }, 0);
-          // console.log(sums[index], "sums[index]");
-          sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
+          console.log(sums[index], "sums[index]", index, column.property);
+          if (index == 7 && column.property === 'cumulativeAmount') {
+            sums[index] = "";
+          } else {
+            sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
+          }
         } else {
           sums[index] = "";
         }
@@ -490,8 +499,8 @@ export default {
       $http
         .post(api.yearTotalEPIAdjust, {
           totalEPI: this.totalEPI,
-          estimateKey: sessionStorage.getItem("finAnnualEstimateKey"),
-          estimateMonth: sessionStorage.getItem("finAnnualEstimateMonth"),
+          estimateKey: sessionStorage.getItem("finEstimateKey"),
+          estimateMonth: sessionStorage.getItem("finEstimateMonth"),
         })
         .then((res) => {
           if (res.data.code === "0") {
@@ -523,7 +532,7 @@ export default {
       $http
         .post(api.yearDetailEPIAdjust, {
           yearEpiSplitList: this.EPIData,
-          estimateKey: sessionStorage.getItem("finAnnualEstimateKey"),
+          estimateKey: sessionStorage.getItem("finEstimateKey"),
           // estimateMonth: sessionStorage.getItem("estimateMonth"),
         })
         .then((res) => {
@@ -665,7 +674,7 @@ export default {
           .post(api.yearSlidingScaleRateAdjust, {
             iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
             orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
-            estimateKey: sessionStorage.getItem("finAnnualEstimateKey"),
+            estimateKey: sessionStorage.getItem("finEstimateKey"),
           })
           .then((res) => {
             if (res.data.code === "0") {
@@ -697,7 +706,7 @@ export default {
     handleDetial() {
       sessionStorage.removeItem("bookDetialHistory");
       sessionStorage.setItem("accountType", "0");
-      this.$router.push({path: '/bookedDetial', query: {type: 1}});
+      this.$router.push({ path: "/bookedDetial" });
     },
     changtext(scope) {
       console.log(scope, "scope");

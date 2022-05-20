@@ -81,7 +81,7 @@
         </el-table-column>
         <el-table-column
           prop="calculatedEPI"
-          label="月最终预估保费"
+          label="月最终预估保费/合计"
           width="200"
         >
           <template slot-scope="scope">
@@ -175,7 +175,7 @@
         </el-table-column>
         <el-table-column
           prop="calculatedEPI"
-          label="月最终预估保费"
+          label="月最终预估保费/合计"
           width="200"
         >
           <template slot-scope="scope">
@@ -321,7 +321,7 @@ export default {
       dropLoading: false,
       adjustLoading: false,
       // adjustLoading: false,
-      estimateMonth: sessionStorage.getItem("finMonthEstimateMonth"),
+      estimateMonth: sessionStorage.getItem("finEstimateMonth"),
       totalEPI: "0",
       floatingFactor: "",
       columns: [
@@ -494,7 +494,7 @@ export default {
     init() {
       $http
         .post(api.monthContractDetailQuery, {
-          estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
+          estimateKey: sessionStorage.getItem("finEstimateKey"),
         })
         .then((res) => {
           if (res.data.code == "0") {
@@ -716,53 +716,95 @@ export default {
       // sumHeaderObj.originEPI = "";
       // sumHeaderObj.manualAdjustEPI = "";
       // console.log(epiSplitSumList, 'epiSplitSumList???????????????????????????????????????????????');
+      let sumHeaderObjSum = 0;
+      let premiumHeaderObjSum = 0;
+      let allHeaderObjSum = 0;
+      let originEPIHeaderObjSum = 0;
+      let manualAdjustEPIHeaderObjSum = 0;
+      let workSheetAmountHeaderSum = 0;
+      let workSheetAdjustEPIHeaderSum = 0;
+      let actuarialAmountHeaderSum = 0;
+      let calculatedEPIHeaderSum = 0;
       epiSplitSumList.forEach((item) => {
         for (var key in sumHeaderObj) {
           if (item.calculatMonth === key) {
             sumHeaderObj[key] = item.cumulativeAmount;
+            sumHeaderObjSum = sumHeaderObjSum + Number(item.cumulativeAmount);
           }
         }
         for (var key1 in premiumHeaderObj) {
           if (item.calculatMonth === key1) {
             premiumHeaderObj[key1] = item.totalPremium;
+            premiumHeaderObjSum =
+              premiumHeaderObjSum + Number(item.totalPremium);
           }
         }
         for (var key2 in allHeaderObj) {
           if (item.calculatMonth === key2) {
             allHeaderObj[key2] = item.sumAmount;
+            allHeaderObjSum = allHeaderObjSum + Number(item.sumAmount);
           }
         }
         for (var key3 in originEPIHeaderObj) {
           if (item.calculatMonth === key3) {
             originEPIHeaderObj[key3] = item.originEPI;
+            originEPIHeaderObjSum =
+              originEPIHeaderObjSum + Number(item.originEPI);
           }
         }
         for (var key4 in manualAdjustEPIHeaderObj) {
           if (item.calculatMonth === key4) {
             manualAdjustEPIHeaderObj[key4] = item.manualAdjustEPI;
+            manualAdjustEPIHeaderObjSum =
+              manualAdjustEPIHeaderObjSum + Number(item.manualAdjustEPI);
           }
         }
         for (var key5 in workSheetAmountHeader) {
           if (item.calculatMonth === key5) {
             workSheetAmountHeader[key5] = item.workSheetAmount;
+            workSheetAmountHeaderSum =
+              workSheetAmountHeaderSum + Number(item.workSheetAmount);
+            console.log(
+              workSheetAmountHeaderSum,
+              "workSheetAmountHeader",
+              key5
+            );
           }
         }
+
         for (var key6 in workSheetAdjustEPIHeader) {
           if (item.calculatMonth === key6) {
             workSheetAdjustEPIHeader[key6] = item.workSheetAdjustEPI;
+            workSheetAdjustEPIHeaderSum =
+              workSheetAdjustEPIHeaderSum + Number(item.workSheetAdjustEPI);
           }
         }
         for (var key7 in actuarialAmountHeader) {
           if (item.calculatMonth === key7) {
             actuarialAmountHeader[key7] = item.actuarialAmount;
+            actuarialAmountHeaderSum =
+              actuarialAmountHeaderSum + Number(item.actuarialAmount);
           }
         }
+
         for (var key8 in calculatedEPIHeader) {
           if (item.calculatMonth === key8) {
             calculatedEPIHeader[key8] = item.calculatedEPI;
+            calculatedEPIHeaderSum =
+              calculatedEPIHeaderSum + Number(item.calculatedEPI);
           }
         }
       });
+
+      allHeaderObj.calculatedEPI = sumHeaderObjSum;
+      sumHeaderObj.calculatedEPI = premiumHeaderObjSum;
+      premiumHeaderObj.calculatedEPI = allHeaderObjSum;
+      originEPIHeaderObj.calculatedEPI = originEPIHeaderObjSum;
+      manualAdjustEPIHeaderObj.calculatedEPI = manualAdjustEPIHeaderObjSum;
+      workSheetAmountHeader.calculatedEPI = workSheetAmountHeaderSum;
+      workSheetAdjustEPIHeader.calculatedEPI = workSheetAdjustEPIHeaderSum;
+      actuarialAmountHeader.calculatedEPI = actuarialAmountHeaderSum;
+      calculatedEPIHeader.calculatedEPI = calculatedEPIHeaderSum;
       console.log(
         sumObj,
         originEPIObj,
@@ -817,7 +859,7 @@ export default {
       $http
         .post(api.monthTotalEPIAdjust, {
           totalEPI: this.totalEPI,
-          estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
+          estimateKey: sessionStorage.getItem("finEstimateKey"),
         })
         .then((res) => {
           if (res.data.code == "0") {
@@ -882,7 +924,7 @@ export default {
         });
         $http
           .post(api.monthDetailEPIAdjust, {
-            estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
+            estimateKey: sessionStorage.getItem("finEstimateKey"),
             monthAdjustType: this.commandFlag,
             monthEpiSplitList: monthEpiSplitList,
           })
@@ -955,7 +997,7 @@ export default {
         });
         $http
           .post(api.monthDetailEPIAdjust, {
-            estimateKey: sessionStorage.getItem("finMonthEstimateKey"),
+            estimateKey: sessionStorage.getItem("finEstimateKey"),
             monthAdjustType: this.commandFlag,
             monthEpiSplitList: monthEpiSplitList,
           })
@@ -1125,7 +1167,7 @@ export default {
           .post(api.monthSlidingScaleRateAdjust, {
             iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
             orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
-            estimateKey: sessionStorage.getItem("estimateKey"),
+            estimateKey: sessionStorage.getItem("finEstimateKey"),
           })
           .then((res) => {
             if (res.data.code === "0") {
@@ -1156,8 +1198,8 @@ export default {
     },
     handleDetial() {
       sessionStorage.removeItem("bookDetialHistory");
-      sessionStorage.setItem("accountType", "0");
-      this.$router.push({ path: "/bookedDetial", query: { type: 2 } });
+      // sessionStorage.setItem("accountType", "0");
+      this.$router.push({ path: "/bookedDetial" });
     },
   },
   beforeRouteEnter(to, from, next) {

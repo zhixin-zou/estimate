@@ -7,6 +7,7 @@ import NotFound from "@/views/NotFound.vue";
 import FinancialForecasts from "@/views/financial/financialForecasts.vue";
 import AnnualEstimates from "@/views/financial/annualEstimates.vue";
 import BookedDetial from "@/views/financial/bookedDetial.vue";
+import SeBookedDetial from "@/views/financial/seBookedDetial.vue";
 import ViewHistory from "@/views/financial/viewHistory.vue";
 import YearAdjustDetail from "@/views/financial/yearAdjustDetail.vue";
 import MonthContractDetail from "@/views/financial/monthContractDetail.vue";
@@ -17,6 +18,7 @@ import FinancialSearch from "@/views/financialView/financialSearch.vue";
 import SeparateEstimateDetial from "@/views/financial/separateEstimateDetial.vue";
 import YearActuarial from "@/views/actuarial/yearActuarial.vue";
 import MonthActuarial from "@/views/actuarial/monthActuarial.vue";
+import FsBookedDetial from "@/views/financialView/fsBookedDetial.vue"
 
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
 
@@ -91,6 +93,12 @@ const routes = [
   {
     path: "/calculationResult",
     component: CalculationResult,
+  },  {
+    path: "/fsBookedDetial",
+    component: FsBookedDetial,
+  },  {
+    path: "/seBookedDetial",
+    component: SeBookedDetial,
   },
   {
     path: "/404",
