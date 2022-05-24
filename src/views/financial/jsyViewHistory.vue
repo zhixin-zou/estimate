@@ -82,7 +82,7 @@ export default {
       // }else if (this.$route.query.type == 4) {
       //   params = sessionStorage.getItem("jsYcontractKey");
       // }
-      params = sessionStorage.getItem("finHistoryContractKey");
+      params = sessionStorage.getItem("jsYcontractKey");
 
       $http
         .post(api.estimateHistoryQuery, {
@@ -105,23 +105,24 @@ export default {
     handleDetial(row) {
       console.log(row);
       // if (sessionStorage.getItem("enterType") === "in") {
-        if (row.payType === "annual") {
-          sessionStorage.setItem("finEstimateKey", row.estimateKey);
-          this.$router.push("/annualEstimates");
-          sessionStorage.setItem("licl", "1");
-        } else {
-          sessionStorage.setItem("finEstimateKey", row.estimateKey);
-          this.$router.push("/monthContractDetail");
-          sessionStorage.setItem("licl", "2");
-        }
+      //   if (row.payType === "annual") {
+      //     sessionStorage.setItem("finAnnualEstimateKey", row.estimateKey);
+      //     this.$router.push("/annualEstimates");
+      //     sessionStorage.setItem("licl", "1");
+      //   } else {
+      //     sessionStorage.setItem("finMonthEstimateKey", row.estimateKey);
+      //     this.$router.push("/monthContractDetail");
+      //     sessionStorage.setItem("licl", "2");
+      //   }
       // } else if (sessionStorage.getItem("enterType") === "out") {
       //   this.$router.push("/separateEstimateDetial");
       // } else if (sessionStorage.getItem("enterType") === "jsyear") {
       //   this.$router.push("/yearActuarial");
       //   sessionStorage.setItem("licl", "4");
       // } else if (sessionStorage.getItem("enterType") === "jsmonth") {
-      //   this.$router.push("/monthActuarial");
-      //   sessionStorage.setItem("licl", "5");
+      sessionStorage.setItem("jsMonthEstimateKey", row.estimateKey);
+      this.$router.push("/monthActuarial");
+      sessionStorage.setItem("licl", "5");
       // }
     },
     handleBack() {

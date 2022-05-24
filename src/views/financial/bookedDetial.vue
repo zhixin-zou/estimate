@@ -274,7 +274,7 @@ export default {
           estimateKey: sessionStorage.getItem("finEstimateKey"),
           contractKey: sessionStorage.getItem("finContractKey"),
           estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-          accountType: "1",
+          accountType: "0",
         })
         .then((res) => {
           if (res.data.code === "0") {
@@ -318,18 +318,12 @@ export default {
     },
     handleCheck() {
       this.loading = true;
-      // let params =  {
-      //   estimateKey: sessionStorage.getItem("finEstimateKey"),
-      //   contractKey: sessionStorage.getItem("finContractKey"),
-      //   estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-      //   accountType: '1',
-      // }
       $http
         .post(api.ebsInfoPush, {
           estimateKey: sessionStorage.getItem("finEstimateKey"),
           contractKey: sessionStorage.getItem("finContractKey"),
           estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-          accountType: "1",
+          accountType: "0",
         })
         .then((res) => {
           console.log(res);

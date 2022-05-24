@@ -295,7 +295,7 @@ export default {
       sessionStorage.setItem("sepHistoryEstimateKey", row.estimateKey);
       sessionStorage.setItem("sepHistoryEstimateMonth", row.estimateMonth);
       sessionStorage.setItem("sepHistoryContractKey", row.contractKey);
-      this.$router.push({ path: "/viewHistory" });
+      this.$router.push({ path: "/seviewHistory" });
     },
     handleResetClick() {
       this.form = {

@@ -241,7 +241,7 @@ export default {
   // },
   data() {
     return {
-      estimateMonth: sessionStorage.getItem("estimateMonth"),
+      estimateMonth: sessionStorage.getItem("finEstimateMonth"),
       historyShow: sessionStorage.getItem("licl"),
 
       adjustLoading: false,

@@ -18,7 +18,10 @@ import FinancialSearch from "@/views/financialView/financialSearch.vue";
 import SeparateEstimateDetial from "@/views/financial/separateEstimateDetial.vue";
 import YearActuarial from "@/views/actuarial/yearActuarial.vue";
 import MonthActuarial from "@/views/actuarial/monthActuarial.vue";
-import FsBookedDetial from "@/views/financialView/fsBookedDetial.vue"
+import FsBookedDetial from "@/views/financialView/fsBookedDetial.vue";
+import SeViewHistory from "@/views/financial/seviewHistory.vue";
+import JsnViewHistory from "@/views/financial/jsnViewHistory.vue";
+import JsyViewHistory from "@/views/financial/jsyViewHistory.vue";
 
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
 
@@ -93,12 +96,26 @@ const routes = [
   {
     path: "/calculationResult",
     component: CalculationResult,
-  },  {
+  },
+  {
     path: "/fsBookedDetial",
     component: FsBookedDetial,
-  },  {
+  },
+  {
     path: "/seBookedDetial",
     component: SeBookedDetial,
+  },
+  {
+    path: "/seviewHistory",
+    component: SeViewHistory,
+  },
+  {
+    path: "/jsnViewHistory",
+    component: JsnViewHistory,
+  },
+  {
+    path: "/jsyViewHistory",
+    component: JsyViewHistory,
   },
   {
     path: "/404",

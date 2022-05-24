@@ -524,7 +524,7 @@ export default {
       $http
         .post(api.orpIabContractFeeQuery, {
           estimateKey: params,
-          calculat_month: getYearMonthDate(this.cMonth),
+          calculatMonth: getYearMonthDate(this.cMonth),
         })
         .then((res) => {
           console.log(
