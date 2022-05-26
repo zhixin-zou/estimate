@@ -371,6 +371,7 @@ export default {
       return kiloSplit(data);
     },
     handleSearchClick() {
+      this.currentPage = 1
       this.form.estimateMonth = "";
       if (this.form.estimateMonth === "") {
         this.loading = true;

@@ -76,7 +76,6 @@
         :data="currentPageData"
         border
         style="width: 100%"
-        ref="listBox"
       >
         <el-table-column prop="contractNo" label="合同号"> </el-table-column>
         <el-table-column prop="sessionName" label="合同session">
@@ -101,6 +100,87 @@
               <el-option value="monthly">monthly</el-option>
             </el-select>
           </template>
+        </el-table-column>
+        <el-table-column prop="epi" label="预估保费">
+          <template slot-scope="scope">
+            <span>{{ kiloSplitData(scope.row.epi) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="commissionRate" label="手续费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.commissionRate) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="brokerageRate" label="经纪费比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.brokerageRate) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="cedentRate" label="分出比例">
+          <template slot-scope="scope">
+            <span>{{ toPercentData(scope.row.cedentRate) }}</span>
+          </template></el-table-column
+        >
+        <el-table-column prop="estimateStatus" label="预估状态">
+          <template slot-scope="scope">
+            <span>{{ getDictData(scope.row.estimateStatus) }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" width="150">
+          <template slot-scope="scope">
+            <el-button
+              @click="handleFinancialClick(scope.row)"
+              type="text"
+              size="small"
+              v-show="scope.row.payType !== ''"
+              >预估计算</el-button
+            >
+            <el-button
+              @click="handleHistoryClick(scope.row)"
+              type="text"
+              size="small"
+              >历史预估</el-button
+            >
+            <!-- <el-button
+              @click="handleAdjustType(scope.row)"
+              type="text"
+              size="small"
+              >调整缴费方式</el-button
+            > -->
+          </template>
+        </el-table-column>
+      </el-table>
+            <el-table
+            v-show="false"
+        :data="currentPageData"
+        border
+        style="width: 100%"
+        ref="listBox"
+      >
+        <el-table-column prop="contractNo" label="合同号"> </el-table-column>
+        <el-table-column prop="sessionName" label="合同session">
+        </el-table-column>
+        <el-table-column prop="contractType" label="合同类型">
+        </el-table-column>
+        <el-table-column prop="planName" label="主险种"> </el-table-column>
+        <el-table-column prop="productName" label="产品名称"> </el-table-column>
+        <el-table-column prop="cedentName" label="分入公司"> </el-table-column>
+        <el-table-column prop="effectivePeriodBegin" label="开始日期">
+        </el-table-column>
+        <el-table-column prop="effectivePeriodEnd" label="结束日期">
+        </el-table-column>
+        <el-table-column prop="payType" label="缴费方式">
+          <!-- <template slot-scope="scope">
+            <el-select
+              v-model="scope.row.payType"
+              @change="handleTypeChange(scope)"
+              :disabled="scope.row.payType !== ''"
+            >
+              <el-option value="annual">annual</el-option>
+              <el-option value="monthly">monthly</el-option>
+            </el-select>
+          </template> -->
         </el-table-column>
         <el-table-column prop="epi" label="预估保费">
           <template slot-scope="scope">
@@ -223,6 +303,7 @@ export default {
       console.log(row);
     },
     handleSearchClick() {
+      this.currentPage = 1
       this.loading = true;
       console.log(this.form, "form");
       $http

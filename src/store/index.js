@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-// import login from './login'
+import login from './login'
 import test from "./test";
 import actuarial from "./actuarial";
 
@@ -10,5 +10,6 @@ export default new Vuex.Store({
   modules: {
     test,
     actuarial,
+    login
   },
 });

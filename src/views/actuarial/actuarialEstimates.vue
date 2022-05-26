@@ -298,7 +298,7 @@ export default {
     },
     handleSearchClick() {
       this.loading = true;
-
+      this.currentPage = 1;
       // api.contractListQuery
       $http
         .post("/estimate/actuarial/contractListQuery", this.form)

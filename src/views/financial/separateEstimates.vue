@@ -206,6 +206,7 @@ export default {
       console.log(row);
     },
     handleSearchClick() {
+      this.currentPage = 1
       console.log(this.form, "form");
       this.loading = true;
 

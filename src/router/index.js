@@ -25,7 +25,7 @@ import JsyViewHistory from "@/views/financial/jsyViewHistory.vue";
 
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
 
-// import store from '@/store'
+import store from '@/store'
 // import { Message } from 'element-ui'
 // const CustomAppView = () =>
 //     import ('@/views/CustomAppView')
@@ -35,7 +35,7 @@ Vue.use(Router);
 const routes = [
   {
     path: "/",
-    component: FinancialForecasts,
+    component: FinancialSearch,
     meta: {
       title: "test",
       requireAuth: false,
@@ -187,34 +187,35 @@ const router = new Router({ mode: "hash", routes });
 // Router.prototype.push = function push(location) {
 //         return originalPush.call(this, location).catch(err => err)
 //     }
-// router.beforeEach((to, from, next) => {
-//     // const path = to.matched[0].path
-//     // store.dispatch('common/getDict')
-//     // store
-//     //     .dispatch('login/getUserInfo')
-//     //     .then(() => {
-//     //         store.dispatch('login/getUserPermissionList').then(() => {
-//     //             if (!to.meta.requireAuth) {
-//     //                 next()
-//     //                 return
-//     //             }
+router.beforeEach((to, from, next) => {
+  console.log(11111111111111111122222222222223333333333333333333333)
+    // const path = to.matched[0].path
+    // store.dispatch('common/getDict')
+    // store
+    //     .dispatch('login/getUserInfo')
+    //     .then(() => {
+            store.dispatch('login/getUserPermissionList').then(() => {
+                if (!to.meta.requireAuth) {
+                    next()
+                    return
+                }
 
-//     //             if (store.getters['login/hasRoutePermission'](path)) {
-//     //                 next()
-//     //             } else {
-//     //                 next('/forbidden')
-//     //             }
-//     //         })
-//     //         const account = store.state.login.userInfo.ename
-//     //         if (!store.state.login.userRole) {
-//     //             store.dispatch('login/viewUser', account).then(() => {
-//     //                 store.dispatch('common/getDict')
-//     //             })
-//     //         }
-//     //     })
-//     //     .catch(() => {
-//     //         Message.error('用户权限获取失败')
-//     //     })
-// })
+                // if (store.getters['login/hasRoutePermission'](path)) {
+                //     next()
+                // } else {
+                //     next('/forbidden')
+                // }
+            })
+            // const account = store.state.login.userInfo.ename
+            // if (!store.state.login.userRole) {
+            //     store.dispatch('login/viewUser', account).then(() => {
+            //         store.dispatch('common/getDict')
+            //     })
+            // }
+        // })
+        // .catch(() => {
+        //     Message.error('用户权限获取失败')
+        // })
+})
 
 export default router;

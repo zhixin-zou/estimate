@@ -796,15 +796,15 @@ export default {
         }
       });
 
-      allHeaderObj.calculatedEPI = sumHeaderObjSum;
-      sumHeaderObj.calculatedEPI = premiumHeaderObjSum;
-      premiumHeaderObj.calculatedEPI = allHeaderObjSum;
-      originEPIHeaderObj.calculatedEPI = originEPIHeaderObjSum;
-      manualAdjustEPIHeaderObj.calculatedEPI = manualAdjustEPIHeaderObjSum;
-      workSheetAmountHeader.calculatedEPI = workSheetAmountHeaderSum;
-      workSheetAdjustEPIHeader.calculatedEPI = workSheetAdjustEPIHeaderSum;
-      actuarialAmountHeader.calculatedEPI = actuarialAmountHeaderSum;
-      calculatedEPIHeader.calculatedEPI = calculatedEPIHeaderSum;
+      allHeaderObj.calculatedEPI = sumHeaderObjSum.toFixed(2);
+      sumHeaderObj.calculatedEPI = premiumHeaderObjSum.toFixed(2);
+      premiumHeaderObj.calculatedEPI = allHeaderObjSum.toFixed(2);
+      originEPIHeaderObj.calculatedEPI = originEPIHeaderObjSum.toFixed(2);
+      manualAdjustEPIHeaderObj.calculatedEPI = manualAdjustEPIHeaderObjSum.toFixed(2);
+      workSheetAmountHeader.calculatedEPI = workSheetAmountHeaderSum.toFixed(2);
+      workSheetAdjustEPIHeader.calculatedEPI = workSheetAdjustEPIHeaderSum.toFixed(2);
+      actuarialAmountHeader.calculatedEPI = actuarialAmountHeaderSum.toFixed(2);
+      calculatedEPIHeader.calculatedEPI = calculatedEPIHeaderSum.toFixed(2);
       console.log(
         sumObj,
         originEPIObj,
