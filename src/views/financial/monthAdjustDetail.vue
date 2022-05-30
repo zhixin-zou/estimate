@@ -1,5 +1,8 @@
 <template>
   <div class="monthAdjustDetial">
+    <div class="yearAdjustDetailHeader">
+      <el-button size="medium" @click="handleBack">返回</el-button>
+    </div>
     <div
       class="separateInfo"
       v-for="(element, index) in monthAdjustDetailList"
@@ -82,6 +85,9 @@ export default {
         });
       // let epiSplitInfo =
       // this.monthAdjustDetailList = data.data.monthAdjustDetail;
+    },
+    handleBack() {
+      this.$router.go(-1);
     },
     dataProcess(epiSplitInfo) {
       // 横向时间处理
@@ -214,7 +220,7 @@ export default {
       });
       this.EPIData = epiSplitInfo.epiSplitList;
       // 合计累计预估加实际处理
- console.log(epiSplitInfo.epiSplitSumList, "??????????????????????");
+      console.log(epiSplitInfo.epiSplitSumList, "??????????????????????");
       let epiSplitSumList = epiSplitInfo.epiSplitSumList;
       let sumHeaderObj = cumulativeAmount;
       let premiumHeaderObj = totalPremiumObj;
@@ -324,9 +330,11 @@ export default {
       sumHeaderObj.calculatedEPI = premiumHeaderObjSum.toFixed(2);
       premiumHeaderObj.calculatedEPI = allHeaderObjSum.toFixed(2);
       originEPIHeaderObj.calculatedEPI = originEPIHeaderObjSum.toFixed(2);
-      manualAdjustEPIHeaderObj.calculatedEPI = manualAdjustEPIHeaderObjSum.toFixed(2);
+      manualAdjustEPIHeaderObj.calculatedEPI =
+        manualAdjustEPIHeaderObjSum.toFixed(2);
       workSheetAmountHeader.calculatedEPI = workSheetAmountHeaderSum.toFixed(2);
-      workSheetAdjustEPIHeader.calculatedEPI = workSheetAdjustEPIHeaderSum.toFixed(2);
+      workSheetAdjustEPIHeader.calculatedEPI =
+        workSheetAdjustEPIHeaderSum.toFixed(2);
       actuarialAmountHeader.calculatedEPI = actuarialAmountHeaderSum.toFixed(2);
       calculatedEPIHeader.calculatedEPI = calculatedEPIHeaderSum.toFixed(2);
       console.log(
@@ -394,4 +402,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.monthAdjustDetial {
+  .yearAdjustDetailHeader {
+    float: right;
+    margin-bottom: 20px;
+  }
+}
+</style>

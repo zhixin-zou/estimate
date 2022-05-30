@@ -3,7 +3,7 @@ module.exports = {
   publicPath: "/",
   // build目录
   outputDir: "dist",
-  indexPath: 'financialSearch.html',
+  indexPath: 'financialForecasts.html',
   devServer: {
     // clientLogLevel: 'warning',
     // historyApiFallback: true,

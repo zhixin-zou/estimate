@@ -278,29 +278,29 @@ export default {
   },
   methods: {
     init() {
-      $http
-        .post(api.ebsInfoQuery, {
-          estimateKey: sessionStorage.getItem("finEstimateKey"),
-          contractKey: sessionStorage.getItem("finContractKey"),
-          estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-          accountType: "0",
-        })
-        .then((res) => {
-          if (res.data.code === "0") {
-            console.log(res, "res");
-            this.EBSSummaryForm = res.data.data.ebsSummary;
-            this.listData = res.data.data.ebsDetail;
-            this.listData.forEach((item) => {
-              console.log(item);
-              if (item.updateFlag == "Y") {
-                this.canEdit = false;
-              }
-            });
-          } else {
-            console.log(res);
-            this.$message.error(res.data.msg);
-          }
-        });
+      let params = {};
+      params = {
+        estimateKey: sessionStorage.getItem("fsallEstimateKey"),
+        contractKey: sessionStorage.getItem("fsallContractKey"),
+        estimateMonth: sessionStorage.getItem("fsallEstimateMonth"),
+        accountType: sessionStorage.getItem("fsaccountType"),
+      };
+      $http.post(api.ebsInfoQuery, params).then((res) => {
+        if (res.data.code === "0") {
+          console.log(res, "res");
+          this.EBSSummaryForm = res.data.data.ebsSummary;
+          this.listData = res.data.data.ebsDetail;
+          this.listData.forEach((item) => {
+            console.log(item);
+            if (item.updateFlag == "Y") {
+              this.canEdit = false;
+            }
+          });
+        } else {
+          console.log(res);
+          this.$message.error(res.data.msg);
+        }
+      });
     },
     handleEditClick() {
       let ebsModifyList = [];
@@ -333,18 +333,20 @@ export default {
     },
     handleCheck() {
       this.loading = true;
+      let params = {
+        estimateKey: sessionStorage.getItem("fsallEstimateKey"),
+        contractKey: sessionStorage.getItem("fsallContractKey"),
+        estimateMonth: sessionStorage.getItem("fsallEstimateMonth"),
+        accountType: sessionStorage.getItem("fsaccountType"),
+      };
+
       $http
-        .post(api.ebsInfoPush, {
-          estimateKey: sessionStorage.getItem("finEstimateKey"),
-          contractKey: sessionStorage.getItem("finContractKey"),
-          estimateMonth: sessionStorage.getItem("finEstimateMonth"),
-          accountType: "0",
-        })
+        .post(api.ebsInfoPush, params)
         .then((res) => {
           console.log(res);
           if (res.data.code === "0") {
             this.$message.success("成功");
-            this.finished = true
+            this.finished = true;
             // this.$router.go(-1);
           } else {
             this.$message.error(res.data.msg);

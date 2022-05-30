@@ -355,7 +355,7 @@ export default {
       $http
         .post(api.summaryAllocatCalculat, {
           classCode: this.classCode,
-          estimateMonth: getYearMonthDate(this.estimateMonth),
+          estimateMonth: this.estimateMonth === '' ? '' : getYearMonthDate(this.estimateMonth),
         })
         .then((res) => {
           this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;

@@ -145,10 +145,17 @@
     </div>
     <!-- <fs-list-panel :columns="columns" :listData="listData"> </fs-list-panel> -->
     <div class="bookDetialButton" v-if="historyShow !== '0'">
-      <el-button :loading="loading" plain @click="handleCheck"
+      <el-button
+        :loading="loading"
+        plain
+        @click="handleCheck"
+        :disabled="finished"
         >确认入账</el-button
       >
-      <el-button :loading="editLoading" @click="handleEditClick"
+      <el-button
+        :loading="editLoading"
+        @click="handleEditClick"
+        :disabled="canEdit"
         >修改</el-button
       >
     </div>
@@ -265,6 +272,8 @@ export default {
       ],
       listData: [],
       btTitle: "编辑",
+      finished: false,
+      canEdit: true,
     };
   },
   methods: {
@@ -281,6 +290,12 @@ export default {
             console.log(res, "res");
             this.EBSSummaryForm = res.data.data.ebsSummary;
             this.listData = res.data.data.ebsDetail;
+            this.listData.forEach((item) => {
+              console.log(item);
+              if (item.updateFlag == "Y") {
+                this.canEdit = false;
+              }
+            });
           } else {
             console.log(res);
             this.$message.error(res.data.msg);
@@ -331,6 +346,7 @@ export default {
           console.log(res);
           if (res.data.code === "0") {
             this.$message.success("成功");
+            this.finished = true;
             // this.$router.go(-1);
           } else {
             this.$message.error(res.data.msg);

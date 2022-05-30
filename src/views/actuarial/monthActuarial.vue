@@ -745,6 +745,8 @@ export default {
           this.feeInfoList[this.feeIndex].discounting;
         this.feeInfoList[k].retroDacRate =
           this.feeInfoList[this.feeIndex].retroDacRate;
+                this.feeInfoList[k].cedentRate =
+          this.feeInfoList[this.feeIndex].cedentRate;
         this.feeInfoList[k].adjustedRiskMarginFactor =
           this.feeInfoList[this.feeIndex].adjustedRiskMarginFactor;
       }

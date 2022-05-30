@@ -399,14 +399,14 @@ export default {
     },
     handleSearchAll() {
       if (this.form.estimateMonth !== "") {
-        sessionStorage.setItem("fsallEstimateKey", ""),
+          sessionStorage.setItem("fsallEstimateKey", ""),
           sessionStorage.setItem("fsallContractKey", ""),
           sessionStorage.setItem(
             "fsallEstimateMonth",
             getYearMonthDate(this.form.estimateMonth)
           ),
-          sessionStorage.setItem("accountType", ""),
-          this.$router.push({ path: "/bookedDetial", query: { type: 4 } });
+          sessionStorage.setItem("fsaccountType", ""),
+          this.$router.push('/fsAllBookedDetial');
       } else {
         this.$message.warning("请输入做账月份");
       }
@@ -425,7 +425,7 @@ export default {
       sessionStorage.setItem("fsEstimateKey", row.estimateKey);
       sessionStorage.setItem("fsEstimateMonth", this.form.estimateMonth);
       sessionStorage.setItem("fsContractKey", row.contractKey);
-      sessionStorage.setItem("accountType", "0");
+      sessionStorage.setItem("fsaccountType", "0");
       sessionStorage.removeItem("bookDetialHistory");
       this.$router.push({ path: "/fsBookedDetial" });
     },
@@ -433,7 +433,7 @@ export default {
       sessionStorage.setItem("fsEstimateKey", row.estimateKey);
       sessionStorage.setItem("fsEstimateMonth", this.form.estimateMonth);
       sessionStorage.setItem("fsContractKey", row.contractKey);
-      sessionStorage.setItem("accountType", "1");
+      sessionStorage.setItem("fsaccountType", "1");
       sessionStorage.removeItem("bookDetialHistory");
 
       this.$router.push({ path: "/fsBookedDetial"});
@@ -442,7 +442,7 @@ export default {
       sessionStorage.setItem("fsEstimateKey", row.estimateKey);
       sessionStorage.setItem("fsEstimateMonth", this.form.estimateMonth);
       sessionStorage.setItem("fsContractKey", row.contractKey);
-      sessionStorage.setItem("accountType", "");
+      sessionStorage.setItem("fsaccountType", "");
       sessionStorage.setItem("bookDetialHistory", "0");
       this.$router.push({ path: "/fsBookedDetial" });
     },
