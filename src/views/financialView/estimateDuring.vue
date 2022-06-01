@@ -1,5 +1,9 @@
 <template>
-  <div></div>
+  <div>
+    <div class="duringHeader">
+      
+    </div>
+  </div>
 </template>
 
 <script>

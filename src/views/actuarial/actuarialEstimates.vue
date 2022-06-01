@@ -345,13 +345,13 @@ export default {
         sessionStorage.setItem("jsNestimateKey", row.estimateKey);
         sessionStorage.setItem("jsNestimateMonth", row.estimateMonth);
         sessionStorage.setItem("jsNcontractKey", row.contractKey);
-        this.$router.push({ path: "/viewHistory", query: { type: 3 } });
+        this.$router.push({ path: "/jsnViewHistory" });
       } else {
         sessionStorage.setItem("enterType", "jsmonth");
         sessionStorage.setItem("jsYestimateKey", row.estimateKey);
         sessionStorage.setItem("jsYestimateMonth", row.estimateMonth);
         sessionStorage.setItem("jsYcontractKey", row.contractKey);
-        this.$router.push({ path: "/viewHistory", query: { type: 4 } });
+        this.$router.push({ path: "/jsYViewHistory" });
       }
     },
     // 合同拆分

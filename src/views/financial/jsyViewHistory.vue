@@ -85,7 +85,7 @@ export default {
       params = sessionStorage.getItem("jsYcontractKey");
 
       $http
-        .post(api.estimateHistoryQuery, {
+        .post(api.actuarialHistoryQuery, {
           contractKey: params,
         })
         .then((res) => {

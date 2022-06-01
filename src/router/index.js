@@ -23,6 +23,7 @@ import FsAllBookedDetial from "@/views/financialView/fsAllBookedDetial.vue";
 import SeViewHistory from "@/views/financial/seviewHistory.vue";
 import JsnViewHistory from "@/views/financial/jsnViewHistory.vue";
 import JsyViewHistory from "@/views/financial/jsyViewHistory.vue";
+import AuditLog from "@/views/financialView/auditLog.vue"
 
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
 
@@ -51,6 +52,18 @@ const routes = [
     component: SeparateEstimates,
   },
   {
+    path: "/actuarialEstimates",
+    component: ActuarialEstimates,
+  },
+  {
+    path: "/financialSearch",
+    component: FinancialSearch,
+  },
+  {
+    path: "/auditLog",
+    component: AuditLog,
+  },
+  {
     path: "/annualEstimates",
     component: AnnualEstimates,
   },
@@ -71,16 +84,8 @@ const routes = [
     component: MonthContractDetail,
   },
   {
-    path: "/actuarialEstimates",
-    component: ActuarialEstimates,
-  },
-  {
     path: "/monthAdjustDetail",
     component: MonthAdjustDetail,
-  },
-  {
-    path: "/financialSearch",
-    component: FinancialSearch,
   },
   {
     path: "/separateEstimateDetial",

@@ -229,6 +229,25 @@
       <el-divider></el-divider>
       <div class="adjustHeader">
         <div class="adjustBox" v-if="historyShow !== '2'">
+          <div class="adjustName"><span>手续费比例：</span></div>
+          <div class="input">
+            <el-input v-model="commRate"></el-input>
+          </div>
+          <div class="adjustName"><span>预付手续费比例：</span></div>
+          <div class="input">
+            <el-input v-model="provCommRate"></el-input>
+          </div>
+          <div class="adjustName"><span>经纪费比例：</span></div>
+          <div class="input">
+            <el-input v-model="brokerageRate"></el-input>
+          </div>
+          <div class="adjustName"><span>分出比例：</span></div>
+          <div class="input">
+            <el-input v-model="cedentRate"></el-input>
+          </div>
+          <br />
+          <div style="height: 30px"></div>
+          <br />
           <div class="adjustName"><span>分入浮动因子：</span></div>
           <div class="input">
             <el-input v-model="iabSlidingScaleAdjustRate"></el-input>
@@ -253,7 +272,7 @@
           >导出</el-button
         >
       </div>
-      <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
+      <el-table :data="lastList" border style="width: 100%; margin-top: 80px">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
         <el-table-column
@@ -487,6 +506,10 @@ export default {
       calculatedFeeList2: [],
       iabSlidingScaleAdjustRate: "",
       orpSlidingScaleAdjustRate: "",
+      commRate: "",
+      provCommRate: "",
+      brokerageRate: "",
+      cedentRate: "",
       commandFlag: "0",
     };
   },
@@ -518,6 +541,10 @@ export default {
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.commRate = res.data.data.contractInfo.commRate;
+            this.provCommRate = res.data.data.contractInfo.provCommRate;
+            this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+            this.cedentRate = res.data.data.contractInfo.cedentRate;
           } else {
             this.$messag.error(res.data.msg);
           }
@@ -800,9 +827,11 @@ export default {
       sumHeaderObj.calculatedEPI = premiumHeaderObjSum.toFixed(2);
       premiumHeaderObj.calculatedEPI = allHeaderObjSum.toFixed(2);
       originEPIHeaderObj.calculatedEPI = originEPIHeaderObjSum.toFixed(2);
-      manualAdjustEPIHeaderObj.calculatedEPI = manualAdjustEPIHeaderObjSum.toFixed(2);
+      manualAdjustEPIHeaderObj.calculatedEPI =
+        manualAdjustEPIHeaderObjSum.toFixed(2);
       workSheetAmountHeader.calculatedEPI = workSheetAmountHeaderSum.toFixed(2);
-      workSheetAdjustEPIHeader.calculatedEPI = workSheetAdjustEPIHeaderSum.toFixed(2);
+      workSheetAdjustEPIHeader.calculatedEPI =
+        workSheetAdjustEPIHeaderSum.toFixed(2);
       actuarialAmountHeader.calculatedEPI = actuarialAmountHeaderSum.toFixed(2);
       calculatedEPIHeader.calculatedEPI = calculatedEPIHeaderSum.toFixed(2);
       console.log(
@@ -882,6 +911,10 @@ export default {
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.commRate = res.data.data.contractInfo.commRate;
+            this.provCommRate = res.data.data.contractInfo.provCommRate;
+            this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+            this.cedentRate = res.data.data.contractInfo.cedentRate;
             this.$message.success("修改成功");
           } else {
             this.$messag.error(res.data.msg);
@@ -949,6 +982,10 @@ export default {
                 res.data.data.contractInfo.iabSlidingScaleAdjustRate;
               this.orpSlidingScaleAdjustRate =
                 res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.commRate = res.data.data.contractInfo.commRate;
+              this.provCommRate = res.data.data.contractInfo.provCommRate;
+              this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+              this.cedentRate = res.data.data.contractInfo.cedentRate;
               this.$message.success("修改成功");
             } else {
               this.$messag.error(res.data.msg);
@@ -1022,6 +1059,10 @@ export default {
                 res.data.data.contractInfo.iabSlidingScaleAdjustRate;
               this.orpSlidingScaleAdjustRate =
                 res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.commRate = res.data.data.contractInfo.commRate;
+              this.provCommRate = res.data.data.contractInfo.provCommRate;
+              this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+              this.cedentRate = res.data.data.contractInfo.cedentRate;
               this.$message.success("修改成功");
               this.commandFlag = "0";
             } else {
@@ -1164,9 +1205,13 @@ export default {
       } else {
         this.adjustLoading = true;
         $http
-          .post(api.monthSlidingScaleRateAdjust, {
+          .post(api.monthRateAdjust, {
             iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
             orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
+            commRate: this.commRate || "",
+            provCommRate: this.provCommRate || "",
+            brokerageRate: this.brokerageRate || "",
+            cedentRate: this.cedentRate || "",
             estimateKey: sessionStorage.getItem("finEstimateKey"),
           })
           .then((res) => {
@@ -1186,6 +1231,10 @@ export default {
                 res.data.data.contractInfo.iabSlidingScaleAdjustRate;
               this.orpSlidingScaleAdjustRate =
                 res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.commRate = res.data.data.contractInfo.commRate;
+              this.provCommRate = res.data.data.contractInfo.provCommRate;
+              this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+              this.cedentRate = res.data.data.contractInfo.cedentRate;
               this.$message.success("修改成功");
             } else {
               this.$message.error(res.data.msg);

@@ -148,6 +148,25 @@
       <el-divider></el-divider>
       <div class="adjustHeader">
         <div class="adjustBox" v-if="historyShow !== '1'">
+          <div class="adjustName"><span>手续费比例：</span></div>
+          <div class="input">
+            <el-input v-model="commRate"></el-input>
+          </div>
+          <div class="adjustName"><span>预付手续费比例：</span></div>
+          <div class="input">
+            <el-input v-model="provCommRate"></el-input>
+          </div>
+          <div class="adjustName"><span>经纪费比例：</span></div>
+          <div class="input">
+            <el-input v-model="brokerageRate"></el-input>
+          </div>
+          <div class="adjustName"><span>分出比例：</span></div>
+          <div class="input">
+            <el-input v-model="cedentRate"></el-input>
+          </div>
+          <br />
+          <div style="height: 30px"></div>
+          <br />
           <div class="adjustName"><span>分入浮动因子：</span></div>
           <div class="input">
             <el-input v-model="iabSlidingScaleAdjustRate"></el-input>
@@ -173,7 +192,7 @@
         >
       </div>
       <!-- {{ this.lastList }} -->
-      <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
+      <el-table :data="lastList" border style="width: 100%; margin-top: 80px">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
         <el-table-column
@@ -412,6 +431,10 @@ export default {
       calculatData: [],
       iabSlidingScaleAdjustRate: "",
       orpSlidingScaleAdjustRate: "",
+      commRate: "",
+      provCommRate: "",
+      brokerageRate: "",
+      cedentRate: "",
     };
   },
 
@@ -437,6 +460,11 @@ export default {
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.commRate = res.data.data.contractInfo.commRate;
+            this.provCommRate = res.data.data.contractInfo.provCommRate;
+            this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+            this.cedentRate = res.data.data.contractInfo.cedentRate;
+            console.log( this.commRate, this.provCommRate, this.brokerageRate, 'this.brokerageRatethis.brokerageRatethis.brokerageRatethis.brokerageRate');
             this.handleFloatChange();
             // console.log(this.lastList, "lastListaaaa");
           } else {
@@ -474,7 +502,7 @@ export default {
             }
           }, 0);
           console.log(sums[index], "sums[index]", index, column.property);
-          if (index == 7 && column.property === 'cumulativeAmount') {
+          if (index == 7 && column.property === "cumulativeAmount") {
             sums[index] = "";
           } else {
             sums[index] = kiloSplit(sums[index].toFixed(2)) + " 元";
@@ -516,6 +544,10 @@ export default {
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.commRate = res.data.data.contractInfo.commRate;
+            this.provCommRate = res.data.data.contractInfo.provCommRate;
+            this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+            this.cedentRate = res.data.data.contractInfo.cedentRate;
             this.handleFloatChange();
             this.$message.success("修改成功");
           } else {
@@ -549,6 +581,10 @@ export default {
               res.data.data.contractInfo.iabSlidingScaleAdjustRate;
             this.orpSlidingScaleAdjustRate =
               res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+            this.commRate = res.data.data.contractInfo.commRate;
+            this.provCommRate = res.data.data.contractInfo.provCommRate;
+            this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+            this.cedentRate = res.data.data.contractInfo.cedentRate;
             this.handleFloatChange();
             this.$message.success("修改成功");
           } else {
@@ -671,9 +707,14 @@ export default {
       } else {
         this.checkLoading = true;
         $http
-          .post(api.yearSlidingScaleRateAdjust, {
+          .post(api.yearRateAdjust, {
             iabSlidingScaleAdjustRate: this.iabSlidingScaleAdjustRate,
             orpSlidingScaleAdjustRate: this.orpSlidingScaleAdjustRate,
+            commRate: this.commRate || '',
+            provCommRate: this.provCommRate || '',
+            brokerageRate: this.brokerageRate || '', 
+            cedentRate: this.cedentRate || '',
+
             estimateKey: sessionStorage.getItem("finEstimateKey"),
           })
           .then((res) => {
@@ -690,6 +731,10 @@ export default {
                 res.data.data.contractInfo.iabSlidingScaleAdjustRate;
               this.orpSlidingScaleAdjustRate =
                 res.data.data.contractInfo.orpSlidingScaleAdjustRate;
+              this.commRate = res.data.data.contractInfo.commRate;
+              this.provCommRate = res.data.data.contractInfo.provCommRate;
+              this.brokerageRate = res.data.data.contractInfo.brokerageRate;
+              this.cedentRate = res.data.data.contractInfo.cedentRate;
               this.handleFloatChange();
               this.$message.success("成功");
 

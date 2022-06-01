@@ -31,7 +31,7 @@ export default {
   // 年缴明细调整
   yearAdjustDetail: "/estimate/finance/yearAdjustDetail",
   // 年缴浮动因子调整
-  yearSlidingScaleRateAdjust: "/estimate/finance/yearSlidingScaleRateAdjust",
+  yearRateAdjust: "/estimate/finance/yearRateAdjust",
   // 月缴预估明细
   monthContractDetailQuery: "/estimate/finance/monthContractDetailQuery",
   // 月缴预估EPI调整
@@ -41,7 +41,7 @@ export default {
   // 月缴预估Epi历史调整明细
   monthAdjustDetail: "/estimate/finance/monthAdjustDetail",
   // 月缴浮动因子调整
-  monthSlidingScaleRateAdjust: "/estimate/finance/monthSlidingScaleRateAdjust",
+  monthRateAdjust: "/estimate/finance/monthRateAdjust",
 
   // 精算查询
   contractListQuery: "/estimate/actuarial/contractListQuery",
