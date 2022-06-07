@@ -410,10 +410,10 @@ export default {
         //   property: "orpSlidingScaleAdjustRate",
         //   formatter: "toPercent",
         // },
-        // {
-        //   title: "预估月份",
-        //   property: "estimateMonth",
-        // },
+        {
+          title: "预估月份",
+          property: "estimateMonth",
+        },
       ],
       feeColumns: [
         {

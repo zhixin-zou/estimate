@@ -56,6 +56,16 @@
             >
             </el-date-picker
           ></el-form-item>
+          <el-form-item label="获取非0EPI记录">
+            <el-switch
+              v-model="form.ifNotZero"
+              active-color="#ff4949"
+              inactive-color="#13ce66"
+              active-value="N"
+              inactive-value="Y"
+            >
+            </el-switch
+          ></el-form-item>
         </el-form>
       </div>
 
@@ -180,7 +190,8 @@ export default {
         cedent: "",
         contractTimeBegin: "",
         contractTimeEnd: "",
-        estimateMonth: ""
+        estimateMonth: "",
+        ifNotZero: "Y",
       },
       currentPageData: [],
       tableData: [],
@@ -231,6 +242,7 @@ export default {
           this.form.estimateMonth === ""
             ? ""
             : getYearMonthDate(this.form.estimateMonth),
+        ifNotZero: this.form.ifNotZero,
       };
       if (this.form.estimateMonth != "") {
         params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
@@ -334,6 +346,8 @@ export default {
         cedent: "",
         contractTimeBegin: "",
         contractTimeEnd: "",
+        estimateMonth: "",
+        ifNotZero: "Y",
       };
     },
   },

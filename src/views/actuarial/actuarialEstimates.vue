@@ -47,6 +47,25 @@
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
+          <el-form-item label="预估月份">
+            <el-date-picker
+              v-model="form.estimateMonth"
+              type="month"
+              placeholder="选择月"
+              style="width: 100%"
+            >
+            </el-date-picker
+          ></el-form-item>
+          <el-form-item label="获取非0EPI记录">
+            <el-switch
+              v-model="form.ifNotZero"
+              active-color="#ff4949"
+              inactive-color="#13ce66"
+              active-value="N"
+              inactive-value="Y"
+            >
+            </el-switch
+          ></el-form-item>
         </el-form>
       </div>
 
@@ -207,7 +226,7 @@
 
 <script>
 import { $http } from "@/utils/request";
-import { kiloSplit, toPercent } from "@/utils/utils";
+import { kiloSplit, toPercent, getYearMonthDate } from "@/utils/utils";
 import { getText } from "@/utils/dict.js";
 import api from "@/utils/api";
 import * as XLSX from "xlsx";
@@ -230,6 +249,8 @@ export default {
         cedent: "",
         contractTimeBegin: "",
         contractTimeEnd: "",
+        estimateMonth: "",
+        ifNotZero: "Y",
       },
       currentPageData: [],
       tableData: [],
@@ -248,7 +269,7 @@ export default {
   methods: {
     // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
-      $http.post(api.productListQuery).then((res) => {
+      $http.post(api.productListQuery, {}).then((res) => {
         this.productList = res.data.data.productList;
         console.log(
           this.productList,
@@ -301,8 +322,27 @@ export default {
       this.loading = true;
       this.currentPage = 1;
       // api.contractListQuery
+      let params = {
+        contractType: this.form.contractType,
+        contractNoBegin: this.form.contractNoBegin,
+        contractNoEnd: this.form.contractNoEnd,
+        cedent: this.form.cedent,
+        contractTimeBegin: this.form.contractTimeBegin,
+        contractTimeEnd: this.form.contractTimeEnd,
+        estimateMonth:
+          this.form.estimateMonth === ""
+            ? ""
+            : getYearMonthDate(this.form.estimateMonth),
+        ifNotZero: this.form.ifNotZero,
+      };
+      if (this.form.estimateMonth != "") {
+        params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
+      }
+      if (this.form.estimateMonth === null) {
+        params.estimateMonth = "";
+      }
       $http
-        .post("/estimate/actuarial/contractListQuery", this.form)
+        .post("/estimate/actuarial/contractListQuery", params)
         .then((res) => {
           // this.$message.success(res.data.msg);
           this.tableData = res.data.data.contractList;
@@ -407,6 +447,8 @@ export default {
           if (res.data.code === "0") {
             this.contractBreak = false;
             this.$message.success("成功");
+          } else {
+            this.$message.error(res.data.msg);
           }
         })
         .finally(() => {

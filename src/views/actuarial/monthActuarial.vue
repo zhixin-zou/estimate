@@ -264,7 +264,12 @@
       <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
-        <el-table-column prop="calculatItem" label="计算项目" width="200" fixed="left">
+        <el-table-column
+          prop="calculatItem"
+          label="计算项目"
+          width="200"
+          fixed="left"
+        >
         </el-table-column>
         <el-table-column prop="currencyCode" label="币种"> </el-table-column>
         <el-table-column
@@ -405,10 +410,10 @@ export default {
         //   property: "orpSlidingScaleAdjustRate",
         //   formatter: "toPercent",
         // },
-        // {
-        //   title: "预估月份",
-        //   property: "estimateMonth",
-        // },
+        {
+          title: "预估月份",
+          property: "estimateMonth",
+        },
       ],
       feeColumns: [
         {
@@ -678,8 +683,7 @@ export default {
     },
     handleBack() {
       // this.$router.go(-1);
-      this.$router.push('/actuarialEstimates')
-      
+      this.$router.push("/actuarialEstimates");
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -745,7 +749,7 @@ export default {
           this.feeInfoList[this.feeIndex].discounting;
         this.feeInfoList[k].retroDacRate =
           this.feeInfoList[this.feeIndex].retroDacRate;
-                this.feeInfoList[k].cedentRate =
+        this.feeInfoList[k].cedentRate =
           this.feeInfoList[this.feeIndex].cedentRate;
         this.feeInfoList[k].adjustedRiskMarginFactor =
           this.feeInfoList[this.feeIndex].adjustedRiskMarginFactor;
