@@ -47,6 +47,15 @@
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
+          <el-form-item label="预估月份">
+            <el-date-picker
+              v-model="form.estimateMonth"
+              type="month"
+              placeholder="选择月"
+              style="width: 100%"
+            >
+            </el-date-picker
+          ></el-form-item>
         </el-form>
       </div>
 
@@ -72,11 +81,7 @@
         @click="handleExport('listBox', '导出信息')"
         >导出</el-button
       >
-      <el-table
-        :data="currentPageData"
-        border
-        style="width: 100%"
-      >
+      <el-table :data="currentPageData" border style="width: 100%">
         <el-table-column prop="contractNo" label="合同号"> </el-table-column>
         <el-table-column prop="sessionName" label="合同session">
         </el-table-column>
@@ -126,7 +131,11 @@
             <span>{{ getDictData(scope.row.estimateStatus) }}</span>
           </template>
         </el-table-column>
-
+        <el-table-column prop="estimateMonth" label="预估月份">
+          <template slot-scope="scope">
+            <span>{{ scope.row.estimateMonth }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button
@@ -151,8 +160,8 @@
           </template>
         </el-table-column>
       </el-table>
-            <el-table
-            v-show="false"
+      <el-table
+        v-show="false"
         :data="currentPageData"
         border
         style="width: 100%"
@@ -240,6 +249,7 @@
           @prev-click="prevPage"
           @next-click="nextPage"
           @current-change="handleCurrentChange"
+          :current-page.sync="currentPage"
           :page-size="pageSize"
           :page-sizes="[10, 20, 50, 100, 1000]"
           :total="total"
@@ -259,7 +269,7 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
-import { kiloSplit, toPercent } from "@/utils/utils";
+import { kiloSplit, toPercent, getYearMonthDate } from "@/utils/utils";
 import { getText } from "@/utils/dict.js";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
@@ -274,6 +284,7 @@ export default {
         cedent: "",
         contractTimeBegin: "",
         contractTimeEnd: "",
+        estimateMonth: "",
       },
       currentPageData: [],
       tableData: [],
@@ -303,11 +314,31 @@ export default {
       console.log(row);
     },
     handleSearchClick() {
-      this.currentPage = 1
       this.loading = true;
+      this.currentPage = 1;
+      let params = {
+        contractType: this.form.contractType,
+        contractNoBegin: this.form.contractNoBegin,
+        contractNoEnd: this.form.contractNoEnd,
+        cedent: this.form.cedent,
+        contractTimeBegin: this.form.contractTimeBegin,
+        contractTimeEnd: this.form.contractTimeEnd,
+        estimateMonth:
+          this.form.estimateMonth === "" || null
+            ? ""
+            : getYearMonthDate(this.form.estimateMonth),
+      };
+      if (this.form.estimateMonth !== "") {
+        params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
+      }
+      if (this.form.estimateMonth === null) {
+        params.estimateMonth = "";
+      }
+      console.log(this.form.estimateMonth, "this.form.estimateMonth", "");
+
       console.log(this.form, "form");
       $http
-        .post("/estimate/finance/contractListQuery", this.form)
+        .post("/estimate/finance/contractListQuery", params)
         .then((res) => {
           // this.$message.success(res.data.msg);
           if (res.data.code === "0") {
@@ -323,6 +354,8 @@ export default {
             this.totalPage = Math.ceil(this.total / this.pageSize);
             this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
             console.log(this.totalPage, "this.totalPage");
+            console.log(this.currentPage, "this.currentPage");
+
             this.setCurrentPageData();
           } else {
             this.$message.error(res.data.msg);
@@ -420,11 +453,23 @@ export default {
       // sessionStorage.setItem("contractKey", row.contractKey);
       console.log(row);
       if (row.payType === "annual") {
+        if (row.estimateStatus === "3") {
+          sessionStorage.setItem("licl", "1");
+        } else {
+          sessionStorage.removeItem("licl");
+        }
+
         sessionStorage.setItem("finEstimateKey", row.estimateKey);
         sessionStorage.setItem("finEstimateMonth", row.estimateMonth);
         sessionStorage.setItem("finContractKey", row.contractKey);
         this.$router.push("/annualEstimates");
       } else if (row.payType === "monthly") {
+        if (row.estimateStatus === "3") {
+          sessionStorage.setItem("licl", "2");
+        } else {
+          sessionStorage.removeItem("licl");
+        }
+
         sessionStorage.setItem("finEstimateKey", row.estimateKey);
         sessionStorage.setItem("finEstimateMonth", row.estimateMonth);
         sessionStorage.setItem("finContractKey", row.contractKey);
@@ -437,7 +482,7 @@ export default {
       sessionStorage.setItem("finHistoryEstimateMonth", row.estimateMonth);
       sessionStorage.setItem("finHistoryContractKey", row.contractKey);
       // if (row.payType === "annual") {
-      this.$router.push({path: "/viewHistory"});
+      this.$router.push({ path: "/viewHistory" });
       // } else {
       //   this.$router.push("/monthHistory");
       // }

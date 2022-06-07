@@ -47,6 +47,15 @@
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
+          <el-form-item label="预估月份">
+            <el-date-picker
+              v-model="form.estimateMonth"
+              type="month"
+              placeholder="选择月"
+              style="width: 100%"
+            >
+            </el-date-picker
+          ></el-form-item>
         </el-form>
       </div>
 
@@ -142,6 +151,7 @@
           @prev-click="prevPage"
           @next-click="nextPage"
           @current-change="handleCurrentChange"
+          :current-page.sync="currentPage"
           :page-size="this.pageSize"
           :page-sizes="[10, 20, 50, 100, 1000]"
           :total="total"
@@ -155,7 +165,7 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
-import { kiloSplit, toPercent } from "@/utils/utils";
+import { kiloSplit, toPercent, getYearMonthDate } from "@/utils/utils";
 import { getText } from "@/utils/dict.js";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
@@ -170,6 +180,7 @@ export default {
         cedent: "",
         contractTimeBegin: "",
         contractTimeEnd: "",
+        estimateMonth: ""
       },
       currentPageData: [],
       tableData: [],
@@ -206,12 +217,29 @@ export default {
       console.log(row);
     },
     handleSearchClick() {
-      this.currentPage = 1
+      this.currentPage = 1;
       console.log(this.form, "form");
       this.loading = true;
-
+      let params = {
+        contractType: this.form.contractType,
+        contractNoBegin: this.form.contractNoBegin,
+        contractNoEnd: this.form.contractNoEnd,
+        cedent: this.form.cedent,
+        contractTimeBegin: this.form.contractTimeBegin,
+        contractTimeEnd: this.form.contractTimeEnd,
+        estimateMonth:
+          this.form.estimateMonth === ""
+            ? ""
+            : getYearMonthDate(this.form.estimateMonth),
+      };
+      if (this.form.estimateMonth != "") {
+        params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
+      }
+      if (this.form.estimateMonth === null) {
+        params.estimateMonth = "";
+      }
       $http
-        .post(api.orpContractListQuery, this.form)
+        .post(api.orpContractListQuery, this.params)
         .then((res) => {
           if (res.data.code === "0") {
             this.tableData = res.data.data.contractList;

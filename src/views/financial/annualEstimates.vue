@@ -192,7 +192,7 @@
         >
       </div>
       <!-- {{ this.lastList }} -->
-      <el-table :data="lastList" border style="width: 100%; margin-top: 80px">
+      <el-table :data="lastList" border :style="historyShow !== '1' ? 'width: 100%; margin-top: 80px' : 'width: 100%; margin-top: 0px'">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
         <el-table-column

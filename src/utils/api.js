@@ -73,4 +73,10 @@ export default {
   ebsInfoPush: "/estimate/finance/ebsInfoPush",
   // 当月汇算class获取
   classListQuery: "/estimate/actuarial/classListQuery",
+  // 审计查询
+  auditListQuery: '/estimate/auditListQuery',
+  // 审计明细查询
+  auditDetailQuery: '/estimate/auditDetailQuery',
+  // 操作方法查询
+  operationTypeQuery: '/estimate/operationTypeQuery'
 };

@@ -64,20 +64,20 @@
         <el-table-column prop="userId" label="操作人"> </el-table-column>
         <el-table-column prop="operationTypeName" label="操作方法"> </el-table-column>
 
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <el-button
-              @click="handleFinancialClick(scope.row)"
+              @click="handleBeforeOperate(scope.row)"
               type="text"
               size="small"
               v-show="scope.row.payType !== ''"
-              >预估计算</el-button
+              >操作前明细</el-button
             >
             <el-button
-              @click="handleHistoryClick(scope.row)"
+              @click="handleAfterOperate(scope.row)"
               type="text"
               size="small"
-              >历史预估</el-button
+              >操作后明细</el-button
             >
             <!-- <el-button
               @click="handleAdjustType(scope.row)"
@@ -146,10 +146,10 @@ export default {
   },
   methods: {
     init() {
-      $http.get("/estimate/partnerQuery").then((res) => {
-        console.log(res, "queryCompany");
-        this.companyList = res.data.data.partnerList;
-      });
+    //   $http.get("/estimate/partnerQuery").then((res) => {
+    //     console.log(res, "queryCompany");
+    //     this.companyList = res.data.data.partnerList;
+    //   });
       this.handleSearchClick();
     },
     onSubmit() {
@@ -163,7 +163,7 @@ export default {
       this.loading = true;
       console.log(this.form, "form");
       $http
-        .post("/estimate/finance/contractListQuery", this.form)
+        .post("auditListQuery", this.form)
         .then((res) => {
           // this.$message.success(res.data.msg);
           if (res.data.code === "0") {
@@ -268,7 +268,7 @@ export default {
         });
       console.log(scope);
     },
-    handleFinancialClick(row) {
+    handleBeforeOperate(row) {
       console.log(row.payType, "row.payTyperow.payTyperow.payType");
       sessionStorage.removeItem("licl");
       // sessionStorage.setItem("estimateKey", row.estimateKey);
@@ -287,7 +287,7 @@ export default {
         this.$router.push("/monthContractDetail");
       }
     },
-    handleHistoryClick(row) {
+    handleAfterOperate(row) {
       sessionStorage.setItem("enterType", "in");
       sessionStorage.setItem("finHistoryEstimateKey", row.estimateKey);
       sessionStorage.setItem("finHistoryEstimateMonth", row.estimateMonth);

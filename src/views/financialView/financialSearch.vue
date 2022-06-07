@@ -241,6 +241,7 @@
           @next-click="nextPage"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
+          :current-page.sync="currentPage"
           :page-size="pageSize"
           :page-sizes="[10, 20, 50, 100, 1000]"
           :total="total"

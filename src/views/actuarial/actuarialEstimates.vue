@@ -143,6 +143,7 @@
           @prev-click="prevPage"
           @next-click="nextPage"
           @current-change="handleCurrentChange"
+          :current-page.sync="currentPage"
           :page-size="this.pageSize"
           :page-sizes="[10, 20, 50, 100, 1000]"
           :total="total"
