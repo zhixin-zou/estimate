@@ -263,6 +263,16 @@ export const getYearMonthDate = (value) => {
   }
   return str;
 };
+/**
+  返回当天的00:00:00秒时间
+  @param {date}
+  @returns {date}
+*/
+export const getYearMonthDayDate = (value) => {
+  value = new Date(value)
+  var str = value.getFullYear() + '-' + (value.getMonth() + 1) + '-' + value.getDate()
+  return new Date(str)
+}
 
 /**
  返回特殊时间格式处理 20180718000000

@@ -24,7 +24,19 @@
           </el-form-item>
 
           <el-form-item label="操作类别">
-            <el-input v-model="form.operationTypeCode"></el-input>
+            <!-- <el-input v-model="form.operationTypeCode"></el-input> -->
+            <el-select
+              v-model="form.operationTypeCode"
+              placeholder="请选择"
+              clearable
+              ><el-option
+                v-for="item in this.operateList"
+                :key="item.operationTypeCode"
+                :label="item.operationTypeName"
+                :value="item.operationTypeCode"
+              >
+              </el-option
+            ></el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -51,18 +63,16 @@
         @click="handleExport('listBox', '导出信息')"
         >导出</el-button
       >
-      <el-table
-        :data="currentPageData"
-        border
-        style="width: 100%"
-      >
-        <el-table-column prop="operationTime" label="操作时间"> </el-table-column>
+      <el-table :data="currentPageData" border style="width: 100%">
+        <el-table-column prop="operationTime" label="操作时间">
+        </el-table-column>
         <el-table-column prop="contractNo" label="操作合同号">
         </el-table-column>
         <el-table-column prop="contractTitle" label="操作合同标题">
         </el-table-column>
         <el-table-column prop="userId" label="操作人"> </el-table-column>
-        <el-table-column prop="operationTypeName" label="操作方法"> </el-table-column>
+        <el-table-column prop="operationTypeName" label="操作方法">
+        </el-table-column>
 
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
@@ -114,8 +124,10 @@
 
 <script>
 import { $http } from "@/utils/request";
+// import { mapState, mapMutations } from "vuex";
+
 import api from "@/utils/api";
-import { kiloSplit, toPercent } from "@/utils/utils";
+import { kiloSplit, toPercent, getYearMonthDayDate } from "@/utils/utils";
 import { getText } from "@/utils/dict.js";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
@@ -124,12 +136,10 @@ export default {
   data() {
     return {
       form: {
-        contractType: "",
-        contractNoBegin: "",
-        contractNoEnd: "",
-        cedent: "",
-        contractTimeBegin: "",
-        contractTimeEnd: "",
+        userId: "",
+        operationDateBegin: "",
+        operationDateEnd: "",
+        operationTypeCode: "",
       },
       currentPageData: [],
       tableData: [],
@@ -142,14 +152,18 @@ export default {
       companyList: [],
       showTypeDialog: false,
       payTypeInfo: "",
+      operateList: [],
     };
   },
+  computed: {
+    // ...mapState("financialView/audit", ["auditLogId"]),
+  },
   methods: {
+    // ...mapMutations("financialView/audit", ["SET_AUDITID"]),
     init() {
-    //   $http.get("/estimate/partnerQuery").then((res) => {
-    //     console.log(res, "queryCompany");
-    //     this.companyList = res.data.data.partnerList;
-    //   });
+      $http.post(api.operationTypeQuery).then((res) => {
+        this.operateList = res.data.data.operationTypeList;
+      });
       this.handleSearchClick();
     },
     onSubmit() {
@@ -159,23 +173,38 @@ export default {
       console.log(row);
     },
     handleSearchClick() {
-      this.currentPage = 1
+      this.currentPage = 1;
       this.loading = true;
       console.log(this.form, "form");
+      let params = {
+        userId: this.form.userId,
+        operationDateBegin: this.form.operationDateBegin,
+        operationDateEnd: this.form.operationDateEnd,
+        operationTypeCode: this.form.operationTypeCode,
+        contractTimeBegin: this.form.contractTimeBegin,
+      };
+      if (this.form.operationDateBegin != "") {
+        params.operationDateBegin = getYearMonthDayDate(
+          this.form.operationDateBegin
+        );
+      }
+      if (this.form.operationDateBegin === null) {
+        params.operationDateBegin = "";
+      }
+      if (this.form.operationDateEnd != "") {
+        params.operationDateEnd = getYearMonthDayDate(
+          this.form.operationDateEnd
+        );
+      }
+      if (this.form.operationDateEnd === null) {
+        params.operationDateEnd = "";
+      }
       $http
-        .post("auditListQuery", this.form)
+        .post(api.auditListQuery, params)
         .then((res) => {
-          // this.$message.success(res.data.msg);
           if (res.data.code === "0") {
-            this.tableData = res.data.data.contractList;
-            // console.log(this.tableData, "tableData");
-            // this.tableData.forEach((item) => {
-            //   item.epi = kiloSplit(item.epi);
-            //   // item.commissionRate = toPercent(item.commissionRate)
-            //   // item.brokerageRate = toPercent(item.brokerageRate)
-            //   // item.cedentRate = toPercent(item.cedentRate)
-            // });
-            this.total = res.data.data.contractList.length;
+            this.tableData = res.data.data.auditList;
+            this.total = res.data.data.auditList.length;
             this.totalPage = Math.ceil(this.total / this.pageSize);
             this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
             console.log(this.totalPage, "this.totalPage");
@@ -253,50 +282,26 @@ export default {
       this.exportBtn(data, filename);
       // console.log(this.$refs.exportTableRef1.$el);
     },
-    handleTypeChange(scope) {
-      $http
-        .post(api.contractPayModeAdjust, {
-          contractKey: scope.row.contractKey,
-          payType: scope.row.payType,
-        })
-        .then((res) => {
-          if (res.data.code === "0") {
-            this.$message.success("缴费类型更改成功");
-          } else {
-            this.$message.error("缴费类型更改失败");
-          }
-        });
-      console.log(scope);
-    },
     handleBeforeOperate(row) {
-      console.log(row.payType, "row.payTyperow.payTyperow.payType");
-      sessionStorage.removeItem("licl");
-      // sessionStorage.setItem("estimateKey", row.estimateKey);
-      // sessionStorage.setItem("estimateMonth", row.estimateMonth);
-      // sessionStorage.setItem("contractKey", row.contractKey);
-      console.log(row);
-      if (row.payType === "annual") {
-        sessionStorage.setItem("finEstimateKey", row.estimateKey);
-        sessionStorage.setItem("finEstimateMonth", row.estimateMonth);
-        sessionStorage.setItem("finContractKey", row.contractKey);
-        this.$router.push("/annualEstimates");
-      } else if (row.payType === "monthly") {
-        sessionStorage.setItem("finEstimateKey", row.estimateKey);
-        sessionStorage.setItem("finEstimateMonth", row.estimateMonth);
-        sessionStorage.setItem("finContractKey", row.contractKey);
-        this.$router.push("/monthContractDetail");
+      // this.SET_AUDITID(row);
+      sessionStorage.setItem("auditLogId", row.auditLogId);
+      sessionStorage.setItem("opreatAudit", "before");
+      if (row.operationTypeCode.includes("year")) {
+        this.$router.push("/auditLog/yearAudit");
+      }
+      if (row.operationTypeCode.includes("month")) {
+        this.$router.push("/auditLog/monthAudit");
       }
     },
     handleAfterOperate(row) {
-      sessionStorage.setItem("enterType", "in");
-      sessionStorage.setItem("finHistoryEstimateKey", row.estimateKey);
-      sessionStorage.setItem("finHistoryEstimateMonth", row.estimateMonth);
-      sessionStorage.setItem("finHistoryContractKey", row.contractKey);
-      // if (row.payType === "annual") {
-      this.$router.push({path: "/viewHistory"});
-      // } else {
-      //   this.$router.push("/monthHistory");
-      // }
+      sessionStorage.setItem("auditLogId", row.auditLogId);
+      sessionStorage.setItem("opreatAudit", "after");
+      if (row.operationTypeCode.includes("year")) {
+        this.$router.push("/auditLog/yearAudit");
+      }
+      if (row.operationTypeCode.includes("month")) {
+        this.$router.push("/auditLog/monthAudit");
+      }
     },
     handleAdjustType(row) {
       this.showTypeDialog = true;
@@ -313,12 +318,10 @@ export default {
     },
     handleResetClick() {
       this.form = {
-        contractType: "",
-        contractNoBegin: "",
-        contractNoEnd: "",
-        cedent: "",
-        contractTimeBegin: "",
-        contractTimeEnd: "",
+        userId: "",
+        operationDateBegin: "",
+        operationDateEnd: "",
+        operationTypeCode: "",
       };
     },
   },

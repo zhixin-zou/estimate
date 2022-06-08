@@ -78,5 +78,9 @@ export default {
   // 审计明细查询
   auditDetailQuery: '/estimate/auditDetailQuery',
   // 操作方法查询
-  operationTypeQuery: '/estimate/operationTypeQuery'
+  operationTypeQuery: '/estimate/operationTypeQuery',
+  // 获取期间信息
+  periodInfoQuery: '/estimate/finance/periodInfoQuery',
+  // 期间切换
+  periodSwitch: '/estimate/finance/periodSwitch'
 };
