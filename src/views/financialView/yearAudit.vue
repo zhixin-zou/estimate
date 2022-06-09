@@ -272,7 +272,7 @@
           fixed="left"
         >
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
+        <el-table-column prop="currencyCode" label="币种" width="100"> </el-table-column>
         <el-table-column
           width="150"
           v-for="(item, index) in calculatedFeeList"
@@ -528,6 +528,7 @@ export default {
             res = JSON.parse(datas);
           }
           console.log(res, "resres");
+          sessionStorage.setItem('jsYAuditEstimateKey', res.data.contractInfo.estimateKey)
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.contractInfo);

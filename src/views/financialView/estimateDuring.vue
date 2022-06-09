@@ -5,7 +5,7 @@
         <span>当前期间:</span> <span>{{ nowDate }}</span>
       </div>
       <div class="duringright">
-        <el-button size="mini">切换至下一期间</el-button>
+        <el-button size="mini" @click="handleNext()" :disabled="nextDuring">切换至下一期间</el-button>
       </div>
     </div>
     <el-divider></el-divider>
@@ -31,6 +31,15 @@
           prop="checkResult"
           label="检查结果"
         >
+          <template slot-scope="scope">
+            <el-select
+              v-model="scope.row.checkResult"
+              @change="handleTypeChange(scope)"
+            >
+              <el-option value="通过">通过</el-option>
+              <el-option value="不通过">不通过</el-option>
+            </el-select>
+          </template>
         </el-table-column>
         <el-table-column prop="estimateMonth" label="预估期间">
         </el-table-column>
@@ -80,6 +89,7 @@ export default {
         },
       ],
       duringList: [],
+      nextDuring: false
     };
   },
   methods: {
@@ -90,6 +100,18 @@ export default {
         this.nowDate = res.data.data.periodCheckList[0].estimateMonth
       });
     },
+    handleNext () {
+      $http.post(api.periodSwitch, {
+        periodCheckList: this.duringList,
+        estimateMonth: this.nowDate
+      }).then(res => {
+        if (res.data.code === '0') {
+          this.nextDuring = true
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
+    }
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());

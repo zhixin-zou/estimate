@@ -271,7 +271,7 @@
           fixed="left"
         >
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
+        <el-table-column prop="currencyCode" label="币种" width="100"> </el-table-column>
         <el-table-column
           width="150"
           v-for="(item, index) in calculatedFeeList"
@@ -498,7 +498,7 @@ export default {
       contractInfoList: [],
       feeInfoList: [],
 
-      feeInfoListCopy: JSON.parse(localStorage.getItem("feeInfoListCopy")),
+      // feeInfoListCopy: JSON.parse(localStorage.getItem("feeInfoListCopy")),
 
       cedentList: [],
       uprRateList: [],
@@ -530,12 +530,14 @@ export default {
           if (datas !== "") {
             res = JSON.parse(datas);
           }
-          console.log(res, 'resres')
+          console.log(res, "resres");
+          sessionStorage.setItem('jsMAuditEstimateKey', res.data.contractInfo.estimateKey)
+
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.contractInfo);
           this.feeInfoList = res.data.feeList;
-          console.log(res.data, '===================');
+          console.log(res.data, "===================");
           if (this.feeInfoList !== 0) {
             localStorage.setItem(
               "feeInfoListCopy",
@@ -551,13 +553,17 @@ export default {
           console.log(this.uprRateList, obj, "??????????????");
           this.uprRateListData = [];
           this.uprRateListData.push(obj);
-          console.log(this.uprRateListData, "this.uprRateListData");
           this.uprEstimateList = res.data.uprEstimateList;
+          console.log(res.data.uprEstimateList, "res.data.uprEstimateList", this.uprEstimateList, this.uprEstimateList.length);
+
           let upryuguList = [{ class: "月预估保费" }, { class: "预估UPR" }];
           let uprObj = {};
-          this.uprEstimateList.forEach((item) => {
-            uprObj[item.calculatMonth] = item.calculatMonth;
-          });
+          if (this.uprEstimateList.length > 0) {
+            this.uprEstimateList.forEach((item) => {
+              uprObj[item.calculatMonth] = item.calculatMonth;
+            });
+          }
+
           upryuguList.forEach((item) => {
             Object.assign(item, uprObj);
           });
@@ -779,7 +785,7 @@ export default {
       this.adjustLoading = true;
       this.$http
         .post(api.monthFeeRateAdjust, {
-          estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
+          estimateKey: sessionStorage.getItem("jsMAuditEstimateKey"),
           feeList: this.feeInfoList,
           uprRateList: this.uprRateList,
         })
@@ -838,7 +844,7 @@ export default {
       sessionStorage.setItem("accountType", "1");
       $http
         .post(api.saveAdjust, {
-          estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
+          estimateKey: sessionStorage.getItem("jsMAuditEstimateKey"),
         })
         .then((res) => {
           if (res.data.code === "0") {

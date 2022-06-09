@@ -80,13 +80,14 @@
               @click="handleBeforeOperate(scope.row)"
               type="text"
               size="small"
-              v-show="scope.row.payType !== ''"
+              v-show="scope.row.detailFlag !== 'N'"
               >操作前明细</el-button
             >
             <el-button
               @click="handleAfterOperate(scope.row)"
               type="text"
               size="small"
+              v-show="scope.row.detailFlag !== 'N'"
               >操作后明细</el-button
             >
             <!-- <el-button
@@ -286,21 +287,47 @@ export default {
       // this.SET_AUDITID(row);
       sessionStorage.setItem("auditLogId", row.auditLogId);
       sessionStorage.setItem("opreatAudit", "before");
-      if (row.operationTypeCode.includes("year")) {
+      if (row.operationTypeCode === "/estimate/actuarial/yearFeeRateAdjust") {
         this.$router.push("/auditLog/yearAudit");
-      }
-      if (row.operationTypeCode.includes("month")) {
+      } else if (
+        row.operationTypeCode === "/estimate/actuarial/monthFeeRateAdjust"
+      ) {
         this.$router.push("/auditLog/monthAudit");
+      } else if (
+        row.operationTypeCode === "/estimate/finance/yearTotalEPIAdjust" ||
+        row.operationTypeCode === "/estimate/finance/yearRateAdjust" ||
+        row.operationTypeCode === "/estimate/finance/yearDetailEPIAdjust"
+      ) {
+        this.$router.push("/auditLog/annualEstimatesAudit");
+      } else if (
+        row.operationTypeCode === "/estimate/finance/monthTotalEPIAdjust" ||
+        row.operationTypeCode === "/estimate/finance/monthDetailEPIAdjust" ||
+        row.operationTypeCode === "/estimate/finance/monthRateAdjust"
+      ) {
+        this.$router.push("/auditLog/monthContractDetailAudit");
       }
     },
     handleAfterOperate(row) {
       sessionStorage.setItem("auditLogId", row.auditLogId);
       sessionStorage.setItem("opreatAudit", "after");
-      if (row.operationTypeCode.includes("year")) {
+      if (row.operationTypeCode === "/estimate/actuarial/yearFeeRateAdjust") {
         this.$router.push("/auditLog/yearAudit");
-      }
-      if (row.operationTypeCode.includes("month")) {
+      } else if (
+        row.operationTypeCode === "/estimate/actuarial/monthFeeRateAdjust"
+      ) {
         this.$router.push("/auditLog/monthAudit");
+      } else if (
+        row.operationTypeCode === "/estimate/finance/yearTotalEPIAdjust" ||
+        row.operationTypeCode === "/estimate/finance/yearRateAdjust" ||
+        row.operationTypeCode === "/estimate/finance/yearDetailEPIAdjust"
+      ) {
+        this.$router.push("/auditLog/annualEstimatesAudit");
+      } else if (
+        row.operationTypeCode === "/estimate/finance/monthTotalEPIAdjust" ||
+        row.operationTypeCode === "/estimate/finance/monthDetailEPIAdjust" ||
+        row.operationTypeCode === "/estimate/finance/monthRateAdjust"
+      ) {
+        this.$router.push("/auditLog/monthContractDetailAudit");
       }
     },
     handleAdjustType(row) {

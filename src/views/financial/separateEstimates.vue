@@ -56,7 +56,7 @@
             >
             </el-date-picker
           ></el-form-item>
-          <el-form-item label="获取非0EPI记录">
+          <el-form-item label="获取非0EPI记录" style="margin-left: 20px">
             <el-switch
               v-model="form.ifNotZero"
               active-color="#ff4949"
@@ -251,7 +251,7 @@ export default {
         params.estimateMonth = "";
       }
       $http
-        .post(api.orpContractListQuery, this.params)
+        .post(api.orpContractListQuery, params)
         .then((res) => {
           if (res.data.code === "0") {
             this.tableData = res.data.data.contractList;

@@ -56,7 +56,7 @@
             >
             </el-date-picker
           ></el-form-item>
-          <el-form-item label="获取非0EPI记录">
+          <el-form-item label="获取非0EPI记录" style="margin-left: 20px">
             <el-switch
               v-model="form.ifNotZero"
               active-color="#ff4949"

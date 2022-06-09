@@ -282,7 +282,7 @@
           fixed="left"
         >
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种"> </el-table-column>
+        <el-table-column prop="currencyCode" label="币种" width="100"> </el-table-column>
         <el-table-column
           width="200"
           v-for="(item, index) in calculatedFeeList"

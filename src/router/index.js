@@ -27,6 +27,8 @@ import AuditLog from "@/views/financialView/auditLog.vue"
 import MonthAudit from "@/views/financialView/monthAudit"
 import YearAudit from "@/views/financialView/yearAudit"
 import EstimateDuring from "@/views/financialView/estimateDuring"
+import AnnualEstimatesAudit from "@/views/financialView/annualEstimatesAudit"
+import MonthContractDetailAudit from "@/views/financialView/monthContractDetailAudit"
 
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
 
@@ -130,10 +132,10 @@ const routes = [
     path: "/jsyViewHistory",
     component: JsyViewHistory,
   },
-  {
-    path: "/auditLog",
-    component: AuditLog,
-  },
+  // {
+  //   path: "/auditLog",
+  //   component: AuditLog,
+  // },
   {
     path: "/auditLog/yearAudit",
     component: YearAudit,
@@ -145,6 +147,14 @@ const routes = [
   {
     path: "/estimateDuring",
     component: EstimateDuring,
+  },
+  {
+    path: "/auditLog/annualEstimatesAudit",
+    component: AnnualEstimatesAudit,
+  },
+  {
+    path: "/auditLog/monthContractDetailAudit",
+    component: MonthContractDetailAudit,
   },
   {
     path: "/404",
