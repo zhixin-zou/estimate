@@ -47,12 +47,12 @@
       <h2>EPI拆分</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox" v-if="historyShow !== '1'">
+        <div class="adjustBox" v-if="historyShow !== 'Y'">
           <div class="adjustName"><span>总EPI：</span></div>
           <div class="input"><el-input v-model="totalEPI"></el-input></div>
         </div>
         <el-button
-          v-if="historyShow !== '1'"
+          v-if="historyShow !== 'Y'"
           type="primary"
           :loading="adjustLoading"
           round
@@ -93,7 +93,7 @@
         </el-table-column>
         <el-table-column prop="manualAdjustEPI" label="EPI调整">
           <template slot-scope="scope">
-            <span v-if="historyShow === '1'">
+            <span v-if="historyShow === 'Y'">
               {{ scope.row.manualAdjustEPI }}</span
             >
             <el-input
@@ -136,7 +136,7 @@
       >
       <br />
       <el-button
-        v-if="historyShow !== '1'"
+        v-if="historyShow !== 'Y'"
         class="EPIbutton"
         @click="handleAdjustEPI"
         :loading="saveLoading"
@@ -147,7 +147,7 @@
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox" v-if="historyShow !== '1'">
+        <div class="adjustBox" v-if="historyShow !== 'Y'">
           <div class="adjustName"><span>手续费比例：</span></div>
           <div class="input">
             <el-input v-model="commRate"></el-input>
@@ -177,7 +177,7 @@
           </div>
         </div>
         <el-button
-          v-if="historyShow !== '1'"
+          v-if="historyShow !== 'Y'"
           type="primary"
           :loading="checkLoading"
           round
@@ -196,7 +196,7 @@
         :data="lastList"
         border
         :style="
-          historyShow !== '1'
+          historyShow !== 'Y'
             ? 'width: 100%; margin-top: 80px'
             : 'width: 100%; margin-top: 0px'
         "
@@ -269,7 +269,7 @@ export default {
   data() {
     return {
       estimateMonth: '',
-      historyShow: sessionStorage.getItem("licl"),
+      historyShow: sessionStorage.getItem("yahistoryShow"),
 
       adjustLoading: false,
       saveLoading: false,

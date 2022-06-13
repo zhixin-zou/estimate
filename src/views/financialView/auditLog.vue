@@ -287,6 +287,7 @@ export default {
       // this.SET_AUDITID(row);
       sessionStorage.setItem("auditLogId", row.auditLogId);
       sessionStorage.setItem("opreatAudit", "before");
+      sessionStorage.setItem('yahistoryShow', 'Y')
       if (row.operationTypeCode === "/estimate/actuarial/yearFeeRateAdjust") {
         this.$router.push("/auditLog/yearAudit");
       } else if (

@@ -69,6 +69,10 @@ const routes = [
     component: AuditLog,
   },
   {
+    path: "/estimateDuring",
+    component: EstimateDuring,
+  },
+  {
     path: "/annualEstimates",
     component: AnnualEstimates,
   },
@@ -143,10 +147,6 @@ const routes = [
   {
     path: "/auditLog/monthAudit",
     component: MonthAudit,
-  },
-  {
-    path: "/estimateDuring",
-    component: EstimateDuring,
   },
   {
     path: "/auditLog/annualEstimatesAudit",

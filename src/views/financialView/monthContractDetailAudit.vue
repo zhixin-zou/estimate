@@ -47,12 +47,12 @@
       <h2>EPI拆分</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox" v-if="historyShow !== '2'">
+        <div class="adjustBox" v-if="historyShow !== 'Y'">
           <div class="adjustName"><span>总EPI：</span></div>
           <div class="input"><el-input v-model="totalEPI"></el-input></div>
         </div>
         <el-button
-          v-if="historyShow !== '2'"
+          v-if="historyShow !== 'Y'"
           :loading="adjustLoading"
           type="primary"
           round
@@ -106,7 +106,7 @@
                 scope.row.calculatMonth === '实际账单金额调整' ||
                 scope.row.calculatMonth === '精算计算金额' ||
                 scope.row.calculatMonth === '计算后epi' ||
-                historyShow === '2'
+                historyShow === 'Y'
               "
             >
               {{ scope.row.manualAdjustEPI }}</span
@@ -145,7 +145,7 @@
                 scope.row.calculatMonth === '实际账单金额调整' ||
                 scope.row.calculatMonth === '精算计算金额' ||
                 scope.row.calculatMonth === '计算后epi' ||
-                historyShow === '2'
+                historyShow === 'Y'
               "
               >{{ kiloSplitData(scope.row[item.month]) }}</span
             >
@@ -209,7 +209,7 @@
       >
       <br />
       <el-dropdown
-        v-if="historyShow !== '2'"
+        v-if="historyShow !== 'Y'"
         :loading="dropLoading"
         class="dropdownButton"
         split-button
@@ -228,7 +228,7 @@
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox" v-if="historyShow !== '2'">
+        <div class="adjustBox" v-if="historyShow !== 'Y'">
           <div class="adjustName"><span>手续费比例：</span></div>
           <div class="input">
             <el-input v-model="commRate"></el-input>
@@ -258,7 +258,7 @@
           </div>
         </div>
         <el-button
-          v-if="historyShow !== '2'"
+          v-if="historyShow !== 'Y'"
           :loading="adjustLoading"
           type="primary"
           round
@@ -276,7 +276,7 @@
         :data="lastList"
         border
         :style="
-          historyShow !== '2'
+          historyShow !== 'Y'
             ? 'width: 100%; margin-top: 80px'
             : 'width: 100%; margin-top: 0px'
         "
@@ -344,7 +344,7 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
-      historyShow: sessionStorage.getItem("licl"),
+      historyShow: sessionStorage.getItem("yahistoryShow"),
       dropLoading: false,
       adjustLoading: false,
       // adjustLoading: false,
