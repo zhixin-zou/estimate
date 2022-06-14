@@ -62,7 +62,7 @@
             <el-input
               v-else
               v-model="scope.row.debit"
-              :disabled="scope.row.updateFlag !== 'Y'"
+              :disabled="scope.row.updateFlag !== 'Y' || flag === 1"
             ></el-input>
           </template>
         </el-table-column>
@@ -72,7 +72,7 @@
             <el-input
               v-else
               v-model="scope.row.credit"
-              :disabled="scope.row.updateFlag !== 'Y'"
+              :disabled="scope.row.updateFlag !== 'Y' || flag === 1"
             ></el-input>
           </template>
         </el-table-column>
@@ -145,10 +145,17 @@
     </div>
     <!-- <fs-list-panel :columns="columns" :listData="listData"> </fs-list-panel> -->
     <div class="bookDetialButton" v-if="historyShow !== '0'">
-      <el-button :loading="loading" plain @click="handleCheck" :disabled="finished"
+      <el-button
+        :loading="loading"
+        plain
+        @click="handleCheck"
+        :disabled="finished"
         >确认入账</el-button
       >
-      <el-button :loading="editLoading" @click="handleEditClick" :disabled="canEdit"
+      <el-button
+        :loading="editLoading"
+        @click="handleEditClick"
+        :disabled="canEdit"
         >修改</el-button
       >
     </div>
@@ -165,7 +172,7 @@ export default {
   data() {
     return {
       historyShow: sessionStorage.getItem("bookDetialHistory"),
-
+      flag: 0,
       loading: false,
       editLoading: false,
       EBSSummaryForm: {
@@ -266,7 +273,7 @@ export default {
       listData: [],
       btTitle: "编辑",
       finished: false,
-      canEdit: true
+      canEdit: true,
     };
   },
   methods: {
@@ -283,12 +290,12 @@ export default {
           console.log(res, "res");
           this.EBSSummaryForm = res.data.data.ebsSummary;
           this.listData = res.data.data.ebsDetail;
-          this.listData.forEach(item => {
+          this.listData.forEach((item) => {
             console.log(item);
-            if (item.updateFlag == 'Y') {
-              this.canEdit = false
+            if (item.updateFlag == "Y") {
+              this.canEdit = false;
             }
-          })
+          });
         } else {
           console.log(res);
           this.$message.error(res.data.msg);
@@ -340,13 +347,14 @@ export default {
           if (res.data.code === "0") {
             this.$message.success("成功");
             // this.$router.go(-1);
-            this.finished = true
+            this.finished = true;
           } else {
             this.$message.error(res.data.msg);
           }
         })
         .finally(() => {
           this.loading = false;
+          this.flag = 1;
         });
     },
     exportBtn(refProp, fname) {

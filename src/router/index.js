@@ -23,12 +23,15 @@ import FsAllBookedDetial from "@/views/financialView/fsAllBookedDetial.vue";
 import SeViewHistory from "@/views/financial/seviewHistory.vue";
 import JsnViewHistory from "@/views/financial/jsnViewHistory.vue";
 import JsyViewHistory from "@/views/financial/jsyViewHistory.vue";
-import AuditLog from "@/views/financialView/auditLog.vue"
-import MonthAudit from "@/views/financialView/monthAudit"
-import YearAudit from "@/views/financialView/yearAudit"
-import EstimateDuring from "@/views/financialView/estimateDuring"
-import AnnualEstimatesAudit from "@/views/financialView/annualEstimatesAudit"
-import MonthContractDetailAudit from "@/views/financialView/monthContractDetailAudit"
+import AuditLog from "@/views/financialView/auditLog.vue";
+import MonthAudit from "@/views/financialView/monthAudit";
+import YearAudit from "@/views/financialView/yearAudit";
+import EstimateDuring from "@/views/financialView/estimateDuring";
+import AnnualEstimatesAudit from "@/views/financialView/annualEstimatesAudit";
+import MonthContractDetailAudit from "@/views/financialView/monthContractDetailAudit";
+import YearTrial from "@/views/actuarial/yearTrial";
+import MonthTrial from "@/views/actuarial/monthTrial";
+import TrialSearch from "@/views/actuarial/trialSearch.vue"
 
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
 
@@ -155,6 +158,18 @@ const routes = [
   {
     path: "/auditLog/monthContractDetailAudit",
     component: MonthContractDetailAudit,
+  },
+  {
+    path: "/trialSearch",
+    component: TrialSearch,
+  },
+  {
+    path: "/yearTrial",
+    component: YearTrial,
+  },
+  {
+    path: "/monthTrial",
+    component: MonthTrial,
   },
   {
     path: "/404",

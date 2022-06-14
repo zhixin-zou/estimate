@@ -57,6 +57,22 @@ export default {
   monthFeeRateAdjust: "/estimate/actuarial/monthFeeRateAdjust",
   // 保存调整数据
   saveAdjust: "/estimate/actuarial/saveAdjust",
+
+  // 精算试算查询
+  trialListQuery: "/estimate/actuarial/trialListQuery",
+  // 新增试算
+  yearContractDetailTrailAdd: "/estimate/actuarial/yearContractDetailTrailAdd",
+  // 月缴预估修改试算
+  monthContractDetailTrail: "/estimate/actuarial/monthContractDetailTrail",
+  // 年缴预估修改试算
+  yearContractDetailTrail: "/estimate/actuarial/yearContractDetailTrail",
+  // 年缴试算查询
+  yearContractDetailTrailQuery:
+    "/estimate/actuarial/yearContractDetailTrailQuery",
+  // 月缴试算查询
+  monthContractDetailTrailQuery:
+    "/estimate/actuarial/monthContractDetailTrailQuery",
+
   // 精算预估历史查看
   actuarialHistoryQuery: "/estimate/actuarial/estimateHistoryQuery",
   // 当月产品列表获取
@@ -74,13 +90,13 @@ export default {
   // 当月汇算class获取
   classListQuery: "/estimate/actuarial/classListQuery",
   // 审计查询
-  auditListQuery: '/estimate/auditListQuery',
+  auditListQuery: "/estimate/auditListQuery",
   // 审计明细查询
-  auditDetailQuery: '/estimate/auditDetailQuery',
+  auditDetailQuery: "/estimate/auditDetailQuery",
   // 操作方法查询
-  operationTypeQuery: '/estimate/operationTypeQuery',
+  operationTypeQuery: "/estimate/operationTypeQuery",
   // 获取期间信息
-  periodInfoQuery: '/estimate/finance/periodInfoQuery',
+  periodInfoQuery: "/estimate/finance/periodInfoQuery",
   // 期间切换
-  periodSwitch: '/estimate/finance/periodSwitch'
+  periodSwitch: "/estimate/finance/periodSwitch",
 };

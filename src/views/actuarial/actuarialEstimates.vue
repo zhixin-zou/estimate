@@ -130,9 +130,13 @@
             <span>{{ toPercentData(scope.row.cedentRate) }}</span>
           </template>
         </el-table-column>
-
-        <!-- <el-table-column prop="estimateStatus" label="预估状态">
-        </el-table-column> -->
+        <el-table-column prop="estimateMonth" label="预估月份">
+        </el-table-column>
+        <el-table-column prop="estimateStatus" label="预估状态">
+          <template slot-scope="scope">
+            <span>{{ getDictData(scope.row.estimateStatus) }}</span>
+          </template>
+        </el-table-column>
 
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
@@ -150,6 +154,16 @@
             >
             <el-button @click="handleBreak(scope.row)" type="text" size="small"
               >合同拆分</el-button
+            ><el-button
+              @click="handleCreateTrial(scope.row)"
+              type="text"
+              size="small"
+              >新增试算</el-button
+            ><el-button
+              @click="handleTrialSearch(scope.row)"
+              type="text"
+              size="small"
+              >试算查询</el-button
             >
           </template>
         </el-table-column>
@@ -221,6 +235,21 @@
       ></el-table>
       <el-button type="primary" @click="handleClick">确认</el-button>
     </el-dialog>
+    <el-dialog
+      class="newTrial"
+      title="合同拆分"
+      :visible.sync="newTrial"
+      width="500px"
+    >
+      <span>填写</span>
+      <el-input v-model="trialsName" placeholder="请输入内容"></el-input>
+      <el-button
+        type="primary"
+        @click="handleNewTrial"
+        style="margin-top: 10px; margin-left: 42%"
+        >确认</el-button
+      >
+    </el-dialog>
   </div>
 </template>
 
@@ -264,6 +293,9 @@ export default {
           spiltPremium: "",
         },
       ],
+      newTrial: false,
+      trialsName: "",
+      newTrailType: "",
     };
   },
   methods: {
@@ -369,11 +401,17 @@ export default {
       sessionStorage.removeItem("licl");
       console.log(row);
       if (row.payType === "annual") {
+        if (row.estimateStatus === "3") {
+          sessionStorage.setItem("licl", "4");
+        }
         sessionStorage.setItem("jsAnnualEstimateKey", row.estimateKey);
         sessionStorage.setItem("jsAnnualEstimateMonth", row.estimateMonth);
         sessionStorage.setItem("jsAnnualContractKey", row.contractKey);
         this.$router.push("/yearActuarial");
       } else {
+        if (row.estimateStatus === "3") {
+          sessionStorage.setItem("licl", "5");
+        }
         sessionStorage.setItem("jsMonthEstimateKey", row.estimateKey);
         sessionStorage.setItem("jsMonthEstimateMonth", row.estimateMonth);
         sessionStorage.setItem("jsMonthContractKey", row.contractKey);
@@ -381,6 +419,7 @@ export default {
       }
     },
     handleHistoryClick(row) {
+      sessionStorage.removeItem("licl");
       if (row.payType === "annual") {
         sessionStorage.setItem("enterType", "jsyear");
         sessionStorage.setItem("jsNestimateKey", row.estimateKey);
@@ -399,6 +438,24 @@ export default {
     handleBreak(row) {
       sessionStorage.setItem("estimateKey", row.estimateKey);
       this.contractBreak = true;
+    },
+    handleCreateTrial(row) {
+      sessionStorage.removeItem("licl");
+
+      this.newTrial = true;
+      if (row.payType === "annual") {
+        console.log(row);
+        this.newTrailType = "Y";
+        sessionStorage.setItem("newYTrialEstimateKey", row.estimateKey);
+      } else {
+        this.newTrailType = "M";
+        sessionStorage.setItem("newYTrialEstimateKey", row.estimateKey);
+      }
+    },
+    handleTrialSearch(row) {
+      sessionStorage.removeItem("licl");
+      sessionStorage.setItem("newYTrialEstimateKey", row.estimateKey);
+      this.$router.push("/trialSearch");
     },
     // 假分页
     setCurrentPageData() {
@@ -460,6 +517,15 @@ export default {
             },
           ];
         });
+    },
+    handleNewTrial() {
+      if (this.newTrailType === "Y") {
+        sessionStorage.setItem("newTrialName", this.trialsName);
+        this.$router.push("/yearTrial");
+      } else {
+        sessionStorage.setItem("newTrialName", this.trialsName);
+        this.$router.push("/monthTrial");
+      }
     },
   },
   // mounted () {

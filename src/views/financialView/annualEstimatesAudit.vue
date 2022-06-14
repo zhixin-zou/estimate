@@ -509,8 +509,8 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleBack() {
-      // this.$router.go(-1);
-      this.$router.push("/financialForecasts");
+      this.$router.go(-1);
+      // this.$router.push("/financialForecasts");
     },
     getSummaries(param) {
       const { columns, data } = param;

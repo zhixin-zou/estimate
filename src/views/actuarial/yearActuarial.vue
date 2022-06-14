@@ -803,8 +803,8 @@ export default {
       // this.$forceUpdate()
     },
     handleBack() {
-      // this.$router.go(-1);
-      this.$router.push("/actuarialEstimates");
+      this.$router.go(-1);
+      // this.$router.push("/actuarialEstimates");
     },
     // 导出方法
     exportBtn(refProp, fname) {

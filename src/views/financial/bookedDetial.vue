@@ -62,7 +62,7 @@
             <el-input
               v-else
               v-model="scope.row.debit"
-              :disabled="scope.row.updateFlag !== 'Y'"
+              :disabled="scope.row.updateFlag !== 'Y' || flag === 1"
             ></el-input>
           </template>
         </el-table-column>
@@ -72,7 +72,7 @@
             <el-input
               v-else
               v-model="scope.row.credit"
-              :disabled="scope.row.updateFlag !== 'Y'"
+              :disabled="scope.row.updateFlag !== 'Y' || flag === 1"
             ></el-input>
           </template>
         </el-table-column>
@@ -172,7 +172,7 @@ export default {
   data() {
     return {
       historyShow: sessionStorage.getItem("bookDetialHistory"),
-
+      flag: 0,
       loading: false,
       editLoading: false,
       EBSSummaryForm: {
@@ -344,7 +344,7 @@ export default {
           console.log(res);
           if (res.data.code === "0") {
             this.$message.success("成功");
-            this.finished = true
+            this.finished = true;
             // this.$router.go(-1);
           } else {
             this.$message.error(res.data.msg);
@@ -352,6 +352,7 @@ export default {
         })
         .finally(() => {
           this.loading = false;
+          this.flag = 1
         });
     },
     exportBtn(refProp, fname) {

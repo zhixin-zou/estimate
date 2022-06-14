@@ -554,8 +554,8 @@ export default {
       return kiloSplit(data);
     },
     handleBack() {
-      // this.$router.go(-1);
-      this.$router.push("/financialForecasts");
+      this.$router.go(-1);
+      // this.$router.push("/financialForecasts");
     },
     // 导出方法
     exportBtn(refProp, fname) {
