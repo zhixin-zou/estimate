@@ -11,6 +11,7 @@
               type="date"
               placeholder="选择日期"
               v-model="form.operationDateBegin"
+              value-format="yyyy-MM-dd"
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
@@ -19,6 +20,7 @@
               type="date"
               placeholder="选择日期"
               v-model="form.operationDateEnd"
+              value-format="yyyy-MM-dd"
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
@@ -182,7 +184,6 @@ export default {
         operationDateBegin: this.form.operationDateBegin,
         operationDateEnd: this.form.operationDateEnd,
         operationTypeCode: this.form.operationTypeCode,
-        contractTimeBegin: this.form.contractTimeBegin,
       };
       if (this.form.operationDateBegin != "") {
         params.operationDateBegin = getYearMonthDayDate(

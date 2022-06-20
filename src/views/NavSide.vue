@@ -28,7 +28,7 @@
           </template>
           <el-menu-item-group>
             <el-menu-item index="/actuarialEstimates">预估查询</el-menu-item>
-            <!-- <el-menu-item index="/trialSearch">试算查询</el-menu-item> -->
+            <el-menu-item index="/trialSearchView">试算查询</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
               <el-submenu index="3">

@@ -36,6 +36,7 @@
               type="date"
               placeholder="选择日期"
               v-model="form.contractTimeBegin"
+              value-format="yyyy-MM-dd"
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
@@ -44,6 +45,7 @@
               type="date"
               placeholder="选择日期"
               v-model="form.contractTimeEnd"
+              value-format="yyyy-MM-dd"
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
@@ -237,7 +239,7 @@
     </el-dialog>
     <el-dialog
       class="newTrial"
-      title="合同拆分"
+      title="新增试算"
       :visible.sync="newTrial"
       width="500px"
     >
@@ -521,10 +523,10 @@ export default {
     handleNewTrial() {
       if (this.newTrailType === "Y") {
         sessionStorage.setItem("newTrialName", this.trialsName);
-        this.$router.push("/yearTrial");
+        this.$router.push("/yearTrialAdd");
       } else {
         sessionStorage.setItem("newTrialName", this.trialsName);
-        this.$router.push("/monthTrial");
+        this.$router.push("/monthTrialAdd");
       }
     },
   },

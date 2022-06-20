@@ -60,8 +60,11 @@ export default {
 
   // 精算试算查询
   trialListQuery: "/estimate/actuarial/trialListQuery",
-  // 新增试算
+  // 年缴新增试算
   yearContractDetailTrailAdd: "/estimate/actuarial/yearContractDetailTrailAdd",
+  // 月缴新增试算
+  monthContractDetailTrailAdd:
+    "/estimate/actuarial/monthContractDetailTrailAdd",
   // 月缴预估修改试算
   monthContractDetailTrail: "/estimate/actuarial/monthContractDetailTrail",
   // 年缴预估修改试算

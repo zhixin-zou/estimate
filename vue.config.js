@@ -4,6 +4,21 @@ module.exports = {
   // build目录
   outputDir: "dist",
   indexPath: 'financialForecasts.html',
+  pages: {
+    financialForecasts: {
+      entry: './src/main.js',
+      template: './src/views/financial/financialForecasts.vue',
+      fileName: 'financialForecasts.html'
+    },
+    separateEstimates: {
+      entry: './src/main.js',
+      template: './src/views/financial/separateEstimates.vue'
+    },
+    actuarialEstimates: {
+      entry: './src/main.js',
+      template: './src/views/actuarial/actuarialEstimates.vue'
+    }
+  },
   devServer: {
     // clientLogLevel: 'warning',
     // historyApiFallback: true,

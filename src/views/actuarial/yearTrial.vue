@@ -192,7 +192,7 @@
             <!-- <span> {{ kiloSplitData(scope.row.financePremium) }} </span> -->
             <el-input
               placeholder="请输入内容"
-              v-model="scope.row[item.financePremium]"
+              v-model="scope.row.financePremium"
             ></el-input>
           </template>
         </el-table-column>
@@ -207,6 +207,7 @@
             <!-- <span>{{ kiloSplitData(scope.row[item.month]) }}</span> -->
             <el-input
               placeholder="请输入内容"
+              disabled
               v-model="scope.row[item.month]"
             ></el-input>
           </template>
@@ -217,7 +218,7 @@
         :loading="adjustLoading"
         type="primary"
         plain
-        @click="handleUprRate"
+        @click="handleTrialCalculate"
         style="margin-top: 10px; margin-left: 45%"
         >试算</el-button
       >
@@ -515,16 +516,15 @@ export default {
   methods: {
     init() {
       $http
-        .post(api.yearContractDetailTrailAdd, {
-          estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
-          trialName: sessionStorage.getItem("newTrialName"),
+        .post(api.yearContractDetailTrailQuery, {
+          estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
         })
         .then((res) => {
           console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
-          this.feeInfoList = res.data.data.feeList;
+          this.feeInfoList.push(res.data.data.feeInfo);
           this.cedentList = res.data.data.cedentList;
           let obj = { policyMonth: "UPR 分布" };
           this.uprRateList = res.data.data.uprRateList;
@@ -576,12 +576,12 @@ export default {
       // 年份处理
       let monthInfo = uprSplitInfo.calculatMonths % 12;
       let yearsInfo = parseInt(uprSplitInfo.calculatMonths / 12);
-      console.log(yearsInfo, "?????", monthInfo);
+      // console.log(yearsInfo, "?????", monthInfo);
       let endYear =
         Number(uprSplitInfo.contractMonthBegin.slice(0, 4)) + yearsInfo;
       let endMonth =
         Number(uprSplitInfo.contractMonthBegin.slice(4)) + monthInfo;
-      console.log(endYear, endMonth, "===============");
+      // console.log(endYear, endMonth, "===============");
       if (endMonth > 12) {
         endYear += 1;
         endMonth = endMonth - 12;
@@ -591,9 +591,9 @@ export default {
       } else {
         endTime = String(endYear) + "-" + String(endMonth - 1) + "-01";
       }
-      console.log(endTime, "endTime");
+      // console.log(endTime, "endTime");
       this.monthList = getMonthBetween(startTime, endTime);
-      console.log(this.monthList, "monthList");
+      // console.log(this.monthList, "monthList");
       // end
       let newEPIObj = {};
       let sumObj = {};
@@ -672,7 +672,7 @@ export default {
             item[p] = " ";
           }
         }
-        console.log(item, "item");
+        // console.log(item, "item");
       });
       this.UPRData = uprSplitInfo.uprSplitList;
       // // 合计累计预估加实际处理
@@ -844,7 +844,7 @@ export default {
     handleExport(data, filename) {
       this.exportBtn(data, filename);
     },
-    handleUprRate() {
+    handleTrialCalculate() {
       for (var key in this.uprRateListData[0]) {
         this.uprRateList.forEach((item) => {
           if (key === item.policyMonth) {
@@ -853,12 +853,21 @@ export default {
         });
       }
       this.adjustLoading = true;
+      console.log(this.UPRData, 'UPRDataUPRDataUPRDataUPRDataUPRDataUPRData');
+      let premiumList = [];
+      this.UPRData.map((item) => {
+        premiumList.push({
+          calculatMonth: item.calculatMonth,
+          financePremium: item.financePremium,
+        });
+      });
 
       this.$http
         .post(api.yearContractDetailTrail, {
-          estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
+          estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
           feeInfo: this.feeInfoList[0],
           uprRateList: this.uprRateList,
+          premiumList: premiumList
         })
         .then((res) => {
           if (res.data.code === "0") {
@@ -915,7 +924,7 @@ export default {
       sessionStorage.setItem("accountType", "1");
       $http
         .post(api.saveAdjust, {
-          estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
+          estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
         })
         .then((res) => {
           if (res.data.code === "0") {

@@ -213,6 +213,7 @@
             <el-input
               placeholder=""
               v-model="scope.row[item.calculatMonth]"
+              :disabled="scope.row.class === '预估UPR' ? true : false"
             ></el-input>
             <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
           </template>
@@ -513,9 +514,8 @@ export default {
   methods: {
     init() {
       $http
-        .post(api.yearContractDetailTrailAdd, {
-          estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
-          trialName: sessionStorage.getItem("newTrialName"),
+        .post(api.monthContractDetailTrailQuery, {
+          estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
         })
         .then((res) => {
           // console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
@@ -775,41 +775,42 @@ export default {
               : premiumList.push({
                   calculatMonth: key,
                   financePremium: item[key],
-                  uprAmount: "",
+                  // uprAmount: "",
                 });
           }
         }
-        if (item.class === "预估UPR") {
-          console.log(premiumList, 'premiumList');
-          premiumList.map((e) => {
-            for (var key in item) {
-              if (e.calculatMonth === key) {
-                e.uprAmount = item[key]
-              }
-            }
-          })
-        }
+        // if (item.class === "预估UPR") {
+        //   // console.log(premiumList, 'premiumList');
+        //   premiumList.map((e) => {
+        //     for (var key in item) {
+        //       if (e.calculatMonth === key) {
+        //         e.uprAmount = item[key]
+        //       }
+        //     }
+        //   })
+        // }
       });
-      // this.adjustLoading = true;
-      // this.$http
-      //   .post(api.monthContractDetailTrail, {
-      //     estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
-      //     feeInfo: this.feeInfoList,
-      //     uprRateList: this.uprRateList,
-      //     premiumList: this.UPRData
-      //   })
-      //   .then((res) => {
-      //     if (res.data.code === "0") {
-      //       this.$message.success("调整成功");
-      //       // this.$router.push("/actuarialEstimates");
-      //       this.init();
-      //     } else {
-      //       this.$message.error(res.data.msg);
-      //     }
-      //   })
-      //   .finally(() => {
-      //     this.adjustLoading = false;
-      //   });
+      console.log(premiumList, 'premiumList')
+      this.adjustLoading = true;
+      this.$http
+        .post(api.monthContractDetailTrail, {
+          estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
+          feeInfo: this.feeInfoList,
+          uprRateList: this.uprRateList,
+          premiumList: premiumList
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("调整成功");
+            // this.$router.push("/actuarialEstimates");
+            this.init();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.adjustLoading = false;
+        });
     },
     handleChange() {
       console.log(
@@ -853,7 +854,7 @@ export default {
       sessionStorage.setItem("accountType", "1");
       $http
         .post(api.saveAdjust, {
-          estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
+          estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
         })
         .then((res) => {
           if (res.data.code === "0") {
