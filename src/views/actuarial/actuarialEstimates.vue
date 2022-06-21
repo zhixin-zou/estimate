@@ -456,6 +456,7 @@ export default {
     },
     handleTrialSearch(row) {
       sessionStorage.removeItem("licl");
+      localStorage.setItem("firstTimeTrialSearch", "1");
       sessionStorage.setItem("newYTrialEstimateKey", row.estimateKey);
       this.$router.push("/trialSearch");
     },

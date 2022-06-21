@@ -84,7 +84,6 @@
           >
           <el-button size="mini" @click="handleResetClick">重置</el-button>
           <el-button size="mini" @click="handleBack">返回</el-button>
-
         </div>
       </div>
     </div>
@@ -184,7 +183,7 @@ export default {
         trialName: "",
         trialTimeBegin: "",
         trialTimeEnd: "",
-        estimateKey: '',
+        estimateKey: "",
       },
       currentPageData: [],
       tableData: [],
@@ -203,17 +202,11 @@ export default {
   methods: {
     // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
-      // $http.post(api.productListQuery, {}).then((res) => {
-      //   this.productList = res.data.data.productList;
-      //   console.log(
-      //     this.productList,
-      //     " this.productList this.productList this.productList this.productList"
-      //   );
-      // });
-      // $http.get("/estimate/partnerQuery").then((res) => {
-      //   this.companyList = res.data.data.partnerList;
-      // });
-      this.handleSearchClick();
+      if (localStorage.getItem("firstTimeTrialSearch") === "1") {
+        this.handleSearchClickInit();
+      } else {
+        this.handleSearchClick()
+      }
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -252,7 +245,7 @@ export default {
     getDictData(data) {
       return getText("estimateStatus", data);
     },
-    handleSearchClick() {
+    handleSearchClickInit() {
       this.loading = true;
       this.currentPage = 1;
       // api.contractListQuery
@@ -270,7 +263,48 @@ export default {
         trialName: this.form.trialBatchNo,
         trialTimeBegin: this.form.trialTimeBegin,
         trialTimeEnd: this.form.trialTimeEnd,
-        estimateKey: '',
+        estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
+      };
+      if (this.form.estimateMonth != "") {
+        params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
+      }
+      if (this.form.estimateMonth === null) {
+        params.estimateMonth = "";
+      }
+      $http
+        .post(api.trialListQuery, params)
+        .then((res) => {
+          // this.$message.success(res.data.msg);
+          this.tableData = res.data.data.trialList;
+          this.total = res.data.data.trialList.length;
+          this.totalPage = Math.ceil(this.total / this.pageSize);
+          this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+          this.setCurrentPageData();
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    handleSearchClick() {
+      localStorage.removeItem('firstTimeTrialSearch')
+      this.loading = true;
+      this.currentPage = 1;
+      // api.contractListQuery
+      let params = {
+        contractType: this.form.contractType,
+        contractNoBegin: this.form.contractNoBegin,
+        contractNoEnd: this.form.contractNoEnd,
+        contractTimeBegin: this.form.contractTimeBegin,
+        contractTimeEnd: this.form.contractTimeEnd,
+        estimateMonth:
+          this.form.estimateMonth === ""
+            ? ""
+            : getYearMonthDate(this.form.estimateMonth),
+        trialBatchNo: this.form.trialBatchNo,
+        trialName: this.form.trialBatchNo,
+        trialTimeBegin: this.form.trialTimeBegin,
+        trialTimeEnd: this.form.trialTimeEnd,
+        estimateKey: "",
       };
       if (this.form.estimateMonth != "") {
         params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
@@ -307,8 +341,8 @@ export default {
         estimateKey: "",
       };
     },
-    handleBack () {
-      this.$router.push('/actuarialEstimates')
+    handleBack() {
+      this.$router.push("/actuarialEstimates");
     },
     handleTrial(row) {
       sessionStorage.removeItem("licl");
