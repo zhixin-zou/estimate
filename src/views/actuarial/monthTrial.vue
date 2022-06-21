@@ -514,7 +514,7 @@ export default {
   methods: {
     init() {
       $http
-        .post(api.monthContractDetailTrailQuery, {
+        .post(api.monthContractDetailTrialQuery, {
           estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
         })
         .then((res) => {
@@ -793,9 +793,9 @@ export default {
       console.log(premiumList, 'premiumList')
       this.adjustLoading = true;
       this.$http
-        .post(api.monthContractDetailTrail, {
+        .post(api.monthContractDetailTrial, {
           estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
-          feeInfo: this.feeInfoList,
+          feeList: this.feeInfoList,
           uprRateList: this.uprRateList,
           premiumList: premiumList
         })
@@ -803,7 +803,57 @@ export default {
           if (res.data.code === "0") {
             this.$message.success("调整成功");
             // this.$router.push("/actuarialEstimates");
-            this.init();
+            // this.init();
+             this.contractInfoList = [];
+          this.feeInfoList = [];
+          this.contractInfoList.push(res.data.data.contractInfo);
+          this.feeInfoList = res.data.data.feeList;
+          if (res.data.data.feeList.length !== 0) {
+            localStorage.setItem(
+              "feeInfoListCopy",
+              JSON.stringify(res.data.data.feeList)
+            );
+          }
+          this.cedentList = res.data.data.cedentList;
+          let obj = { policyMonth: "UPR 分布" };
+          this.uprRateList = res.data.data.uprRateList;
+          this.uprRateList.map((item) => {
+            obj[item.policyMonth] = item.uprRate;
+          });
+          this.uprRateListData = [];
+          this.uprRateListData.push(obj);
+          this.uprEstimateList = res.data.data.uprEstimateList;
+          let upryuguList = [{ class: "月预估保费" }, { class: "预估UPR" }];
+          let uprObj = {};
+          this.uprEstimateList.forEach((item) => {
+            uprObj[item.calculatMonth] = item.calculatMonth;
+          });
+          upryuguList.forEach((item) => {
+            Object.assign(item, uprObj);
+          });
+          upryuguList.forEach((item) => {
+            if (item.class === "月预估保费") {
+              for (var key in item) {
+                this.uprEstimateList.forEach((e) => {
+                  if (key === e.calculatMonth) {
+                    item[key] = e.financeEPI;
+                  }
+                });
+              }
+            } else {
+              for (var key2 in item) {
+                this.uprEstimateList.forEach((e) => {
+                  if (key2 === e.calculatMonth) {
+                    item[key2] = e.uprAmount;
+                  }
+                });
+              }
+            }
+          });
+          this.UPRData = upryuguList;
+          this.calculatedFeeList = res.data.data.calculatedFeeList;
+          this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+          this.handleFloatChange();
           } else {
             this.$message.error(res.data.msg);
           }

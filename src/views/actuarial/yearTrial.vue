@@ -516,7 +516,7 @@ export default {
   methods: {
     init() {
       $http
-        .post(api.yearContractDetailTrailQuery, {
+        .post(api.yearContractDetailTrialQuery, {
           estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
         })
         .then((res) => {
@@ -863,7 +863,7 @@ export default {
       });
 
       this.$http
-        .post(api.yearContractDetailTrail, {
+        .post(api.yearContractDetailTrial, {
           estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
           feeInfo: this.feeInfoList[0],
           uprRateList: this.uprRateList,
@@ -871,9 +871,38 @@ export default {
         })
         .then((res) => {
           if (res.data.code === "0") {
-            this.$message.success("调整成功");
-            // this.$router.push("/actuarialEstimates");
-            this.init();
+          this.$message.success("成功");
+          this.feeInfoList = [];
+          this.contractInfoList.push(res.data.data.contractInfo);
+          this.feeInfoList.push(res.data.data.feeInfo);
+          this.cedentList = res.data.data.cedentList;
+          let obj = { policyMonth: "UPR 分布" };
+          this.uprRateList = res.data.data.uprRateList;
+          // 对this.uprRAteList进行冒泡排序
+          for (var i = 0; i < this.uprRateList.length; i++) {
+            for (var j = 0; j < this.uprRateList.length - 1 - i; j++) {
+              if (
+                Number(this.uprRateList[j].policyMonth) >
+                Number(this.uprRateList[j + 1].policyMonth)
+              ) {
+                //相邻元素两两对比
+                var temp = this.uprRateList[j + 1]; //元素交换
+                this.uprRateList[j + 1] = this.uprRateList[j];
+                this.uprRateList[j] = temp;
+              }
+            }
+          }
+          // 排序结束
+          this.uprRateList.map((item) => {
+            obj[item.policyMonth] = item.uprRate;
+          });
+          this.uprRateListData = [];
+          this.uprRateListData.push(obj);
+          let uprSplitInfo = res.data.data.uprEstimateList;
+          this.dataProcess(uprSplitInfo);
+          this.calculatedFeeList = res.data.data.calculatedFeeList;
+          this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+          this.handleFloatChange();
           } else {
             this.$message.error(res.data.msg);
           }

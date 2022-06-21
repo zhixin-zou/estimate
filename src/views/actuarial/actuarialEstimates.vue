@@ -235,7 +235,7 @@
             ></el-input>
           </template> </el-table-column
       ></el-table>
-      <el-button type="primary" @click="handleClick">确认</el-button>
+      <el-button type="primary" @click="handleClick" style="margin-top: 10px; margin-left: 45%">确认</el-button>
     </el-dialog>
     <el-dialog
       class="newTrial"

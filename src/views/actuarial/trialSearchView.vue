@@ -208,17 +208,17 @@ export default {
   methods: {
     // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
-      $http.post(api.productListQuery, {}).then((res) => {
-        this.productList = res.data.data.productList;
-        console.log(
-          this.productList,
-          " this.productList this.productList this.productList this.productList"
-        );
-      });
-      $http.get("/estimate/partnerQuery").then((res) => {
-        this.companyList = res.data.data.partnerList;
-        this.handleSearchClick();
-      });
+      // $http.post(api.productListQuery, {}).then((res) => {
+      //   this.productList = res.data.data.productList;
+      //   console.log(
+      //     this.productList,
+      //     " this.productList this.productList this.productList this.productList"
+      //   );
+      // });
+      // $http.get("/estimate/partnerQuery").then((res) => {
+      //   this.companyList = res.data.data.partnerList;
+      // });
+      this.handleSearchClick();
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -314,13 +314,13 @@ export default {
     },
     handleTrial(row) {
       sessionStorage.removeItem("licl");
-      sessionStorage.setItem("trialViewEstimateKey", row.estimateKey)
+      sessionStorage.setItem("trialViewEstimateKey", row.estimateKey);
 
-      console.log(row)
+      console.log(row);
       if (row.payType === "annual") {
-        this.$router.push('/yearTrial')
+        this.$router.push("/yearTrial");
       } else {
-        this.$router.push('/monthTrial')
+        this.$router.push("/monthTrial");
       }
     },
     // 假分页

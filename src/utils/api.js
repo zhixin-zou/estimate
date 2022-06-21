@@ -61,20 +61,20 @@ export default {
   // 精算试算查询
   trialListQuery: "/estimate/actuarial/trialListQuery",
   // 年缴新增试算
-  yearContractDetailTrailAdd: "/estimate/actuarial/yearContractDetailTrailAdd",
+  yearContractDetailTrialAdd: "/estimate/actuarial/yearContractDetailTrialAdd",
   // 月缴新增试算
-  monthContractDetailTrailAdd:
-    "/estimate/actuarial/monthContractDetailTrailAdd",
+  monthContractDetailTrialAdd:
+    "/estimate/actuarial/monthContractDetailTrialAdd",
   // 月缴预估修改试算
-  monthContractDetailTrail: "/estimate/actuarial/monthContractDetailTrail",
+  monthContractDetailTrial: "/estimate/actuarial/monthContractDetailTrial",
   // 年缴预估修改试算
-  yearContractDetailTrail: "/estimate/actuarial/yearContractDetailTrail",
+  yearContractDetailTrial: "/estimate/actuarial/yearContractDetailTrial",
   // 年缴试算查询
-  yearContractDetailTrailQuery:
-    "/estimate/actuarial/yearContractDetailTrailQuery",
+  yearContractDetailTrialQuery:
+    "/estimate/actuarial/yearContractDetailTrialQuery",
   // 月缴试算查询
-  monthContractDetailTrailQuery:
-    "/estimate/actuarial/monthContractDetailTrailQuery",
+  monthContractDetailTrialQuery:
+    "/estimate/actuarial/monthContractDetailTrialQuery",
 
   // 精算预估历史查看
   actuarialHistoryQuery: "/estimate/actuarial/estimateHistoryQuery",

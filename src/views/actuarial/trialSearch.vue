@@ -201,17 +201,17 @@ export default {
   methods: {
     // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
-      $http.post(api.productListQuery, {}).then((res) => {
-        this.productList = res.data.data.productList;
-        console.log(
-          this.productList,
-          " this.productList this.productList this.productList this.productList"
-        );
-      });
-      $http.get("/estimate/partnerQuery").then((res) => {
-        this.companyList = res.data.data.partnerList;
-        this.handleSearchClick();
-      });
+      // $http.post(api.productListQuery, {}).then((res) => {
+      //   this.productList = res.data.data.productList;
+      //   console.log(
+      //     this.productList,
+      //     " this.productList this.productList this.productList this.productList"
+      //   );
+      // });
+      // $http.get("/estimate/partnerQuery").then((res) => {
+      //   this.companyList = res.data.data.partnerList;
+      // });
+      this.handleSearchClick();
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -268,7 +268,7 @@ export default {
         trialName: this.form.trialBatchNo,
         trialTimeBegin: this.form.trialTimeBegin,
         trialTimeEnd: this.form.trialTimeEnd,
-        estimateKey: this.form.estimateKey
+        estimateKey: this.form.estimateKey,
       };
       if (this.form.estimateMonth != "") {
         params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
