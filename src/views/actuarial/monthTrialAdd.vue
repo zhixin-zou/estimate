@@ -509,6 +509,7 @@ export default {
       calculatedFeeList2: [],
       lastList: [],
       uprEstimateList: [],
+      estimateKeyAdd: ''
     };
   },
   methods: {
@@ -520,6 +521,7 @@ export default {
         })
         .then((res) => {
           // console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
+          this.estimateKeyAdd = res.data.data.contractInfo.estimateKey
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
@@ -683,8 +685,8 @@ export default {
       // this.$forceUpdate()
     },
     handleBack() {
-      this.$router.go(-1);
-      // this.$router.push("/actuarialEstimates");
+      // this.$router.go(-1);
+      this.$router.push("/actuarialEstimates");
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -795,7 +797,7 @@ export default {
       this.adjustLoading = true;
       this.$http
         .post(api.monthContractDetailTrial, {
-          estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
+          estimateKey: this.estimateKeyAdd,
           feelist: this.feeInfoList,
           uprRateList: this.uprRateList,
           premiumList: premiumList,
@@ -907,7 +909,7 @@ export default {
       sessionStorage.setItem("accountType", "1");
       $http
         .post(api.saveAdjust, {
-          estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
+          estimateKey: this.estimateKeyAdd,
         })
         .then((res) => {
           if (res.data.code === "0") {

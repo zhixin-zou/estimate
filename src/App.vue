@@ -5,7 +5,7 @@
     </el-aside>
     <test-api /> -->
     <el-container class="container">
-      <NavSide class="aside" />
+      <!-- <NavSide class="aside" /> -->
       <el-container>
         <el-header height="50px" class="header">
           <!-- <i
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import NavSide from "./views/NavSide.vue";
+// import NavSide from "./views/NavSide.vue";
 // import FinancialForecasts from "./views/financial/financialForecasts.vue";
 // import TestApi from './views/test/testApi.vue'
 
@@ -63,7 +63,7 @@ export default {
     // }
   },
   components: {
-    NavSide,
+    // NavSide,
     // FinancialForecasts
     // TestApi
   },

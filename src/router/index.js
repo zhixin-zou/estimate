@@ -31,6 +31,8 @@ import AnnualEstimatesAudit from "@/views/financialView/annualEstimatesAudit";
 import MonthContractDetailAudit from "@/views/financialView/monthContractDetailAudit";
 import YearTrial from "@/views/actuarial/yearTrial";
 import MonthTrial from "@/views/actuarial/monthTrial";
+import YearTrialSearch from "@/views/actuarial/yearTrialSearch";
+import MonthTrialSearch from "@/views/actuarial/monthTrialSearch";
 import YearTrialAdd from "@/views/actuarial/yearTrialAdd";
 import MonthTrialAdd from "@/views/actuarial/monthTrialAdd";
 import TrialSearch from "@/views/actuarial/trialSearch.vue";
@@ -177,6 +179,13 @@ const routes = [
   {
     path: "/monthTrial",
     component: MonthTrial,
+  },  {
+    path: "/yearTrialSearch",
+    component: YearTrialSearch,
+  },
+  {
+    path: "/monthTrialSearch",
+    component: MonthTrialSearch,
   },
   {
     path: "/yearTrialAdd",

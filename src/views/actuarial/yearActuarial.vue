@@ -272,7 +272,8 @@
           fixed="left"
         >
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种" width="100"> </el-table-column>
+        <el-table-column prop="currencyCode" label="币种" width="100">
+        </el-table-column>
         <el-table-column
           width="150"
           v-for="(item, index) in calculatedFeeList"
@@ -803,8 +804,8 @@ export default {
       // this.$forceUpdate()
     },
     handleBack() {
-      this.$router.go(-1);
-      // this.$router.push("/actuarialEstimates");
+      // this.$router.go(-1);
+      this.$router.push("/actuarialEstimates");
     },
     // 导出方法
     exportBtn(refProp, fname) {

@@ -813,8 +813,8 @@ export default {
       // this.$forceUpdate()
     },
     handleBack() {
-      this.$router.go(-1);
-      // this.$router.push("/actuarialEstimates");
+      // this.$router.go(-1);
+      this.$router.push("/trialSearchView");
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -872,6 +872,7 @@ export default {
         .then((res) => {
           if (res.data.code === "0") {
           this.$message.success("成功");
+          this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
           this.feeInfoList.push(res.data.data.feeInfo);

@@ -83,6 +83,8 @@
             >查询</el-button
           >
           <el-button size="mini" @click="handleResetClick">重置</el-button>
+          <el-button size="mini" @click="handleBack">返回</el-button>
+
         </div>
       </div>
     </div>
@@ -182,7 +184,7 @@ export default {
         trialName: "",
         trialTimeBegin: "",
         trialTimeEnd: "",
-        estimateKey: sessionStorage.getItem("newYTrialEstimateKey"),
+        estimateKey: '',
       },
       currentPageData: [],
       tableData: [],
@@ -268,7 +270,7 @@ export default {
         trialName: this.form.trialBatchNo,
         trialTimeBegin: this.form.trialTimeBegin,
         trialTimeEnd: this.form.trialTimeEnd,
-        estimateKey: this.form.estimateKey,
+        estimateKey: '',
       };
       if (this.form.estimateMonth != "") {
         params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
@@ -280,8 +282,8 @@ export default {
         .post(api.trialListQuery, params)
         .then((res) => {
           // this.$message.success(res.data.msg);
-          this.tableData = res.data.data.contractList;
-          this.total = res.data.data.contractList.length;
+          this.tableData = res.data.data.trialList;
+          this.total = res.data.data.trialList.length;
           this.totalPage = Math.ceil(this.total / this.pageSize);
           this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
           this.setCurrentPageData();
@@ -305,19 +307,22 @@ export default {
         estimateKey: "",
       };
     },
+    handleBack () {
+      this.$router.push('/actuarialEstimates')
+    },
     handleTrial(row) {
       sessionStorage.removeItem("licl");
       console.log(row);
       if (row.payType === "annual") {
-        sessionStorage.setItem("jsAnnualEstimateKey", row.estimateKey);
-        sessionStorage.setItem("jsAnnualEstimateMonth", row.estimateMonth);
-        sessionStorage.setItem("jsAnnualContractKey", row.contractKey);
-        this.$router.push("/yearActuarial");
+        sessionStorage.setItem("jsTrialSearchEstimateKey", row.estimateKey);
+        // sessionStorage.setItem("jsAnnualEstimateMonth", row.estimateMonth);
+        // sessionStorage.setItem("jsAnnualContractKey", row.contractKey);
+        this.$router.push("/yearTrialSearch");
       } else {
-        sessionStorage.setItem("jsMonthEstimateKey", row.estimateKey);
-        sessionStorage.setItem("jsMonthEstimateMonth", row.estimateMonth);
-        sessionStorage.setItem("jsMonthContractKey", row.contractKey);
-        this.$router.push("/monthActuarial");
+        sessionStorage.setItem("jsTrialSearchEstimateKey", row.estimateKey);
+        // sessionStorage.setItem("jsMonthEstimateMonth", row.estimateMonth);
+        // sessionStorage.setItem("jsMonthContractKey", row.contractKey);
+        this.$router.push("/monthTrialSearch");
       }
     },
     // 假分页
