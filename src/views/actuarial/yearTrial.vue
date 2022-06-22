@@ -25,6 +25,14 @@
         :columns="feeColumns"
         :listData="feeInfoList"
       ></fs-list-panel> -->
+        <span style="padding-right: 20px">是否根据赔付率获取手续费比例</span>
+        <el-switch
+          v-model="isDAC"
+          active-text="是"
+          inactive-text="否"
+          @change="handleIsDAC"
+        >
+        </el-switch>
         <el-table
           :data="feeInfoList"
           ref="feeInfo"
@@ -33,7 +41,9 @@
         >
           <el-table-column prop="dacRate" label="DAC比例">
             <template slot-scope="scope">
-              <span v-if="historyShow === '4'">{{ scope.row.dacRate }}</span>
+              <span v-if="historyShow === '4' || isDAC === true">{{
+                scope.row.dacRate
+              }}</span>
               <el-input v-else v-model="scope.row.dacRate"></el-input>
             </template>
           </el-table-column>
@@ -42,7 +52,11 @@
               <span v-if="historyShow === '4'">{{
                 scope.row.expectClaimRate
               }}</span>
-              <el-input v-else v-model="scope.row.expectClaimRate"></el-input>
+              <el-input
+                v-else
+                v-model="scope.row.expectClaimRate"
+                @blur="handleChangelossRatio(scope.row.expectClaimRate)"
+              ></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="expectXOLRate" label="预期XOL費用率">
@@ -511,6 +525,7 @@ export default {
       calculatedFeeList: [],
       calculatedFeeList2: [],
       lastList: [],
+      isDAC: false,
     };
   },
   methods: {
@@ -709,6 +724,35 @@ export default {
         "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
       );
     },
+    handleIsDAC() {
+      if (this.isDAC === true) {
+        $http
+          .post(api.commRateQuery, {
+            estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
+            lossRatioList: [{ lossRatio: this.feeInfoList[0].expectClaimRate }],
+          })
+          .then((res) => {
+            this.feeInfoList[0].dacRate = res.data.data[0].commRate;
+            // console.log(commRate, '??????')
+          });
+      } else {
+        // console.log(dacRateData, "dacRateData");
+        // this.feeInfoList[0].dacRate = localStorage.getItem("dacRateData");
+      }
+    },
+    handleChangelossRatio(lossRatio) {
+      console.log(lossRatio);
+      if (this.isDAC === true) {
+        $http
+          .post(api.commRateQuery, {
+            estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
+            lossRatioList: [{ lossRatio: this.feeInfoList[0].expectClaimRate }],
+          })
+          .then((res) => {
+            this.feeInfoList[0].dacRate = res.data.data[0].commRate;
+          });
+      }
+    },
     handleFloatChange() {
       this.lastList = [];
       // console.log(this.calculatedFeeList, "this.calculatedFeeList");
@@ -853,7 +897,7 @@ export default {
         });
       }
       this.adjustLoading = true;
-      console.log(this.UPRData, 'UPRDataUPRDataUPRDataUPRDataUPRDataUPRData');
+      console.log(this.UPRData, "UPRDataUPRDataUPRDataUPRDataUPRDataUPRData");
       let premiumList = [];
       this.UPRData.map((item) => {
         premiumList.push({
@@ -867,43 +911,43 @@ export default {
           estimateKey: sessionStorage.getItem("trialViewEstimateKey"),
           feeInfo: this.feeInfoList[0],
           uprRateList: this.uprRateList,
-          premiumList: premiumList
+          premiumList: premiumList,
         })
         .then((res) => {
           if (res.data.code === "0") {
-          this.$message.success("成功");
-          this.contractInfoList = [];
-          this.feeInfoList = [];
-          this.contractInfoList.push(res.data.data.contractInfo);
-          this.feeInfoList.push(res.data.data.feeInfo);
-          this.cedentList = res.data.data.cedentList;
-          let obj = { policyMonth: "UPR 分布" };
-          this.uprRateList = res.data.data.uprRateList;
-          // 对this.uprRAteList进行冒泡排序
-          for (var i = 0; i < this.uprRateList.length; i++) {
-            for (var j = 0; j < this.uprRateList.length - 1 - i; j++) {
-              if (
-                Number(this.uprRateList[j].policyMonth) >
-                Number(this.uprRateList[j + 1].policyMonth)
-              ) {
-                //相邻元素两两对比
-                var temp = this.uprRateList[j + 1]; //元素交换
-                this.uprRateList[j + 1] = this.uprRateList[j];
-                this.uprRateList[j] = temp;
+            this.$message.success("成功");
+            this.contractInfoList = [];
+            this.feeInfoList = [];
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.feeInfoList.push(res.data.data.feeInfo);
+            this.cedentList = res.data.data.cedentList;
+            let obj = { policyMonth: "UPR 分布" };
+            this.uprRateList = res.data.data.uprRateList;
+            // 对this.uprRAteList进行冒泡排序
+            for (var i = 0; i < this.uprRateList.length; i++) {
+              for (var j = 0; j < this.uprRateList.length - 1 - i; j++) {
+                if (
+                  Number(this.uprRateList[j].policyMonth) >
+                  Number(this.uprRateList[j + 1].policyMonth)
+                ) {
+                  //相邻元素两两对比
+                  var temp = this.uprRateList[j + 1]; //元素交换
+                  this.uprRateList[j + 1] = this.uprRateList[j];
+                  this.uprRateList[j] = temp;
+                }
               }
             }
-          }
-          // 排序结束
-          this.uprRateList.map((item) => {
-            obj[item.policyMonth] = item.uprRate;
-          });
-          this.uprRateListData = [];
-          this.uprRateListData.push(obj);
-          let uprSplitInfo = res.data.data.uprEstimateList;
-          this.dataProcess(uprSplitInfo);
-          this.calculatedFeeList = res.data.data.calculatedFeeList;
-          this.calculatedFeeList2 = res.data.data.calculatedFeeList;
-          this.handleFloatChange();
+            // 排序结束
+            this.uprRateList.map((item) => {
+              obj[item.policyMonth] = item.uprRate;
+            });
+            this.uprRateListData = [];
+            this.uprRateListData.push(obj);
+            let uprSplitInfo = res.data.data.uprEstimateList;
+            this.dataProcess(uprSplitInfo);
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+            this.handleFloatChange();
           } else {
             this.$message.error(res.data.msg);
           }

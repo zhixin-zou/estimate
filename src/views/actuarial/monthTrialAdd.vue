@@ -21,6 +21,14 @@
       <div class="separateInfo">
         <h2>费用信息</h2>
         <el-divider></el-divider>
+        <span style="padding-right: 20px">是否根据赔付率获取手续费比例</span>
+        <el-switch
+          v-model="isDAC"
+          active-text="是"
+          inactive-text="否"
+          @change="handleIsDAC"
+        >
+        </el-switch>
         <fs-list-panel
           v-show="false"
           :ref="'feeInfo'"
@@ -36,7 +44,9 @@
           </el-table-column>
           <el-table-column prop="dacRate" label="DAC比例">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{ scope.row.dacRate }}</span>
+              <span v-if="historyShow === '5' || isDAC === true">{{
+                scope.row.dacRate
+              }}</span>
               <el-input
                 v-else
                 v-model="scope.row.dacRate"
@@ -52,6 +62,9 @@
               <el-input
                 v-else
                 v-model="scope.row.expectClaimRate"
+                @blur="
+                  handleChangelossRatio(scope.row.expectClaimRate, scope.$index)
+                "
                 @change="getIndex(scope.row, scope.$index)"
               ></el-input>
             </template>
@@ -509,7 +522,8 @@ export default {
       calculatedFeeList2: [],
       lastList: [],
       uprEstimateList: [],
-      estimateKeyAdd: ''
+      estimateKeyAdd: "",
+      isDAC: false,
     };
   },
   methods: {
@@ -521,7 +535,7 @@ export default {
         })
         .then((res) => {
           // console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
-          this.estimateKeyAdd = res.data.data.contractInfo.estimateKey
+          this.estimateKeyAdd = res.data.data.contractInfo.estimateKey;
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
@@ -580,7 +594,53 @@ export default {
     kiloSplitData(data) {
       return kiloSplit(data);
     },
-
+    handleIsDAC() {
+      if (this.isDAC === true) {
+        console.log(this.feeInfoList, "feeInfoList");
+        let lossRatioList = [];
+        this.feeInfoList.forEach((item) => {
+          lossRatioList.push({ lossRatio: item.expectClaimRate });
+        });
+        console.log(lossRatioList, "lossRatioList");
+        $http
+          .post(api.commRateQuery, {
+            estimateKey: this.estimateKeyAdd,
+            lossRatioList: lossRatioList,
+          })
+          .then((res) => {
+            if (res.data.data.length === 1) {
+              this.feeInfoList.forEach((item) => {
+                item.dacRate = res.data.data[0].commRate;
+              });
+            } else {
+              this.feeInfoList.forEach((item) => {
+                res.data.data.forEach((element) => {
+                  if (item.expectClaimRate === element.lossRatio) {
+                    item.dacRate = element.commRate;
+                  }
+                });
+              });
+            }
+            // this.feeInfoList[0].dacRate = res.data.data.commRate;
+          });
+      } else {
+        // console.log(dacRateData, "dacRateData");
+        // this.feeInfoList[0].dacRate = localStorage.getItem("dacRateData");
+      }
+    },
+    handleChangelossRatio(ratio, index) {
+      console.log(ratio, index);
+      if (this.isDAC === true) {
+        $http
+          .post(api.commRateQuery, {
+            estimateKey: this.estimateKeyAdd,
+            lossRatioList: [{ lossRatio: ratio }],
+          })
+          .then((res) => {
+            this.feeInfoList[index].dacRate = res.data.data[0].commRate;
+          });
+      }
+    },
     handleFloatChange() {
       this.lastList = [];
       // console.log(this.calculatedFeeList, "this.calculatedFeeList");

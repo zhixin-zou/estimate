@@ -75,6 +75,8 @@ export default {
   // 月缴试算查询
   monthContractDetailTrialQuery:
     "/estimate/actuarial/monthContractDetailTrialQuery",
+  // 根据赔付率获取手续费比例
+  commRateQuery: '/estimate/actuarial/commRateQuery',
 
   // 精算预估历史查看
   actuarialHistoryQuery: "/estimate/actuarial/estimateHistoryQuery",

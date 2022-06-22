@@ -25,6 +25,14 @@
         :columns="feeColumns"
         :listData="feeInfoList"
       ></fs-list-panel> -->
+        <span style="padding-right: 20px">是否根据赔付率获取手续费比例</span>
+        <el-switch
+          v-model="isDAC"
+          active-text="是"
+          inactive-text="否"
+          @change="handleIsDAC"
+        >
+        </el-switch>
         <el-table
           :data="feeInfoList"
           ref="feeInfo"
@@ -33,7 +41,9 @@
         >
           <el-table-column prop="dacRate" label="DAC比例">
             <template slot-scope="scope">
-              <span v-if="historyShow === '4'">{{ scope.row.dacRate }}</span>
+              <span v-if="historyShow === '4' || isDAC === true">{{
+                scope.row.dacRate
+              }}</span>
               <el-input v-else v-model="scope.row.dacRate"></el-input>
             </template>
           </el-table-column>
@@ -42,7 +52,11 @@
               <span v-if="historyShow === '4'">{{
                 scope.row.expectClaimRate
               }}</span>
-              <el-input v-else v-model="scope.row.expectClaimRate"></el-input>
+              <el-input
+                v-else
+                v-model="scope.row.expectClaimRate"
+                @blur="handleChangelossRatio(scope.row.expectClaimRate)"
+              ></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="expectXOLRate" label="预期XOL費用率">
@@ -502,6 +516,8 @@ export default {
       calculatedFeeList: [],
       calculatedFeeList2: [],
       lastList: [],
+      isDAC: false,
+      // dacRateData: ''
     };
   },
   methods: {
@@ -511,11 +527,14 @@ export default {
           estimateKey: sessionStorage.getItem("jsAnnualEstimateKey"),
         })
         .then((res) => {
-          console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
+          // console.log(res, "rrrrrrrrreeeeeeeeeeeeeesssssssssssss");
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
           this.feeInfoList.push(res.data.data.feeInfo);
+          // localStorage.setItem("dacRateData", this.feeInfoList[0].dacRate);
+
+          // this.dacRateData = res.data.data.dacRate
           this.cedentList = res.data.data.cedentList;
           let obj = { policyMonth: "UPR 分布" };
           this.uprRateList = res.data.data.uprRateList;
@@ -699,6 +718,35 @@ export default {
         sumObj,
         "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
       );
+    },
+    handleIsDAC() {
+      if (this.isDAC === true) {
+        $http
+          .post(api.commRateQuery, {
+            estimateKey: sessionStorage.getItem("jsAnnualEstimateKey"),
+            lossRatioList: [{ lossRatio: this.feeInfoList[0].expectClaimRate }],
+          })
+          .then((res) => {
+            this.feeInfoList[0].dacRate = res.data.data[0].commRate;
+            // console.log(commRate, '??????')
+          });
+      } else {
+        // console.log(dacRateData, "dacRateData");
+        // this.feeInfoList[0].dacRate = localStorage.getItem("dacRateData");
+      }
+    },
+    handleChangelossRatio(lossRatio) {
+      console.log(lossRatio);
+      if (this.isDAC === true) {
+        $http
+          .post(api.commRateQuery, {
+            estimateKey: sessionStorage.getItem("jsAnnualEstimateKey"),
+            lossRatioList: [{ lossRatio: this.feeInfoList[0].expectClaimRate }],
+          })
+          .then((res) => {
+            this.feeInfoList[0].dacRate = res.data.data[0].commRate;
+          });
+      }
     },
     handleFloatChange() {
       this.lastList = [];
