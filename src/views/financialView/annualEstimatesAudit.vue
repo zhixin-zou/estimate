@@ -47,9 +47,14 @@
       <h2>EPI拆分</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox" v-if="historyShow !== 'Y'">
+        <div class="adjustBox">
           <div class="adjustName"><span>总EPI：</span></div>
-          <div class="input"><el-input v-model="totalEPI"></el-input></div>
+          <div class="input">
+            <el-input
+              v-model="totalEPI"
+              :disabled="historyShow === 'Y'"
+            ></el-input>
+          </div>
         </div>
         <el-button
           v-if="historyShow !== 'Y'"
@@ -147,33 +152,51 @@
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox" v-if="historyShow !== 'Y'">
+        <div class="adjustBox">
           <div class="adjustName"><span>手续费比例：</span></div>
           <div class="input">
-            <el-input v-model="commRate"></el-input>
+            <el-input
+              v-model="commRate"
+              :disabled="historyShow === 'Y'"
+            ></el-input>
           </div>
           <div class="adjustName"><span>预付手续费比例：</span></div>
           <div class="input">
-            <el-input v-model="provCommRate"></el-input>
+            <el-input
+              v-model="provCommRate"
+              :disabled="historyShow === 'Y'"
+            ></el-input>
           </div>
           <div class="adjustName"><span>经纪费比例：</span></div>
           <div class="input">
-            <el-input v-model="brokerageRate"></el-input>
+            <el-input
+              v-model="brokerageRate"
+              :disabled="historyShow === 'Y'"
+            ></el-input>
           </div>
           <div class="adjustName"><span>分出比例：</span></div>
           <div class="input">
-            <el-input v-model="cedentRate"></el-input>
+            <el-input
+              v-model="cedentRate"
+              :disabled="historyShow === 'Y'"
+            ></el-input>
           </div>
           <br />
           <div style="height: 30px"></div>
           <br />
           <div class="adjustName"><span>分入浮动因子：</span></div>
           <div class="input">
-            <el-input v-model="iabSlidingScaleAdjustRate"></el-input>
+            <el-input
+              v-model="iabSlidingScaleAdjustRate"
+              :disabled="historyShow === 'Y'"
+            ></el-input>
           </div>
           <div class="adjustName"><span>分出浮动因子：</span></div>
           <div class="input">
-            <el-input v-model="orpSlidingScaleAdjustRate"></el-input>
+            <el-input
+              v-model="orpSlidingScaleAdjustRate"
+              :disabled="historyShow === 'Y'"
+            ></el-input>
           </div>
         </div>
         <el-button
@@ -195,11 +218,7 @@
       <el-table
         :data="lastList"
         border
-        :style="
-          historyShow !== 'Y'
-            ? 'width: 100%; margin-top: 80px'
-            : 'width: 100%; margin-top: 0px'
-        "
+        style="width: 100%; margin-top: 80px"
       >
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
@@ -210,7 +229,8 @@
           fixed="left"
         >
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种" width="100"> </el-table-column>
+        <el-table-column prop="currencyCode" label="币种" width="100">
+        </el-table-column>
         <el-table-column
           width="200"
           v-for="(item, index) in calculatedFeeList"
@@ -248,7 +268,11 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-button plain class="checkDetial" @click="handleDetial"
+    <el-button
+      plain
+      class="checkDetial"
+      @click="handleDetial"
+      v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
       >查看入账明细</el-button
     >
   </div>
@@ -268,7 +292,7 @@ export default {
   // },
   data() {
     return {
-      estimateMonth: '',
+      estimateMonth: "",
       historyShow: sessionStorage.getItem("yahistoryShow"),
 
       adjustLoading: false,
@@ -451,11 +475,11 @@ export default {
       // let params = sessionStorage.getItem("cwNAuditEstimateKey");
       $http
         .post(api.auditDetailQuery, {
-          auditLogId: sessionStorage.getItem('auditLogId'),
+          auditLogId: sessionStorage.getItem("auditLogId"),
         })
         .then((data) => {
           let datas = "";
-          console.log(data, 'datas');
+          console.log(data, "datas");
 
           if (sessionStorage.getItem("opreatAudit") === "before") {
             datas = data.data.data.beforeInfo;
@@ -466,12 +490,18 @@ export default {
           if (datas !== "") {
             res = JSON.parse(datas);
           }
-          console.log(res, 'res')
+          console.log(res, "res");
           if (res.code === "0") {
             console.log(res, "reseres");
-            sessionStorage.setItem('cwNAuditEstimateKey', res.data.contractInfo.estimateKey)
-            sessionStorage.setItem('cwNAuditEstimateMonth', res.data.contractInfo.estimateMonth)
-            this.estimateMonth = res.data.contractInfo.estimateMonth
+            sessionStorage.setItem(
+              "cwNAuditEstimateKey",
+              res.data.contractInfo.estimateKey
+            );
+            sessionStorage.setItem(
+              "cwNAuditEstimateMonth",
+              res.data.contractInfo.estimateMonth
+            );
+            this.estimateMonth = res.data.contractInfo.estimateMonth;
             this.contractInfoList.push(res.data.contractInfo);
             this.cedentList = res.data.cedentList;
             this.workSheetList = res.data.workSheetList;
@@ -509,8 +539,8 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleBack() {
-      this.$router.go(-1);
-      // this.$router.push("/financialForecasts");
+      // this.$router.go(-1);
+      this.$router.push("/auditLog");
     },
     getSummaries(param) {
       const { columns, data } = param;
@@ -780,6 +810,7 @@ export default {
     handleDetial() {
       sessionStorage.removeItem("bookDetialHistory");
       sessionStorage.setItem("accountType", "0");
+      localStorage.setItem("bookDetialGoto", "annualEstimatesAudit");
       this.$router.push({ path: "/bookedDetial" });
     },
     changtext(scope) {

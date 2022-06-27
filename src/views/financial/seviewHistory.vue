@@ -115,9 +115,10 @@ export default {
       //     sessionStorage.setItem("licl", "2");
       //   }
       // } else if (sessionStorage.getItem("enterType") === "out") {
-          sessionStorage.setItem("sepEstimateKey", row.estimateKey);
+      sessionStorage.setItem("sepEstimateKey", row.estimateKey);
+      localStorage.setItem("seGoto", "seviewHistory");
 
-        this.$router.push("/separateEstimateDetial");
+      this.$router.push("/separateEstimateDetial");
       // } else if (sessionStorage.getItem("enterType") === "jsyear") {
       //   this.$router.push("/yearActuarial");
       //   sessionStorage.setItem("licl", "4");
@@ -127,7 +128,8 @@ export default {
       // }
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push("/separateEstimates");
     },
   },
   beforeRouteEnter(to, from, next) {

@@ -329,7 +329,17 @@ export default {
         });
     },
     handleBackClick() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      if (localStorage.getItem("bookDetialGoto") === "annualEstimates") {
+        this.$router.push("/annualEstimates");
+      } else if (localStorage.getItem("bookDetialGoto") === "monthContractDetail") {
+        this.$router.push("/monthContractDetail");
+      } else if (localStorage.getItem("bookDetialGoto") === "annualEstimatesAudit") {
+        this.$router.push("/auditLog/annualEstimatesAudit");
+      } else if (localStorage.getItem("bookDetialGoto") === "monthContractDetailAudit") {
+        this.$router.push("/auditLog/monthContractDetailAudit");
+      }
+      localStorage.removeItem('bookDetialGoto')
     },
     handleCheck() {
       this.loading = true;
@@ -352,7 +362,7 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-          this.flag = 1
+          this.flag = 1;
         });
     },
     exportBtn(refProp, fname) {

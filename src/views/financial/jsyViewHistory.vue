@@ -104,6 +104,8 @@ export default {
     },
     handleDetial(row) {
       console.log(row);
+      localStorage.setItem("ActuarialGoto", "jsyViewHistory");
+      
       // if (sessionStorage.getItem("enterType") === "in") {
       //   if (row.payType === "annual") {
       //     sessionStorage.setItem("finAnnualEstimateKey", row.estimateKey);
@@ -126,7 +128,8 @@ export default {
       // }
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push('/actuarialEstimates')
     },
   },
   beforeRouteEnter(to, from, next) {

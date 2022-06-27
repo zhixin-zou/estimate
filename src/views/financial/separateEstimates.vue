@@ -325,6 +325,7 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleFinancialClick(row) {
+      localStorage.setItem('seGoto', 'separateEstimates')
       sessionStorage.setItem("sepEstimateKey", row.estimateKey);
       sessionStorage.setItem("sepEstimateMonth", row.estimateMonth);
       sessionStorage.setItem("sepContractKey", row.contractKey);

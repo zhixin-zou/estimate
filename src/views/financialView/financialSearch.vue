@@ -62,6 +62,16 @@
             >
             </el-date-picker>
           </el-form-item>
+          <el-form-item label="获取非0EPI记录" style="margin-left: 20px">
+            <el-switch
+              v-model="form.ifNotZero"
+              active-color="#ff4949"
+              inactive-color="#13ce66"
+              active-value="N"
+              inactive-value="Y"
+            >
+            </el-switch
+          ></el-form-item>
         </el-form>
       </div>
 
@@ -277,6 +287,7 @@ export default {
         contractTimeEnd: "",
         estimateMonth: "",
         contractClass: "",
+        ifNotZero: "Y",
       },
       columns: [
         {
@@ -372,7 +383,7 @@ export default {
       return kiloSplit(data);
     },
     handleSearchClick() {
-      this.currentPage = 1
+      this.currentPage = 1;
       this.form.estimateMonth = "";
       if (this.form.estimateMonth === "") {
         this.loading = true;
@@ -400,14 +411,14 @@ export default {
     },
     handleSearchAll() {
       if (this.form.estimateMonth !== "") {
-          sessionStorage.setItem("fsallEstimateKey", ""),
+        sessionStorage.setItem("fsallEstimateKey", ""),
           sessionStorage.setItem("fsallContractKey", ""),
           sessionStorage.setItem(
             "fsallEstimateMonth",
             getYearMonthDate(this.form.estimateMonth)
           ),
           sessionStorage.setItem("fsaccountType", ""),
-          this.$router.push('/fsAllBookedDetial');
+          this.$router.push("/fsAllBookedDetial");
       } else {
         this.$message.warning("请输入做账月份");
       }
@@ -420,6 +431,7 @@ export default {
         cedent: "",
         contractTimeBegin: "",
         contractTimeEnd: "",
+        ifNotZero: "Y",
       };
     },
     handleFinancialAccounting(row) {
@@ -437,7 +449,7 @@ export default {
       sessionStorage.setItem("fsaccountType", "1");
       sessionStorage.removeItem("bookDetialHistory");
 
-      this.$router.push({ path: "/fsBookedDetial"});
+      this.$router.push({ path: "/fsBookedDetial" });
     },
     historyAccounting(row) {
       sessionStorage.setItem("fsEstimateKey", row.estimateKey);

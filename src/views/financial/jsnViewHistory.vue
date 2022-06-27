@@ -103,6 +103,7 @@ export default {
       return getText("estimateStatus", data);
     },
     handleDetial(row) {
+      localStorage.setItem("ActuarialGoto", "jsnViewHistory");
       console.log(row);
       // if (sessionStorage.getItem("enterType") === "in") {
       //   if (row.payType === "annual") {
@@ -117,16 +118,17 @@ export default {
       // } else if (sessionStorage.getItem("enterType") === "out") {
       //   this.$router.push("/separateEstimateDetial");
       // } else if (sessionStorage.getItem("enterType") === "jsyear") {
-          sessionStorage.setItem("jsAnnualEstimateKey", row.estimateKey);
-        this.$router.push("/yearActuarial");
-        sessionStorage.setItem("licl", "4");
+      sessionStorage.setItem("jsAnnualEstimateKey", row.estimateKey);
+      this.$router.push("/yearActuarial");
+      sessionStorage.setItem("licl", "4");
       // } else if (sessionStorage.getItem("enterType") === "jsmonth") {
       //   this.$router.push("/monthActuarial");
       //   sessionStorage.setItem("licl", "5");
       // }
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push("/actuarialEstimates");
     },
   },
   beforeRouteEnter(to, from, next) {

@@ -459,6 +459,7 @@ export default {
     },
     handleFinancialClick(row) {
       console.log(row.payType, "row.payTyperow.payTyperow.payType");
+      localStorage.setItem('cwHistoryGoto', 'financialForecasts')
       sessionStorage.removeItem("licl");
       // sessionStorage.setItem("estimateKey", row.estimateKey);
       // sessionStorage.setItem("estimateMonth", row.estimateMonth);

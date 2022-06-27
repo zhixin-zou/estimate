@@ -746,7 +746,12 @@ export default {
     },
     handleBack() {
       // this.$router.go(-1);
-      this.$router.push("/actuarialEstimates");
+      if (localStorage.getItem("ActuarialGoto") === "actuarialEstimates") {
+        this.$router.push("/actuarialEstimates");
+      } else if (localStorage.getItem("ActuarialGoto") === "jsyViewHistory") {
+        this.$router.push("/jsyViewHistory");
+      }
+      localStorage.removeItem("ActuarialGoto");
     },
     // 导出方法
     exportBtn(refProp, fname) {

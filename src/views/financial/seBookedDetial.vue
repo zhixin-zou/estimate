@@ -329,7 +329,8 @@ export default {
         });
     },
     handleBackClick() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push('/separateEstimateDetial')
     },
     handleCheck() {
       this.loading = true;

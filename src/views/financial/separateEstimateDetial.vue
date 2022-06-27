@@ -82,7 +82,8 @@
           fixed="left"
         >
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种" width="100"> </el-table-column>
+        <el-table-column prop="currencyCode" label="币种" width="100">
+        </el-table-column>
         <el-table-column
           width="150"
           v-for="(item, index) in calculatedFeeList"
@@ -126,7 +127,7 @@
       :columns="frfeeColumns"
       :listData="frfeeList"
     ></fs-list-panel>
-    <el-button plain class="checkDetial" @click="handleDetial"
+    <el-button plain class="checkDetial" @click="handleDetial" v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
       >查看入账明细</el-button
     >
   </div>
@@ -138,7 +139,6 @@ import api from "@/utils/api";
 import { kiloSplit, getYearMonthDate } from "@/utils/utils";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
-
 
 export default {
   data() {
@@ -487,8 +487,13 @@ export default {
       return kiloSplit(data);
     },
     handleBack() {
-      this.$router.go(-1);
-      // this.$router.push("/separateEstimates");
+      // this.$router.go(-1);
+      if (localStorage.getItem("seGoto") === "separateEstimates") {
+        this.$router.push("/separateEstimates");
+      } else if (localStorage.getItem("seGoto") === "seviewHistory") {
+        this.$router.push("/seviewHistory");
+      }
+      localStorage.removeItem("seGoto");
     },
     // 导出方法
     exportBtn(refProp, fname) {

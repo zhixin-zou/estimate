@@ -87,7 +87,8 @@ export default {
       // this.monthAdjustDetailList = data.data.monthAdjustDetail;
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push('/monthContractDetail')
     },
     dataProcess(epiSplitInfo) {
       // 横向时间处理

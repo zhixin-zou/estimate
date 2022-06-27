@@ -821,7 +821,8 @@ export default {
       // this.$forceUpdate()
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push('/auditLog')
     },
     // 导出方法
     exportBtn(refProp, fname) {

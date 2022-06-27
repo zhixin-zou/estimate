@@ -47,9 +47,9 @@
       <h2>EPI拆分</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox" v-if="historyShow !== '1'">
+        <div class="adjustBox">
           <div class="adjustName"><span>总EPI：</span></div>
-          <div class="input"><el-input v-model="totalEPI"></el-input></div>
+          <div class="input"><el-input v-model="totalEPI" :disabled="historyShow === '1'"></el-input></div>
         </div>
         <el-button
           v-if="historyShow !== '1'"
@@ -147,33 +147,33 @@
       <h2>计算后预估费用明细</h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
-        <div class="adjustBox" v-if="historyShow !== '1'">
+        <div class="adjustBox">
           <div class="adjustName"><span>手续费比例：</span></div>
           <div class="input">
-            <el-input v-model="commRate"></el-input>
+            <el-input v-model="commRate" :disabled="historyShow === '1'"></el-input>
           </div>
           <div class="adjustName"><span>预付手续费比例：</span></div>
           <div class="input">
-            <el-input v-model="provCommRate"></el-input>
+            <el-input v-model="provCommRate" :disabled="historyShow === '1'"></el-input>
           </div>
           <div class="adjustName"><span>经纪费比例：</span></div>
           <div class="input">
-            <el-input v-model="brokerageRate"></el-input>
+            <el-input v-model="brokerageRate" :disabled="historyShow === '1'"></el-input>
           </div>
           <div class="adjustName"><span>分出比例：</span></div>
           <div class="input">
-            <el-input v-model="cedentRate"></el-input>
+            <el-input v-model="cedentRate" :disabled="historyShow === '1'"></el-input>
           </div>
           <br />
           <div style="height: 30px"></div>
           <br />
           <div class="adjustName"><span>分入浮动因子：</span></div>
           <div class="input">
-            <el-input v-model="iabSlidingScaleAdjustRate"></el-input>
+            <el-input v-model="iabSlidingScaleAdjustRate" :disabled="historyShow === '1'"></el-input>
           </div>
           <div class="adjustName"><span>分出浮动因子：</span></div>
           <div class="input">
-            <el-input v-model="orpSlidingScaleAdjustRate"></el-input>
+            <el-input v-model="orpSlidingScaleAdjustRate" :disabled="historyShow === '1'"></el-input>
           </div>
         </div>
         <el-button
@@ -192,7 +192,7 @@
         >
       </div>
       <!-- {{ this.lastList }} -->
-      <el-table :data="lastList" border :style="historyShow !== '1' ? 'width: 100%; margin-top: 80px' : 'width: 100%; margin-top: 0px'">
+      <el-table :data="lastList" border style="width: 100%; margin-top: 80px">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
         <el-table-column
@@ -240,7 +240,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-button plain class="checkDetial" @click="handleDetial"
+    <el-button plain class="checkDetial" @click="handleDetial" v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
       >查看入账明细</el-button
     >
   </div>
@@ -481,7 +481,12 @@ export default {
     },
     handleBack() {
       // this.$router.go(-1);
-      this.$router.push("/financialForecasts");
+      if (localStorage.getItem('cwHistoryGoto') === 'financialForecasts') {
+        this.$router.push("/financialForecasts");
+      } else if(localStorage.getItem('cwHistoryGoto') === 'viewHistory') {
+        this.$router.push("/viewHistory");
+      }
+      localStorage.removeItem('cwHistoryGoto')
     },
     getSummaries(param) {
       const { columns, data } = param;
@@ -751,6 +756,7 @@ export default {
     handleDetial() {
       sessionStorage.removeItem("bookDetialHistory");
       sessionStorage.setItem("accountType", "0");
+      localStorage.setItem('bookDetialGoto', 'annualEstimates')
       this.$router.push({ path: "/bookedDetial" });
     },
     changtext(scope) {

@@ -1,5 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
+import store from "@/store";
+
 // import HomeView from '@/views/HomeView.vue'
 import NotFound from "@/views/NotFound.vue";
 // import Forbidden from '@/views/Forbidden.vue'
@@ -36,11 +38,10 @@ import MonthTrialSearch from "@/views/actuarial/monthTrialSearch";
 import YearTrialAdd from "@/views/actuarial/yearTrialAdd";
 import MonthTrialAdd from "@/views/actuarial/monthTrialAdd";
 import TrialSearch from "@/views/actuarial/trialSearch.vue";
-import TrialSearchView from "@/views/actuarial/trialSearchView.vue"
+import TrialSearchView from "@/views/actuarial/trialSearchView.vue";
 
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
 
-// import store from '@/store'
 // import { Message } from 'element-ui'
 // const CustomAppView = () =>
 //     import ('@/views/CustomAppView')
@@ -179,7 +180,8 @@ const routes = [
   {
     path: "/monthTrial",
     component: MonthTrial,
-  },  {
+  },
+  {
     path: "/yearTrialSearch",
     component: YearTrialSearch,
   },
@@ -265,35 +267,45 @@ const router = new Router({ mode: "hash", routes });
 // Router.prototype.push = function push(location) {
 //         return originalPush.call(this, location).catch(err => err)
 //     }
-// router.beforeEach((to, from, next) => {
-//   console.log(11111111111111111122222222222223333333333333333333333)
-//     // const path = to.matched[0].path
-//     // store.dispatch('common/getDict')
-//     // store
-//     //     .dispatch('login/getUserInfo')
-//     //     .then(() => {
-//             // store.dispatch('login/getUserPermissionList').then(() => {
-//             //     if (!to.meta.requireAuth) {
-//             //         next()
-//             //         return
-//             //     }
+router.beforeEach((to, from, next) => {
+  // console.log(to, from, next, "beforein", window.location.href);
+  if (!window.location.href.includes("localhost:3000") && !window.location.href.includes("10.10.128.14")) {
+    store.dispatch("login/getUserPermissionList").then(() => {
+      // next();
+    });
+  } else {
+    store.dispatch("login/getLocalUserPermissionList").then(() => {
+      // next()
+    })
+  }
+  next();
 
-//             //     // if (store.getters['login/hasRoutePermission'](path)) {
-//             //     //     next()
-//             //     // } else {
-//             //     //     next('/forbidden')
-//             //     // }
-//             // })
-//             // const account = store.state.login.userInfo.ename
-//             // if (!store.state.login.userRole) {
-//             //     store.dispatch('login/viewUser', account).then(() => {
-//             //         store.dispatch('common/getDict')
-//             //     })
-//             // }
-//         // })
-//         // .catch(() => {
-//         //     Message.error('用户权限获取失败')
-//         // })
-// })
+  // const path = to.matched[0].path
+  // store
+  //     .dispatch('login/getUserInfo')
+  //     .then(() => {
+  // store.dispatch('login/getUserPermissionList').then(() => {
+  //     if (!to.meta.requireAuth) {
+  //         next()
+  //         return
+  //     }
+
+  //     // if (store.getters['login/hasRoutePermission'](path)) {
+  //     //     next()
+  //     // } else {
+  //     //     next('/forbidden')
+  //     // }
+  // })
+  // const account = store.state.login.userInfo.ename
+  // if (!store.state.login.userRole) {
+  //     store.dispatch('login/viewUser', account).then(() => {
+  //         store.dispatch('common/getDict')
+  //     })
+  // }
+  // })
+  // .catch(() => {
+  //     Message.error('用户权限获取失败')
+  // })
+});
 
 export default router;

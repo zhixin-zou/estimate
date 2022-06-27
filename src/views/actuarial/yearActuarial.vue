@@ -853,7 +853,12 @@ export default {
     },
     handleBack() {
       // this.$router.go(-1);
+      if (localStorage.getItem('ActuarialGoto') === 'actuarialEstimates') {
       this.$router.push("/actuarialEstimates");
+      } else if (localStorage.getItem('ActuarialGoto') === 'jsnViewHistory') {
+        this.$router.push("/jsnViewHistory")
+      }
+      localStorage.removeItem("ActuarialGoto")
     },
     // 导出方法
     exportBtn(refProp, fname) {

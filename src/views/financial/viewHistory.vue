@@ -105,15 +105,17 @@ export default {
     handleDetial(row) {
       console.log(row);
       // if (sessionStorage.getItem("enterType") === "in") {
-        if (row.payType === "annual") {
-          sessionStorage.setItem("finEstimateKey", row.estimateKey);
-          this.$router.push("/annualEstimates");
-          sessionStorage.setItem("licl", "1");
-        } else {
-          sessionStorage.setItem("finEstimateKey", row.estimateKey);
-          this.$router.push("/monthContractDetail");
-          sessionStorage.setItem("licl", "2");
-        }
+      localStorage.setItem("cwHistoryGoto", "viewHistory");
+
+      if (row.payType === "annual") {
+        sessionStorage.setItem("finEstimateKey", row.estimateKey);
+        this.$router.push("/annualEstimates");
+        sessionStorage.setItem("licl", "1");
+      } else {
+        sessionStorage.setItem("finEstimateKey", row.estimateKey);
+        this.$router.push("/monthContractDetail");
+        sessionStorage.setItem("licl", "2");
+      }
       // } else if (sessionStorage.getItem("enterType") === "out") {
       //   this.$router.push("/separateEstimateDetial");
       // } else if (sessionStorage.getItem("enterType") === "jsyear") {
@@ -125,7 +127,8 @@ export default {
       // }
     },
     handleBack() {
-      this.$router.go(-1);
+      // this.$router.go(-1);
+      this.$router.push("/financialForecasts");
     },
   },
   beforeRouteEnter(to, from, next) {

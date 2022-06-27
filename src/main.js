@@ -6,6 +6,7 @@ import ElementUI from "element-ui";
 import request from "./utils/request";
 import router from "./router";
 import store from "./store";
+import permission from "./utils/permission";
 
 import "element-ui/lib/theme-chalk/index.css";
 
@@ -19,7 +20,19 @@ Vue.use(request);
 // Vue.component(FilterPanel.name, FilterPanel)
 Vue.component(FsListPanel.name, FsListPanel);
 /* eslint-disable no-new */
+Vue.directive("permission", {
+  bind: (el, binding) => {
+    if (!binding.value) {
+      return;
+    }
 
+    if (
+      !store.getters["login/hasFeaturePermission"](permission[binding.value])
+    ) {
+      el.style.display = "none";
+    }
+  },
+});
 new Vue({
   router,
   store,
