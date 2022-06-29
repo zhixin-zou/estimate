@@ -348,7 +348,7 @@
       plain
       class="checkDetial"
       @click="handleDetial"
-      v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
+       
       >查看入账明细</el-button
     >
   </div>

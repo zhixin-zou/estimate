@@ -150,12 +150,14 @@
         plain
         @click="handleCheck"
         :disabled="finished"
+        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
         >确认入账</el-button
       >
       <el-button
         :loading="editLoading"
         @click="handleEditClick"
         :disabled="canEdit"
+        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
         >修改</el-button
       >
     </div>

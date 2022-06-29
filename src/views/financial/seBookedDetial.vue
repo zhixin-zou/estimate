@@ -149,12 +149,14 @@
         :loading="loading"
         plain
         @click="handleCheck"
+        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
         :disabled="finished"
         >确认入账</el-button
       >
       <el-button
         :loading="editLoading"
         @click="handleEditClick"
+        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
         :disabled="canEdit"
         >修改</el-button
       >

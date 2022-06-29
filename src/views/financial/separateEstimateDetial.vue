@@ -127,7 +127,7 @@
       :columns="frfeeColumns"
       :listData="frfeeList"
     ></fs-list-panel>
-    <el-button plain class="checkDetial" @click="handleDetial" v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
+    <el-button plain class="checkDetial" @click="handleDetial"  
       >查看入账明细</el-button
     >
   </div>
