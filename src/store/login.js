@@ -37,30 +37,17 @@ export default {
     SET_LOGIN_USER(state, payload) {
       extend(state.userInfo, payload);
     },
-    SET_USER_PERMISSION_LIST(state, list) {
-      state.userPermissionList = list;
+    SET_USER_PERMISSION_LIST(state, payload) {
+      console.log(payload, '?????????????????????')
+      state.userPermissionList = payload;
       state.userPermissionFetced = true;
       console.log(state.userPermissionList, "state.userPermissionList");
     },
-    // SET_USER_ROLE (state, result) {
-    //   // let rolesArr = list.roles || []
-    //   // let user15E = rolesArr.find(v => v.roleName.indexOf('15E') > 0)
-    //   // let user15F = rolesArr.find(v => v.roleName.indexOf('15F') > 0)
-    //   // if (user15E && !user15F) {
-    //   //   state.userRole = 2
-    //   // } else if (!user15E && user15F) {
-    //   //   state.userRole = 3
-    //   // } else {
-    //   //   state.userRole = 1
-    //   // }
-    //   state.userRole = result
-    //   console.log(result, state.userRole, 'getCommonUserDetail')
-    // }
   },
 
   actions: {
-    getUserPermissionList({ state, commit }) {
-      if (!state.userPermissionFetced) {
+    getUserPermissionList({ commit }) {
+      // if (!state.userPermissionFetced) {
         // 线上环境无需传入参数，通过网关获取当前用户
         let params = null;
         // if (process.env.NODE_ENV === 'development') {
@@ -70,9 +57,10 @@ export default {
         //   }
         // }
         return $http.post(api.getUserPermissionList, params).then((data) => {
-          commit("SET_USER_PERMISSION_LIST", data.result || []);
+          console.log(data, '权限data')
+          commit("SET_USER_PERMISSION_LIST", data.data.result || data.result || []);
         });
-      }
+      // }
     },
     getLocalUserPermissionList({ state }) {
       if (!state.localUserPermissionFetced) {

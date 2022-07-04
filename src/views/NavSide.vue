@@ -37,6 +37,7 @@
             <span>账务查看</span>
           </template>
           <el-menu-item-group>
+            <el-menu-item index="/ebsDetailSearch">明细查寻</el-menu-item>
             <el-menu-item index="/financialSearch">账务查寻</el-menu-item>
             <el-menu-item index="/auditLog">审计查询</el-menu-item>
             <el-menu-item index="/estimateDuring">预估期间</el-menu-item>

@@ -39,8 +39,8 @@ import YearTrialAdd from "@/views/actuarial/yearTrialAdd";
 import MonthTrialAdd from "@/views/actuarial/monthTrialAdd";
 import TrialSearch from "@/views/actuarial/trialSearch.vue";
 import TrialSearchView from "@/views/actuarial/trialSearchView.vue";
-
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
+import EbsDetailSearch from "@/views/financialView/ebsDetailSearch"
 
 // import { Message } from 'element-ui'
 // const CustomAppView = () =>
@@ -196,6 +196,10 @@ const routes = [
   {
     path: "/monthTrialAdd",
     component: MonthTrialAdd,
+  },
+  {
+    path: "/ebsDetailSearch",
+    component: EbsDetailSearch,
   },
   {
     path: "/404",

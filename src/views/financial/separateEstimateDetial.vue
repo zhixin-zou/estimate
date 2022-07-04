@@ -127,7 +127,7 @@
       :columns="frfeeColumns"
       :listData="frfeeList"
     ></fs-list-panel>
-    <el-button plain class="checkDetial" @click="handleDetial"  
+    <el-button plain class="checkDetial" @click="handleDetial"
       >查看入账明细</el-button
     >
   </div>
@@ -526,10 +526,16 @@ export default {
     handleDownload() {
       this.loading = true;
       let params = sessionStorage.getItem("sepEstimateKey");
+      let dateParams = "";
+      if (getYearMonthDate(this.cMonth) === "197001" || getYearMonthDate(this.cMonth) === 'NaNNaN') {
+        dateParams = "";
+      } else {
+        dateParams = getYearMonthDate(this.cMonth);
+      }
       $http
         .post(api.orpIabContractFeeQuery, {
           estimateKey: params,
-          calculatMonth: getYearMonthDate(this.cMonth),
+          calculatMonth: dateParams,
         })
         .then((res) => {
           console.log(
