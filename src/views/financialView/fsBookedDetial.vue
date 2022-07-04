@@ -313,19 +313,19 @@
     <!-- <fs-list-panel :columns="columns" :listData="listData"> </fs-list-panel> -->
     <div class="bookDetialButton" v-if="historyShow !== '0'">
       <el-button
+        :loading="editLoading"
+        @click="handleEditClick"
+        :disabled="canEdit"
+        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
+        >账务修改</el-button
+      >
+      <el-button
         :loading="loading"
         plain
         v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
         @click="handleCheck"
         :disabled="canEdit"
-        >确认入账</el-button
-      >
-      <el-button
-        :loading="editLoading"
-        @click="handleEditClick"
-        :disabled="canEdit"
-        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
-        >修改</el-button
+        >账务下发</el-button
       >
     </div>
   </div>
