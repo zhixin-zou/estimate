@@ -544,6 +544,8 @@ export default {
         productCode: this.form.productCode,
         accountClass: this.form.accountClass
       };
+      params.estimateMonth = params.estimateMonth === '197001' ? '' : params.estimateMonth
+
       this.loading = true;
       $http
         .post(api.ebsInfoQuery, params)
