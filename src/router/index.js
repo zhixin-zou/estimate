@@ -40,7 +40,7 @@ import MonthTrialAdd from "@/views/actuarial/monthTrialAdd";
 import TrialSearch from "@/views/actuarial/trialSearch.vue";
 import TrialSearchView from "@/views/actuarial/trialSearchView.vue";
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
-import EbsDetailSearch from "@/views/financialView/ebsDetailSearch"
+import EbsDetailSearch from "@/views/financialView/ebsDetailSearch";
 
 // import { Message } from 'element-ui'
 // const CustomAppView = () =>
@@ -84,6 +84,10 @@ const routes = [
   {
     path: "/trialSearchView",
     component: TrialSearchView,
+  },
+  {
+    path: "/ebsDetailSearch",
+    component: EbsDetailSearch,
   },
   {
     path: "/annualEstimates",
@@ -198,10 +202,6 @@ const routes = [
     component: MonthTrialAdd,
   },
   {
-    path: "/ebsDetailSearch",
-    component: EbsDetailSearch,
-  },
-  {
     path: "/404",
     component: NotFound,
     meta: {
@@ -273,14 +273,17 @@ const router = new Router({ mode: "hash", routes });
 //     }
 router.beforeEach((to, from, next) => {
   // console.log(to, from, next, "beforein", window.location.href);
-  if (!window.location.href.includes("localhost:3000") && !window.location.href.includes("10.10.128.14")) {
+  if (
+    !window.location.href.includes("localhost") &&
+    !window.location.href.includes("10.10.128.14")
+  ) {
     store.dispatch("login/getUserPermissionList").then(() => {
       // next();
     });
   } else {
     store.dispatch("login/getLocalUserPermissionList").then(() => {
       // next()
-    })
+    });
   }
   next();
 

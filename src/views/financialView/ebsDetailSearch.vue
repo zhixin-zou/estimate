@@ -38,6 +38,16 @@
                 <el-form-item label="合同号结束">
                   <el-input v-model="form.contractNoEnd"></el-input>
                 </el-form-item>
+                <el-form-item label="账务类型">
+                  <el-select
+                    v-model="form.accountType"
+                    placeholder="请选择"
+                    clearable
+                  >
+                    <el-option label="财务" value="0"></el-option>
+                    <el-option label="精算" value="1"></el-option>
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="合同类别">
                   <el-select v-model="form.contractClass" placeholder="请选择">
                     <el-option label="分入" value="AB"></el-option>
@@ -100,17 +110,27 @@
                   >
                   </el-date-picker
                 ></el-form-item>
-                <el-form-item label="账务类型">
+                <el-form-item label="凭证类型">
                   <el-select
-                    v-model="form.accountType"
+                    v-model="form.accountClass"
                     placeholder="请选择"
                     clearable
                   >
-                    <el-option label="财务" value="0"></el-option>
-                    <el-option label="精算" value="1"></el-option>
+                    <el-option label="预估帐" value="Estimation"></el-option>
+                    <el-option
+                      label="技术账单"
+                      value="SICS Technical"
+                    ></el-option>
+                    <el-option
+                      label="结算账单"
+                      value="SICS Settlement"
+                    ></el-option>
+                    <el-option
+                      label="资金账单"
+                      value="SICS Remittance"
+                    ></el-option>
                   </el-select>
                 </el-form-item>
-
                 <el-form-item label="是否反冲">
                   <el-select
                     v-model="form.reverseFlag"
@@ -353,6 +373,7 @@ export default {
         journalDescription: "",
         accountCode: "",
         productCode: "",
+        accountClass: "",
       },
       companyList: [],
       loading: false,
@@ -467,6 +488,11 @@ export default {
     };
   },
   methods: {
+    init() {
+      $http.get("/estimate/partnerQuery").then((res) => {
+        this.companyList = res.data.data.partnerList;
+      });
+    },
     handleSearchClick() {
       let params = {
         contractType: this.form.contractType,
@@ -487,6 +513,7 @@ export default {
         journalDescription: this.form.journalDescription,
         accountCode: this.form.accountCode,
         productCode: this.form.productCode,
+        accountClass: this.form.accountClass
       };
       this.loading = true;
       $http
@@ -517,7 +544,7 @@ export default {
         });
     },
     handleResetClick() {
-      this.form ={
+      this.form = {
         contractType: "",
         contractNoBegin: "",
         contractNoEnd: "",
@@ -533,7 +560,8 @@ export default {
         journalDescription: "",
         accountCode: "",
         productCode: "",
-      }
+        accountClass: "",
+      };
     },
     handleSelectionChange(val) {
       console.log(val, "val");
@@ -567,13 +595,13 @@ export default {
     },
     handleCheck() {
       this.loading = true;
-      let ebsPushList = []
-       this.ebsModifyList.forEach((item) => {
+      let ebsPushList = [];
+      this.ebsModifyList.forEach((item) => {
         ebsPushList.push({
           recId: item.recId,
         });
       });
-      console.log(ebsPushList, 'ebsPushList');
+      console.log(ebsPushList, "ebsPushList");
       $http
         .post(api.ebsInfoPush, ebsPushList)
         .then((res) => {
@@ -621,9 +649,9 @@ export default {
       console.log(val);
     },
   },
-  // beforeRouteEnter(to, from, next) {
-  //   // next((vm) => vm.init());
-  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => vm.init());
+  },
 };
 </script>
 
