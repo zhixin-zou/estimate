@@ -490,7 +490,7 @@ export default {
       canEdit: true,
       activeNames: ["2"],
       ebsModifyList: [],
-      canEditflag: 0,
+      firstInFlag: true,
     };
   },
   methods: {
@@ -498,6 +498,7 @@ export default {
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;
       });
+      this.canEdit = true
       $http
         .post(api.ebsInfoQuery, {
           estimateKey: sessionStorage.getItem("sepEstimateKey"),
@@ -530,6 +531,7 @@ export default {
       }
     },
     handleSearchClick() {
+      this.firstInFlag = false;
       let params = {
         contractType: this.form.contractType,
         contractNoBegin: this.form.contractNoBegin,
@@ -555,6 +557,7 @@ export default {
         params.estimateMonth === "197001" ? "" : params.estimateMonth;
 
       this.loading = true;
+      this.canEdit = true
       $http
         .post(api.ebsInfoQuery, params)
         .then((res) => {
@@ -565,11 +568,8 @@ export default {
               res.data.data.ebsSummary || this.initEBSSummaryForm;
             this.listData.forEach((item) => {
               // console.log(item);
-              if (this.canEditflag === 0) {
-                if (item.updateFlag == "Y") {
-                  this.canEdit = false;
-                  this.canEditflag = 1;
-                }
+              if (item.updateFlag == "Y") {
+                this.canEdit = false;
               }
             });
           } else {
@@ -623,6 +623,11 @@ export default {
         .then((res) => {
           if (res.data.code === "0") {
             this.$message.success("修改成功");
+            if (this.firstInFlag) {
+              this.init();
+            } else {
+              this.handleSearchClick();
+            }
           } else {
             this.$message.error(res.data.msg);
           }
@@ -651,6 +656,11 @@ export default {
           if (res.data.code === "0") {
             this.$message.success("成功");
             // this.$router.go(-1);
+            if (this.firstInFlag) {
+              this.init();
+            } else {
+              this.handleSearchClick();
+            }
           } else {
             this.$message.error(res.data.msg);
           }

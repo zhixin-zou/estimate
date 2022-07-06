@@ -3,7 +3,7 @@ module.exports = {
   publicPath: "/",
   // build目录
   outputDir: "dist",
-  indexPath: 'ebsDetailSearch.html',
+  indexPath: 'financialForecasts.html',
   // pages: {
   //   financialForecasts: {
   //     entry: './src/main.js',

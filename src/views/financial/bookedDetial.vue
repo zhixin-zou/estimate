@@ -218,7 +218,8 @@
         @selection-change="handleSelectionChange"
       >
         <!-- <el-table-column fixed prop="ledger" label="ledger"> </el-table-column> -->
-        <el-table-column type="selection" width="55" :selectable="selectable"> </el-table-column>
+        <el-table-column type="selection" width="55" :selectable="selectable">
+        </el-table-column>
         <el-table-column prop="currency" label="Currency" width="90">
         </el-table-column>
         <el-table-column
@@ -489,7 +490,7 @@ export default {
       canEdit: true,
       activeNames: ["2"],
       ebsModifyList: [],
-      canEditflag: 0,
+      firstInFlag: true
     };
   },
   methods: {
@@ -497,6 +498,7 @@ export default {
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;
       });
+      this.canEdit = true
       $http
         .post(api.ebsInfoQuery, {
           estimateKey: sessionStorage.getItem("finEstimateKey"),
@@ -511,7 +513,6 @@ export default {
               res.data.data.ebsSummary || this.initEBSSummaryForm;
             this.listData = res.data.data.ebsDetail;
             this.listData.forEach((item) => {
-              console.log(item);
               if (item.updateFlag == "Y") {
                 this.canEdit = false;
               }
@@ -522,7 +523,7 @@ export default {
           }
         });
     },
-        selectable(row) {
+    selectable(row) {
       if (row.updateFlag !== "Y") {
         return false;
       } else {
@@ -530,6 +531,7 @@ export default {
       }
     },
     handleSearchClick() {
+      this.firstInFlag = false
       let params = {
         contractType: this.form.contractType,
         contractNoBegin: this.form.contractNoBegin,
@@ -549,11 +551,13 @@ export default {
         journalDescription: this.form.journalDescription,
         accountCode: this.form.accountCode,
         productCode: this.form.productCode,
-        accountClass: this.form.accountClass
+        accountClass: this.form.accountClass,
       };
-      params.estimateMonth = params.estimateMonth === '197001' ? '' : params.estimateMonth
+      params.estimateMonth =
+        params.estimateMonth === "197001" ? "" : params.estimateMonth;
 
       this.loading = true;
+      this.canEdit = true
       $http
         .post(api.ebsInfoQuery, params)
         .then((res) => {
@@ -564,11 +568,8 @@ export default {
               res.data.data.ebsSummary || this.initEBSSummaryForm;
             this.listData.forEach((item) => {
               // console.log(item);
-              if (this.canEditflag === 0) {
-                if (item.updateFlag == "Y") {
-                  this.canEdit = false;
-                  this.canEditflag = 1;
-                }
+              if (item.updateFlag == "Y") {
+                this.canEdit = false;
               }
             });
           } else {
@@ -622,6 +623,11 @@ export default {
         .then((res) => {
           if (res.data.code === "0") {
             this.$message.success("修改成功");
+            if (this.firstInFlag) {
+              this.init()
+            } else {
+              this.handleSearchClick()
+            }
           } else {
             this.$message.error(res.data.msg);
           }

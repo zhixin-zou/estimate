@@ -528,6 +528,7 @@ export default {
       params.estimateMonth =
         params.estimateMonth === "197001" ? "" : params.estimateMonth;
       this.loading = true;
+      this.canEdit = true
       $http
         .post(api.ebsInfoQuery, params)
         .then((res) => {
@@ -538,11 +539,8 @@ export default {
               res.data.data.ebsSummary || this.initEBSSummaryForm;
             this.listData.forEach((item) => {
               // console.log(item);
-              if (this.canEditflag === 0) {
-                if (item.updateFlag == "Y") {
-                  this.canEdit = false;
-                  this.canEditflag = 1;
-                }
+              if (item.updateFlag == "Y") {
+                this.canEdit = false;
               }
             });
           } else {
@@ -552,7 +550,6 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-          this.canEditflag = 0;
         });
     },
     handleResetClick() {
@@ -597,6 +594,7 @@ export default {
         .then((res) => {
           if (res.data.code === "0") {
             this.$message.success("修改成功");
+            this.handleSearchClick();
           } else {
             this.$message.error(res.data.msg);
           }
@@ -620,6 +618,7 @@ export default {
           console.log(res);
           if (res.data.code === "0") {
             this.$message.success("成功");
+            this.handleSearchClick();
             // this.$router.go(-1);
           } else {
             this.$message.error(res.data.msg);
