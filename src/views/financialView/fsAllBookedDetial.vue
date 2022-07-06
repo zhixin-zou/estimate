@@ -218,7 +218,7 @@
         @selection-change="handleSelectionChange"
       >
         <!-- <el-table-column fixed prop="ledger" label="ledger"> </el-table-column> -->
-        <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column type="selection" width="55" :selectable="selectable"> </el-table-column>
         <el-table-column prop="currency" label="Currency" width="90">
         </el-table-column>
         <el-table-column
@@ -520,6 +520,13 @@ export default {
           this.$message.error(res.data.msg);
         }
       });
+    },
+        selectable(row) {
+      if (row.updateFlag !== "Y") {
+        return false;
+      } else {
+        return true;
+      }
     },
     handleSearchClick() {
       let params = {
