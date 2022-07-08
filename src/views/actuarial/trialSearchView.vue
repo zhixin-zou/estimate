@@ -107,6 +107,7 @@
         style="width: 100%"
         ref="listBox"
       >
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column type="index" label="序号"> </el-table-column>
         <el-table-column prop="contractNo" label="合同号"> </el-table-column>
         <el-table-column prop="contractTitle" label="合同标题">
@@ -156,6 +157,9 @@
         >
         </el-pagination>
       </div>
+    </div>
+    <div class="calculateResult">
+      <el-button plain @click="handleCalculate">汇算</el-button>
     </div>
   </div>
 </template>
@@ -350,6 +354,9 @@ export default {
       this.pageSize = val;
       this.setCurrentPageData();
     },
+  },
+  handleCalculate () {
+    
   },
   // mounted () {
   //   this.test()

@@ -251,6 +251,18 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="uploadmodel">
+        <span>数据填充：</span>
+        <el-date-picker
+          v-model="dataMonth"
+          type="month"
+          placeholder="选择月"
+          style="width: 150px;"
+        >
+        </el-date-picker>
+        <el-button type="primary" plain @click="handleUpload">预估数据一键导入</el-button>
+        <span style="color: #409EFF; padding-left: 10px;" @click="handleDownload">下载导数模板</span>
+      </div>
       <div class="listPagination">
         <el-pagination
           background
@@ -308,6 +320,7 @@ export default {
       companyList: [],
       showTypeDialog: false,
       payTypeInfo: "",
+      dataMonth: ''
     };
   },
   methods: {
@@ -338,7 +351,7 @@ export default {
           this.form.estimateMonth === "" || null
             ? ""
             : getYearMonthDate(this.form.estimateMonth),
-        ifNotZero: this.form.ifNotZero
+        ifNotZero: this.form.ifNotZero,
       };
       if (this.form.estimateMonth !== "") {
         params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
@@ -459,7 +472,7 @@ export default {
     },
     handleFinancialClick(row) {
       console.log(row.payType, "row.payTyperow.payTyperow.payType");
-      localStorage.setItem('cwHistoryGoto', 'financialForecasts')
+      localStorage.setItem("cwHistoryGoto", "financialForecasts");
       sessionStorage.removeItem("licl");
       // sessionStorage.setItem("estimateKey", row.estimateKey);
       // sessionStorage.setItem("estimateMonth", row.estimateMonth);
@@ -525,6 +538,8 @@ export default {
         ifNotZero: "",
       };
     },
+    handleDownload () {},
+    handleUpload() {}
   },
   mounted() {},
   beforeRouteEnter(to, from, next) {
@@ -624,6 +639,10 @@ export default {
     .exportButton {
       float: right;
       margin-bottom: 10px;
+    }
+    .uploadmodel {
+      margin-top: 5px;
+      float: left;
     }
     .listPagination {
       // position: absolute;
