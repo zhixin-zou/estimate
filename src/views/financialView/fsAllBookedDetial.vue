@@ -246,7 +246,12 @@
         </el-table-column>
         <el-table-column prop="icp" label="ICP"> </el-table-column>
         <!-- <el-table-column prop="spare" label="SPARE"> </el-table-column> -->
-        <el-table-column prop="debit" label="Debit" width="150">
+        <el-table-column
+          prop="debit"
+          label="Debit"
+          width="150"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.debit }}</span>
             <el-input
@@ -256,7 +261,12 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="credit" label="Credit" width="150">
+        <el-table-column
+          prop="credit"
+          label="Credit"
+          width="150"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.credit }}</span>
             <el-input
@@ -266,24 +276,37 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="batchName" label="Batch Name" width="120">
+        <el-table-column
+          prop="batchName"
+          label="Batch Name"
+          width="120"
+          show-overflow-tooltip
+        >
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="batchDescription"
           label="Batch Description"
           width="150"
         >
         </el-table-column>
-        <el-table-column prop="journalName" label="Journal Name" width="150">
+        <el-table-column
+          prop="journalName"
+          label="Journal Name"
+          width="150"
+          show-overflow-tooltip
+        >
         </el-table-column>
         <el-table-column
           prop="journalDescription"
           label="Journal Description"
+          show-overflow-tooltip
           width="200"
         >
         </el-table-column>
         <el-table-column
           prop="lineDescription"
+          show-overflow-tooltip
           label="Line Description"
           width="150"
         >
@@ -507,7 +530,7 @@ export default {
         estimateMonth: sessionStorage.getItem("fsallEstimateMonth"),
         accountType: sessionStorage.getItem("fsaccountType"),
       };
-      this.canEdit = true
+      this.canEdit = true;
       $http.post(api.ebsInfoQuery, params).then((res) => {
         if (res.data.code === "0") {
           console.log(res, "res");
@@ -559,7 +582,7 @@ export default {
         params.estimateMonth === "197001" ? "" : params.estimateMonth;
 
       this.loading = true;
-      this.canEdit = true
+      this.canEdit = true;
       $http
         .post(api.ebsInfoQuery, params)
         .then((res) => {

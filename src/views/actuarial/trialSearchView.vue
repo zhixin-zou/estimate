@@ -106,6 +106,7 @@
         border
         style="width: 100%"
         ref="listBox"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column type="index" label="序号"> </el-table-column>
@@ -168,7 +169,7 @@
 import { $http } from "@/utils/request";
 import { kiloSplit, toPercent, getYearMonthDate } from "@/utils/utils";
 import { getText } from "@/utils/dict.js";
-import api from "@/utils/api";
+// import api from "@/utils/api";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
 
@@ -207,6 +208,7 @@ export default {
           spiltPremium: "",
         },
       ],
+      trialListData: [],
     };
   },
   methods: {
@@ -288,7 +290,11 @@ export default {
         params.estimateMonth = "";
       }
       $http
-        .post(api.trialListQuery, params)
+        // .post(api.trialListQuery, params)
+        .post(
+          "http://yapi.smart-xwork.cn/mock/134845/estimate/actuarial/trialListQuery",
+          params
+        )
         .then((res) => {
           // this.$message.success(res.data.msg);
           this.tableData = res.data.data.trialList;
@@ -315,6 +321,10 @@ export default {
         trialTimeEnd: "",
         // estimateKey: "",
       };
+    },
+    handleSelectionChange(val) {
+      console.log(val, "val");
+      this.trialListData = val;
     },
     handleTrial(row) {
       sessionStorage.removeItem("licl");
@@ -355,7 +365,19 @@ export default {
       this.setCurrentPageData();
     },
     handleCalculate() {
-      this.$message.warning("功能暂不支持");
+      // if (this.trialListData.length === 0) {
+      //   this.$message.warning("请选择数据");
+      //   return;
+      // }
+
+      let paramsList = [];
+      this.trialListData.forEach((item) => {
+        paramsList.push({
+          estimateKey: item.estimateKey,
+        });
+      });
+      localStorage.setItem("tyrCalculateResult", JSON.stringify(paramsList));
+      this.$router.push("/tryCalculateResult");
     },
   },
   // mounted () {

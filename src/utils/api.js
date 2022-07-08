@@ -84,6 +84,8 @@ export default {
   productListQuery: "/estimate/actuarial/productListQuery",
   // 汇算信息获取
   summaryAllocatCalculat: "/estimate/actuarial/summaryAllocatCalculat",
+  // 试算汇算
+  summaryTrialAllocatCalculat: '/estimate/actuarial/summaryTrialAllocatCalculat',
   // 确认下发财务
   saveToFinance: "/estimate/actuarial/saveToFinance",
   // 账务修改

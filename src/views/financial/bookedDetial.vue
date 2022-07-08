@@ -246,7 +246,9 @@
         </el-table-column>
         <el-table-column prop="icp" label="ICP"> </el-table-column>
         <!-- <el-table-column prop="spare" label="SPARE"> </el-table-column> -->
-        <el-table-column prop="debit" label="Debit" width="150">
+        <el-table-column prop="debit" label="Debit" width="150" 
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.debit }}</span>
             <el-input
@@ -256,7 +258,9 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="credit" label="Credit" width="150">
+        <el-table-column prop="credit" label="Credit" width="150"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.credit }}</span>
             <el-input

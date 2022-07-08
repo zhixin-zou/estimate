@@ -245,7 +245,12 @@
         </el-table-column>
         <el-table-column prop="icp" label="ICP"> </el-table-column>
         <!-- <el-table-column prop="spare" label="SPARE"> </el-table-column> -->
-        <el-table-column prop="debit" label="Debit" width="150">
+        <el-table-column
+          prop="debit"
+          label="Debit"
+          width="150"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <el-input
               v-model="scope.row.debit"
@@ -253,7 +258,12 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="credit" label="Credit" width="150">
+        <el-table-column
+          prop="credit"
+          label="Credit"
+          width="150"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <el-input
               v-model="scope.row.credit"
@@ -261,26 +271,39 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="batchName" label="Batch Name" width="120">
+        <el-table-column
+          prop="batchName"
+          label="Batch Name"
+          width="120"
+          show-overflow-tooltip
+        >
         </el-table-column>
         <el-table-column
           prop="batchDescription"
           label="Batch Description"
           width="150"
+          show-overflow-tooltip
         >
         </el-table-column>
-        <el-table-column prop="journalName" label="Journal Name" width="150">
+        <el-table-column
+          prop="journalName"
+          label="Journal Name"
+          width="150"
+          show-overflow-tooltip
+        >
         </el-table-column>
         <el-table-column
           prop="journalDescription"
           label="Journal Description"
           width="200"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
           prop="lineDescription"
           label="Line Description"
           width="150"
+          show-overflow-tooltip
         >
         </el-table-column>
       </el-table>
@@ -530,7 +553,7 @@ export default {
       params.estimateMonth =
         params.estimateMonth === "197001" ? "" : params.estimateMonth;
       this.loading = true;
-      this.canEdit = true
+      this.canEdit = true;
       $http
         .post(api.ebsInfoQuery, params)
         .then((res) => {

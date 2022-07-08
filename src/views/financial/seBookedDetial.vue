@@ -246,7 +246,12 @@
         </el-table-column>
         <el-table-column prop="icp" label="ICP"> </el-table-column>
         <!-- <el-table-column prop="spare" label="SPARE"> </el-table-column> -->
-        <el-table-column prop="debit" label="Debit" width="150">
+        <el-table-column
+          prop="debit"
+          label="Debit"
+          width="150"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.debit }}</span>
             <el-input
@@ -256,7 +261,12 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="credit" label="Credit" width="150">
+        <el-table-column
+          prop="credit"
+          label="Credit"
+          width="150"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.credit }}</span>
             <el-input
@@ -266,23 +276,36 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="batchName" label="Batch Name" width="120">
+        <el-table-column
+          prop="batchName"
+          label="Batch Name"
+          width="120"
+          show-overflow-tooltip
+        >
         </el-table-column>
         <el-table-column
           prop="batchDescription"
+          show-overflow-tooltip
           label="Batch Description"
           width="150"
         >
         </el-table-column>
-        <el-table-column prop="journalName" label="Journal Name" width="150">
+        <el-table-column
+          prop="journalName"
+          label="Journal Name"
+          width="150"
+          show-overflow-tooltip
+        >
         </el-table-column>
         <el-table-column
           prop="journalDescription"
+          show-overflow-tooltip
           label="Journal Description"
           width="200"
         >
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="lineDescription"
           label="Line Description"
           width="150"

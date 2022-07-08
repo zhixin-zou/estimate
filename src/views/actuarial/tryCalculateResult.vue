@@ -23,7 +23,6 @@
       <el-button
         type="primary"
         round
-        v-show="false"
         @click="handleCheckClick"
         :loading="loading"
         >查询</el-button
@@ -210,6 +209,7 @@
       <div class="saveToFinance">
         <el-button
           plain
+          v-show="istrycalculate"
           @click="saveToFinance"
           style="margin-top: 10px; margin-left: 45%"
           >确认并下发财务</el-button
@@ -231,9 +231,9 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
-      classCode: "",
-      loading: false,
       istrycalculate: false,
+      loading: false,
+      classCode: "",
 
       // productList: [],
       hsqColumns: [
@@ -323,9 +323,9 @@ export default {
   methods: {
     ...mapActions("actuarial/actuarialEstimates", ["getClassList"]),
     init() {
+      this.getClassList();
       this.estimateMonthShow = "";
       this.showTable = true;
-      this.getClassList();
       var date = new Date();
       date.getFullYear(); //获取完整的年份(4位)
       date.getMonth(); //获取当前月份(0-11,0代表1月)
@@ -338,12 +338,14 @@ export default {
         month = date.getMonth() + 1;
         paramsMonth = String(date.getFullYear()) + month;
       }
-      console.log(paramsMonth, "paramsMonth");
-       $http
+      let trialListData = JSON.parse(
+        localStorage.getItem("tyrCalculateResult")
+      );
+      $http
         .post(api.summaryAllocatCalculat, {
-          classCode: 'Health',
-          estimateMonth: paramsMonth
-
+          classCode: "Health",
+          estimateMonth: paramsMonth,
+          trialList: trialListData,
         })
         .then((res) => {
           this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
@@ -357,8 +359,10 @@ export default {
           this.calculatedFeeList2 = res.data.data.calculatedFeeList;
           this.handleFloatChange();
           this.estimateMonthShow = res.data.data.estimateMonth;
+        })
+        .finally(() => {
+          this.loading = false;
         });
-      
     },
     handleBack() {
       // this.$router.go(-1);
@@ -398,6 +402,7 @@ export default {
     },
     handleClick() {
       this.istrycalculate = true;
+      this.loading = true;
       this.estimateMonthShow = "";
       this.showTable = true;
       $http
@@ -420,11 +425,47 @@ export default {
           this.calculatedFeeList2 = res.data.data.calculatedFeeList;
           this.handleFloatChange();
           this.estimateMonthShow = res.data.data.estimateMonth;
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     handleCheckClick() {
-      this.$message.warning("功能暂不支持");
       this.istrycalculate = false;
+      this.loading = true;
+      this.showTable = true;
+      let trialListData = JSON.parse(
+        localStorage.getItem("tyrCalculateResult")
+      );
+
+      console.log(trialListData, "trialListDatatrialListData");
+      // $http.post(api.summaryTrialAllocatCalculat, paramsList)
+      $http
+        .post(api.summaryTrialAllocatCalculat, {
+          classCode: this.classCode,
+          estimateMonth:
+            this.estimateMonth === ""
+              ? ""
+              : getYearMonthDate(this.estimateMonth),
+          trialList: trialListData,
+        })
+        .then((res) => {
+          console.log(res);
+          this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
+          this.handleHsq(this.hsqContractInfoList, 0);
+          let hsxzInfoList = res.data.data.calculatClassSummaryList;
+          this.hsxzDataList = res.data.data.calculatClassSummaryList;
+          this.handleHshz(hsxzInfoList);
+          this.hshContractInfoList = res.data.data.afterCalculatTreatyList;
+          this.handleHsq(this.hshContractInfoList, 1);
+          this.calculatedFeeList = res.data.data.calculatedFeeList;
+          this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+          this.handleFloatChange();
+          this.estimateMonthShow = res.data.data.estimateMonth;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     handleHshz(hshz) {
       let obj = {};
