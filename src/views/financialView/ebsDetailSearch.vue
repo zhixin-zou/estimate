@@ -214,6 +214,8 @@
         :data="listData"
         border
         style="width: 100%"
+        v-horizontal-scroll="'always'"
+        highlight-current-row
         @selection-change="handleSelectionChange"
       >
         <!-- <el-table-column fixed prop="ledger" label="ledger"> </el-table-column> -->
@@ -243,7 +245,7 @@
         </el-table-column>
         <el-table-column prop="icp" label="ICP"> </el-table-column>
         <!-- <el-table-column prop="spare" label="SPARE"> </el-table-column> -->
-        <el-table-column prop="debit" label="Debit" width="200">
+        <el-table-column prop="debit" label="Debit" width="150">
           <template slot-scope="scope">
             <el-input
               v-model="scope.row.debit"
@@ -251,7 +253,7 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="credit" label="Credit" width="200">
+        <el-table-column prop="credit" label="Credit" width="150">
           <template slot-scope="scope">
             <el-input
               v-model="scope.row.credit"
@@ -259,26 +261,26 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="batchName" label="Batch Name" width="250">
+        <el-table-column prop="batchName" label="Batch Name" width="120">
         </el-table-column>
         <el-table-column
           prop="batchDescription"
           label="Batch Description"
-          width="200"
+          width="150"
         >
         </el-table-column>
-        <el-table-column prop="journalName" label="Journal Name" width="250">
+        <el-table-column prop="journalName" label="Journal Name" width="150">
         </el-table-column>
         <el-table-column
           prop="journalDescription"
           label="Journal Description"
-          width="500"
+          width="200"
         >
         </el-table-column>
         <el-table-column
           prop="lineDescription"
           label="Line Description"
-          width="400"
+          width="150"
         >
         </el-table-column>
       </el-table>

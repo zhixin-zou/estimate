@@ -17,7 +17,8 @@
           :value="item.classCode"
         ></el-option>
       </el-select>
-      <el-button type="primary" round @click="handleClick">确认</el-button>
+      <el-button type="primary" round @click="handleClick">汇算</el-button>
+      <el-button type="primary" round @click="handleCheckClick">确认</el-button>
       <div
         v-if="this.estimateMonthShow !== ''"
         class="headerRight"
@@ -370,6 +371,9 @@ export default {
           this.handleFloatChange();
           this.estimateMonthShow = res.data.data.estimateMonth;
         });
+    },
+    handleCheckClick() {
+      this.$message.warning('功能暂不支持')
     },
     handleHshz(hshz) {
       let obj = {};

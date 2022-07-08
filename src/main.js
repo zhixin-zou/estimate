@@ -12,6 +12,8 @@ import "element-ui/lib/theme-chalk/index.css";
 
 // import FilterPanel from '@/components/FilterPanelNew.vue'
 import FsListPanel from "@/components/listPanel.vue";
+import horizontalScroll from 'el-table-horizontal-scroll'
+Vue.use(horizontalScroll)
 Vue.config.productionTip = false;
 Vue.use(Vuex);
 Vue.use(ElementUI);

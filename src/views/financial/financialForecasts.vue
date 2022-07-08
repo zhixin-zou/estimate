@@ -257,11 +257,15 @@
           v-model="dataMonth"
           type="month"
           placeholder="选择月"
-          style="width: 150px;"
+          style="width: 150px"
         >
         </el-date-picker>
-        <el-button type="primary" plain @click="handleUpload">预估数据一键导入</el-button>
-        <span style="color: #409EFF; padding-left: 10px;" @click="handleDownload">下载导数模板</span>
+        <el-button type="primary" plain @click="handleUpload"
+          >预估数据一键导入</el-button
+        >
+        <span style="color: #409eff; padding-left: 10px" @click="handleDownload"
+          >下载导数模板</span
+        >
       </div>
       <div class="listPagination">
         <el-pagination
@@ -320,7 +324,7 @@ export default {
       companyList: [],
       showTypeDialog: false,
       payTypeInfo: "",
-      dataMonth: ''
+      dataMonth: "",
     };
   },
   methods: {
@@ -538,8 +542,12 @@ export default {
         ifNotZero: "",
       };
     },
-    handleDownload () {},
-    handleUpload() {}
+    handleDownload() {
+      this.$message.warning("功能暂不支持");
+    },
+    handleUpload() {
+      this.$message.warning("功能暂不支持");
+    },
   },
   mounted() {},
   beforeRouteEnter(to, from, next) {

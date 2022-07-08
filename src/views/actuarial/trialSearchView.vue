@@ -354,9 +354,9 @@ export default {
       this.pageSize = val;
       this.setCurrentPageData();
     },
-  },
-  handleCalculate () {
-    
+    handleCalculate() {
+      this.$message.warning("功能暂不支持");
+    },
   },
   // mounted () {
   //   this.test()
