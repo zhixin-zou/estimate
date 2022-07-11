@@ -20,13 +20,13 @@
       <el-button type="primary" round @click="handleClick" :loading="loading"
         >汇算</el-button
       >
-      <el-button
+      <!-- <el-button
         type="primary"
         round
         @click="handleCheckClick"
         :loading="loading"
         >查询</el-button
-      >
+      > -->
       <div
         v-if="this.estimateMonthShow !== ''"
         class="headerRight"
@@ -401,37 +401,35 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleClick() {
-      this.istrycalculate = true;
-      this.loading = true;
-      this.estimateMonthShow = "";
-      this.showTable = true;
-      $http
-        .post(api.summaryAllocatCalculat, {
-          classCode: this.classCode,
-          estimateMonth:
-            this.estimateMonth === ""
-              ? ""
-              : getYearMonthDate(this.estimateMonth),
-        })
-        .then((res) => {
-          this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
-          this.handleHsq(this.hsqContractInfoList, 0);
-          let hsxzInfoList = res.data.data.calculatClassSummaryList;
-          this.hsxzDataList = res.data.data.calculatClassSummaryList;
-          this.handleHshz(hsxzInfoList);
-          this.hshContractInfoList = res.data.data.afterCalculatTreatyList;
-          this.handleHsq(this.hshContractInfoList, 1);
-          this.calculatedFeeList = res.data.data.calculatedFeeList;
-          this.calculatedFeeList2 = res.data.data.calculatedFeeList;
-          this.handleFloatChange();
-          this.estimateMonthShow = res.data.data.estimateMonth;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
-    },
-    handleCheckClick() {
-      this.istrycalculate = false;
+    //   this.istrycalculate = true;
+    //   this.loading = true;
+    //   this.estimateMonthShow = "";
+    //   this.showTable = true;
+    //   $http
+    //     .post(api.summaryAllocatCalculat, {
+    //       classCode: this.classCode,
+    //       estimateMonth:
+    //         this.estimateMonth === ""
+    //           ? ""
+    //           : getYearMonthDate(this.estimateMonth),
+    //     })
+    //     .then((res) => {
+    //       this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
+    //       this.handleHsq(this.hsqContractInfoList, 0);
+    //       let hsxzInfoList = res.data.data.calculatClassSummaryList;
+    //       this.hsxzDataList = res.data.data.calculatClassSummaryList;
+    //       this.handleHshz(hsxzInfoList);
+    //       this.hshContractInfoList = res.data.data.afterCalculatTreatyList;
+    //       this.handleHsq(this.hshContractInfoList, 1);
+    //       this.calculatedFeeList = res.data.data.calculatedFeeList;
+    //       this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+    //       this.handleFloatChange();
+    //       this.estimateMonthShow = res.data.data.estimateMonth;
+    //     })
+    //     .finally(() => {
+    //       this.loading = false;
+    //     });
+        this.istrycalculate = false;
       this.loading = true;
       this.showTable = true;
       let trialListData = JSON.parse(
@@ -466,6 +464,9 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    handleCheckClick() {
+  
     },
     handleHshz(hshz) {
       let obj = {};

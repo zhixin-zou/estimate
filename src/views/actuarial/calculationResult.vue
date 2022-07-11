@@ -20,14 +20,13 @@
       <el-button type="primary" round @click="handleClick" :loading="loading"
         >汇算</el-button
       >
-      <el-button
+      <!-- <el-button
         type="primary"
         round
-        v-show="false"
         @click="handleCheckClick"
         :loading="loading"
         >查询</el-button
-      >
+      > -->
       <div
         v-if="this.estimateMonthShow !== ''"
         class="headerRight"
