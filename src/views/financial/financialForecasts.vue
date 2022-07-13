@@ -178,6 +178,7 @@
         ref="listBox"
       >
         <el-table-column prop="contractNo" label="合同号"> </el-table-column>
+        <el-table-column prop="estimateKey" label="estimateKey"> </el-table-column>
         <el-table-column prop="sessionName" label="合同session">
         </el-table-column>
         <el-table-column prop="contractType" label="合同类型">
@@ -253,17 +254,25 @@
       </el-table>
       <div class="uploadmodel">
         <span>数据填充：</span>
-        <el-date-picker
+        <!-- <el-date-picker
           v-model="dataMonth"
           type="month"
           placeholder="选择月"
           style="width: 150px"
         >
-        </el-date-picker>
-        <el-button type="primary" :loading="importing" plain @click="handleUpload"
+        </el-date-picker> -->
+        <el-button
+          type="primary"
+          :loading="importing"
+          plain
+          @click="handleUpload"
           >预估数据一键导入</el-button
         >
-        <a href="./EPI导入模板.xlsx" download="EPI导入模板.xlsx" style="color: #409eff; padding-left: 10px" @click="handleDownload"
+        <a
+          href="./EPI导入模板.xlsx"
+          download="EPI导入模板.xlsx"
+          style="color: #409eff; padding-left: 10px"
+          @click="handleDownload"
           >下载导数模板</a
         >
       </div>
@@ -289,8 +298,7 @@
         <el-option label="月缴" value="monthly"> </el-option>
       </el-select>
     </el-dialog> -->
-    <input ref="file" type="file" class="hide" @change="fileChange"/>
-
+    <input ref="file" type="file" class="hide" @change="fileChange" />
   </div>
 </template>
 
@@ -327,7 +335,7 @@ export default {
       showTypeDialog: false,
       payTypeInfo: "",
       dataMonth: "",
-      importing: false
+      importing: false,
     };
   },
   methods: {
@@ -554,25 +562,34 @@ export default {
       // document.body.appendChild(a);
       // a.click();
       // a.remove();
-      // window.open('../../../static/EPI导入模板.xlsx') 
+      // window.open('../../../static/EPI导入模板.xlsx')
     },
     handleUpload() {
-      this.$refs['file'].click()
+      this.$refs["file"].click();
     },
-   fileChange (e) {
-      var target = e.target
+    fileChange(e) {
+      var target = e.target;
       if (target.files && target.files.length) {
-        var data = new FormData()
-        data.append('file', target.files[0])
-        this.importing = true
-        $http.post(api.saveEpi, data).then(res => {
-          console.log(res)
-          if (res.code == 0) {
-            this.$message.success('导入成功')
-          } else {
-            this.$message.warning(res.data.msg)
-          }
-        })
+        var data = new FormData();
+        data.append("file", target.files[0]);
+        this.importing = true;
+        $http
+          .post(api.saveEpi, data)
+          .then((res) => {
+            console.log(res);
+            if (res.code == 0) {
+              this.$message.success("导入成功");
+            } else {
+              if (res.data.msg) {
+                this.$message.warning(res.data.msg);
+              } else {
+                this.$message.warning("请检查相关上传文件")
+              }
+            }
+          })
+          .finally(() => {
+            this.importing = false;
+          });
       }
     },
   },

@@ -5,6 +5,13 @@ export const estimateStatus = [
     { value: '3', text: '已入账' },
 ]
 
+export const dateOptions = [
+    { value: '0', text: '待预估' },
+    { value: '1', text: '预估中' },
+    { value: '2', text: '已预估待入账' },
+    { value: '3', text: '已入账' },
+]
+
 
 const set = {
     estimateStatus

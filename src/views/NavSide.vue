@@ -17,7 +17,9 @@
             <span>财务预估</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/financialForecasts">财务分入预估</el-menu-item>
+            <el-menu-item index="/financialForecasts"
+              >财务分入预估</el-menu-item
+            >
             <el-menu-item index="/separateEstimates">财务分出预估</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
@@ -31,7 +33,7 @@
             <el-menu-item index="/trialSearchView">试算查询</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
-              <el-submenu index="3">
+        <el-submenu index="3">
           <template slot="title">
             <i class="el-icon-location"></i>
             <span>账务查看</span>
@@ -41,6 +43,16 @@
             <el-menu-item index="/financialSearch">账务查寻</el-menu-item>
             <el-menu-item index="/auditLog">审计查询</el-menu-item>
             <el-menu-item index="/estimateDuring">预估期间</el-menu-item>
+            <el-menu-item index="/uyReport">UY Report</el-menu-item>
+          </el-menu-item-group>
+        </el-submenu>
+        <el-submenu index="4">
+          <template slot="title">
+            <i class="el-icon-location"></i>
+            <span>预估分析</span>
+          </template>
+          <el-menu-item-group>
+            <el-menu-item index="/uyReport">UY Report</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>

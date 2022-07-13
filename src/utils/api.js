@@ -109,4 +109,7 @@ export default {
   periodInfoQuery: "/estimate/finance/periodInfoQuery",
   // 期间切换
   periodSwitch: "/estimate/finance/periodSwitch",
+
+  // uy report查询
+  uyReportQuery: "/estimate/finance/uyReportQuery",
 };
