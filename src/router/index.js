@@ -41,7 +41,8 @@ import TrialSearch from "@/views/actuarial/trialSearch.vue";
 import TrialSearchView from "@/views/actuarial/trialSearchView.vue";
 import CalculationResult from "@/views/actuarial/calculationResult.vue";
 import TryCalculationResult from "@/views/actuarial/tryCalculateResult.vue";
-import EbsDetailSearch from "@/views/financialView/ebsDetailSearch";
+import EbsDetailSearch from "@/views/financialView/ebsDetailSearch.vue";
+import UyReportSearch from "@/views/uyReport/uyReport.vue"
 
 // import { Message } from 'element-ui'
 // const CustomAppView = () =>
@@ -89,6 +90,10 @@ const routes = [
   {
     path: "/ebsDetailSearch",
     component: EbsDetailSearch,
+  },
+  {
+    path: "/uyReport",
+    component: UyReportSearch,
   },
   {
     path: "/annualEstimates",

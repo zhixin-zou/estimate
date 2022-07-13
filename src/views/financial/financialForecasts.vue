@@ -260,11 +260,11 @@
           style="width: 150px"
         >
         </el-date-picker>
-        <el-button type="primary" plain @click="handleUpload"
+        <el-button type="primary" :loading="importing" plain @click="handleUpload"
           >预估数据一键导入</el-button
         >
-        <span style="color: #409eff; padding-left: 10px" @click="handleDownload"
-          >下载导数模板</span
+        <a href="./EPI导入模板.xlsx" download="EPI导入模板.xlsx" style="color: #409eff; padding-left: 10px" @click="handleDownload"
+          >下载导数模板</a
         >
       </div>
       <div class="listPagination">
@@ -289,6 +289,8 @@
         <el-option label="月缴" value="monthly"> </el-option>
       </el-select>
     </el-dialog> -->
+    <input ref="file" type="file" class="hide" @change="fileChange"/>
+
   </div>
 </template>
 
@@ -325,6 +327,7 @@ export default {
       showTypeDialog: false,
       payTypeInfo: "",
       dataMonth: "",
+      importing: false
     };
   },
   methods: {
@@ -543,10 +546,34 @@ export default {
       };
     },
     handleDownload() {
-      this.$message.warning("功能暂不支持");
+      // this.$message.warning("功能暂不支持");
+      // let a = document.createElement("a");
+      // a.href = "../../../static/EPI导入模板.xlsx";
+      // a.download = "EPI导入模板.xlsx";
+      // a.style.display = "none";
+      // document.body.appendChild(a);
+      // a.click();
+      // a.remove();
+      // window.open('../../../static/EPI导入模板.xlsx') 
     },
     handleUpload() {
-      this.$message.warning("功能暂不支持");
+      this.$refs['file'].click()
+    },
+   fileChange (e) {
+      var target = e.target
+      if (target.files && target.files.length) {
+        var data = new FormData()
+        data.append('file', target.files[0])
+        this.importing = true
+        $http.post(api.saveEpi, data).then(res => {
+          console.log(res)
+          if (res.code == 0) {
+            this.$message.success('导入成功')
+          } else {
+            this.$message.warning(res.data.msg)
+          }
+        })
+      }
     },
   },
   mounted() {},

@@ -42,6 +42,8 @@ export default {
   monthAdjustDetail: "/estimate/finance/monthAdjustDetail",
   // 月缴浮动因子调整
   monthRateAdjust: "/estimate/finance/monthRateAdjust",
+  // 上传预估数据文件
+  saveEpi: "/estimate/finance/saveEpi",
 
   // 精算查询
   contractListQuery: "/estimate/actuarial/contractListQuery",
@@ -76,7 +78,7 @@ export default {
   monthContractDetailTrialQuery:
     "/estimate/actuarial/monthContractDetailTrialQuery",
   // 根据赔付率获取手续费比例
-  commRateQuery: '/estimate/actuarial/commRateQuery',
+  commRateQuery: "/estimate/actuarial/commRateQuery",
 
   // 精算预估历史查看
   actuarialHistoryQuery: "/estimate/actuarial/estimateHistoryQuery",
@@ -85,7 +87,8 @@ export default {
   // 汇算信息获取
   summaryAllocatCalculat: "/estimate/actuarial/summaryAllocatCalculat",
   // 试算汇算
-  summaryTrialAllocatCalculat: '/estimate/actuarial/summaryTrialAllocatCalculat',
+  summaryTrialAllocatCalculat:
+    "/estimate/actuarial/summaryTrialAllocatCalculat",
   // 确认下发财务
   saveToFinance: "/estimate/actuarial/saveToFinance",
   // 账务修改

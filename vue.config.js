@@ -4,6 +4,7 @@ module.exports = {
   // build目录
   outputDir: "dist",
   indexPath: 'financialForecasts.html',
+  productionSourceMap: false,
   // pages: {
   //   financialForecasts: {
   //     entry: './src/main.js',
