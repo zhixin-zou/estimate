@@ -36,6 +36,14 @@
             :loading="loading"
             size="mini"
             type="primary"
+            @click="handleEdit"
+            style="margin-left: 5px"
+            >修改</el-button
+          >
+          <el-button
+            :loading="loading"
+            size="mini"
+            type="primary"
             @click="handleSearchClick"
             style="margin-left: 5px"
             >查询</el-button
@@ -46,20 +54,31 @@
     </div>
     <div class="listBox">
       <el-table
-        :data="item.itemNameList"
+        :data="tableData"
         style="width: 100%; margin-bottom: 20px"
-        v-for="(item, index) in tablesProp"
-        :key="index"
+        row-key="reportId"
         border
+        default-expand-all
+        :tree-props="{ children: 'children' }"
       >
-        <el-table-column prop="prop" :label="item.itemType" width="300">
+        <el-table-column show-overflow-tooltip prop="name" label="" width="200">
         </el-table-column>
         <el-table-column
-          v-for="(element, index) in headerList"
+          show-overflow-tooltip
+          v-for="(item, index) in columns"
           :key="index"
-          :prop="element.prop"
-          :label="element.label"
+          :prop="item.prop"
+          :label="item.label"
+          :width="item.width || ''"
         >
+          <template slot-scope="scope">
+            <el-input
+              v-model="scope.row[item.prop]"
+              v-if="scope.row.modifyFlag === 'Y'"
+              @change="handleChage(scope.row, scope.column)"
+            ></el-input>
+            <span v-else>{{ scope.row[item.prop] }}</span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -81,46 +100,18 @@ export default {
       },
       tags: [],
       tablesProp: [],
-      tableData: [
+      tableData: [],
+      reportModifyList: [],
+      columns: [
         // {
-        //   id: 1,
-        //   date: "2016-05-02",
-        //   name: "王小虎",
-        //   address: "上海市普陀区金沙江路 1518 弄",
-        // },
-        // {
-        //   id: 2,
-        //   date: "2016-05-04",
-        //   name: "王小虎",
-        //   address: "上海市普陀区金沙江路 1517 弄",
-        // },
-        // {
-        //   id: 3,
-        //   date: "2016-05-01",
-        //   name: "王小虎",
-        //   address: "上海市普陀区金沙江路 1519 弄",
-        //   children: [
-        //     {
-        //       id: 31,
-        //       date: "2016-05-01",
-        //       name: "王小虎",
-        //       address: "上海市普陀区金沙江路 1519 弄",
-        //     },
-        //     {
-        //       id: 32,
-        //       date: "2016-05-01",
-        //       name: "王小虎",
-        //       address: "上海市普陀区金沙江路 1519 弄",
-        //     },
-        //   ],
-        // },
-        // {
-        //   id: 4,
-        //   date: "2016-05-03",
-        //   name: "王小虎",
-        //   address: "上海市普陀区金沙江路 1516 弄",
+        //   label: "",
+        //   prop: "name",
+        //   type: "template",
+        //   template: "isEdit",
+        //   width: 200,
         // },
       ],
+      changeList: [],
     };
   },
   methods: {
@@ -138,55 +129,15 @@ export default {
       this.tags.forEach((element) => {
         periodList.push(element.name);
       });
-      $http
-        .post(api.uyReportQuery, {
-          periodList: periodList,
-          blanceTypeList: this.form.checkList,
-        })
-        .then((res) => {
-          console.log(res, "res");
-          // table数量处理
-          let map = new Map();
-          for (let item of res.data.data.reportDetailList) {
-            map.set(item.itemType, item);
-          }
-          this.tablesProp = [...map.values()];
-          //   console.log(this.tablesProp, 'res.data.data.reportDetailList');
-
-          // table数据处理
-          this.tablesProp.forEach((i) => {
-            i.tableData = [];
-          });
-          this.tablesProp.forEach((i) => {
-            res.data.data.reportDetailList.forEach((e) => {
-              if (i.itemType === e.itemType) {
-                i.tableData.push(e);
-              }
-            });
-          });
-          this.tablesProp.forEach((i) => {
-            // i.tableData.forEach((p) => {
-              let map = new Map();
-              for (let item of i.tableData) {
-                map.set(item.itemName, item);
-              }
-              i.itemNameList = [...map.values()];
-            // });
-          });
-
-            this.tablesProp.forEach((i) => {
-              i.itemNameList.forEach(q => {
-               q.prop = q.itemName
-               this.headerList.forEach(r => {
-                q[r.prop] = '1'
-               })
-            });
-          });
-          console.log(this.tablesProp, "this.tablesProp");
-
-        });
-
-      // table Header 处理
+      this.columns = [
+        // {
+        //   label: "",
+        //   prop: "name",
+        //   type: "template",
+        //   template: "isEdit",
+        //   width: 200,
+        // },
+      ];
       this.headerList = [];
       periodList.forEach((e) => {
         this.form.checkList.forEach((i) => {
@@ -194,9 +145,461 @@ export default {
             prop: i + e,
             label: i + e,
           });
+          this.columns.push({
+            label: i + e,
+            prop: i + e,
+            type: "template",
+            template: "isEdit",
+          });
         });
       });
-      console.log(this.headerList, "headerList");
+      // table Header 处理
+
+      console.log(this.headerList, "headerList", this.columns);
+      $http
+        .post(api.uyReportQuery, {
+          periodList: periodList,
+          blanceTypeList: this.form.checkList,
+        })
+        .then((res) => {
+          let showData = [];
+          console.log(res, "res");
+          // table数量处理
+          let map = new Map();
+          for (let item of res.data.data.reportDetailList) {
+            map.set(item.itemType, item);
+          }
+          this.tablesProp = [...map.values()];
+          console.log(
+            this.tablesProp,
+            "res.data.data.reportDetailList",
+            this.columns
+          );
+
+          // table数据处理
+          this.tablesProp.forEach((i, index) => {
+            this.columns.forEach((e) => {
+              if (e.prop !== "name") {
+                showData.push({
+                  name: i.itemType,
+                  reportId: index,
+                  children: [],
+                });
+              }
+            });
+          });
+
+          // 对showData去重
+          for (let i = 0; i < showData.length; i++) {
+            for (let j = i + 1; j < showData.length; j++) {
+              if (showData[i].name === showData[j].name) {
+                showData.splice(j, 1);
+                j = j - 1;
+              }
+            }
+          }
+
+          this.columns.forEach((item) => {
+            showData.forEach((e) => {
+              if (item.prop !== "name") {
+                e[item.prop] = "";
+                console.log(e, "e");
+              }
+            });
+          });
+
+          // 对所有showPlace为1 的数据进行处理
+          // let arrone = [];
+          let arr1 = [];
+          let arr2 = [];
+          let arr3 = [];
+
+          for (let item of res.data.data.reportDetailList) {
+            if (item.showPlace === "1" && item.itemType === "REVENUE") {
+              arr1.push(item);
+            }
+            if (item.showPlace === "1" && item.itemType === "EXPENSES") {
+              arr2.push(item);
+            }
+            if (
+              item.showPlace === "1" &&
+              item.itemType === "OTHER COMPREHENSIVE INCOME"
+            ) {
+              arr3.push(item);
+            }
+          }
+
+          let arrnew1 = [];
+          let arrnew2 = [];
+          let arrnew3 = [];
+          //
+          var obj1 = {};
+          arrnew1 = arr1.reduce(function (item, next) {
+            obj1[next.itemName]
+              ? ""
+              : (obj1[next.itemName] = true && item.push(next));
+            return item;
+          }, []);
+          arrnew1.forEach((item) => {
+            this.headerList.forEach((p) => {
+              arr1.forEach((q) => {
+                if (p.prop === q.balanceType + q.period) {
+                  item[p.prop] = q.amount;
+                  item[p.prop + "id"] = q.reportId;
+                  item[p.prop + "contractNo"] = q.contractNo;
+                  item.name = item.itemName;
+                }
+              });
+            });
+          });
+          var obj2 = {};
+          arrnew2 = arr2.reduce(function (item, next) {
+            obj2[next.itemName]
+              ? ""
+              : (obj2[next.itemName] = true && item.push(next));
+            return item;
+          }, []);
+          arrnew2.forEach((item) => {
+            this.headerList.forEach((p) => {
+              arr2.forEach((q) => {
+                if (p.prop === q.balanceType + q.period) {
+                  item[p.prop] = q.amount;
+                  item[p.prop + "id"] = q.reportId;
+                  item[p.prop + "contractNo"] = q.contractNo;
+                  item.name = item.itemName;
+                }
+              });
+            });
+          });
+
+          var obj3 = {};
+          arrnew3 = arr3.reduce(function (item, next) {
+            obj3[next.itemName]
+              ? ""
+              : (obj3[next.itemName] = true && item.push(next));
+            return item;
+          }, []);
+          arrnew3.forEach((item) => {
+            this.headerList.forEach((p) => {
+              arr3.forEach((q) => {
+                if (p.prop === q.balanceType + q.period) {
+                  item[p.prop] = q.amount;
+                  item[p.prop + "id"] = q.reportId;
+                  item[p.prop + "contractNo"] = q.contractNo;
+                  item.name = item.itemName;
+                }
+              });
+            });
+          });
+          console.log(arrnew1, arrnew2, arrnew3, "arrnew");
+
+          showData[0].children = arrnew1;
+          showData[1].children = arrnew2;
+          showData[2].children = arrnew3;
+
+          // 对所有showPlace为1.1 的数据进行处理
+          // let arrone = [];
+          let arrson1 = [];
+          let arrson2 = [];
+          let arrson3 = [];
+
+          for (let item of res.data.data.reportDetailList) {
+            if (item.showPlace === "1.1" && item.itemType === "REVENUE") {
+              arrson1.push(item);
+            }
+            if (item.showPlace === "1.1" && item.itemType === "EXPENSES") {
+              arrson2.push(item);
+            }
+            if (
+              item.showPlace === "1.1" &&
+              item.itemType === "OTHER COMPREHENSIVE INCOME"
+            ) {
+              arrson3.push(item);
+            }
+          }
+
+          let arrnewson1 = [];
+          let arrnewson2 = [];
+          let arrnewson3 = [];
+          //
+          var objson1 = {};
+          arrnewson1 = arrson1.reduce(function (item, next) {
+            objson1[next.itemName]
+              ? ""
+              : (objson1[next.itemName] = true && item.push(next));
+            return item;
+          }, []);
+          arrnewson1.forEach((item) => {
+            this.headerList.forEach((p) => {
+              arrson1.forEach((q) => {
+                if (p.prop === q.balanceType + q.period) {
+                  item[p.prop] = q.amount;
+                  item[p.prop + "id"] = q.reportId;
+                  item[p.prop + "contractNo"] = q.contractNo;
+                  item.name = item.itemName;
+                }
+              });
+            });
+          });
+          var objson2 = {};
+          if (arrson2.length !== 0) {
+            arrnewson2 = arrson2.reduce(function (item, next) {
+              objson2[next.itemName]
+                ? ""
+                : (objson2[next.itemName] = true && item.push(next));
+              return item;
+            }, []);
+            arrnewson2.forEach((item) => {
+              this.headerList.forEach((p) => {
+                arrson2.forEach((q) => {
+                  if (p.prop === q.balanceType + q.period) {
+                    item[p.prop] = q.amount;
+                    item[p.prop + "id"] = q.reportId;
+                    item[p.prop + "contractNo"] = q.contractNo;
+                    item.name = item.itemName;
+                  }
+                });
+              });
+            });
+          }
+
+          var objson3 = {};
+          arrnewson3 = arrson3.reduce(function (item, next) {
+            objson3[next.itemName]
+              ? ""
+              : (objson3[next.itemName] = true && item.push(next));
+            return item;
+          }, []);
+          arrnewson3.forEach((item) => {
+            this.headerList.forEach((p) => {
+              arrson3.forEach((q) => {
+                if (p.prop === q.balanceType + q.period) {
+                  item[p.prop] = q.amount;
+                  item[p.prop + "id"] = q.reportId;
+                  item[p.prop + "contractNo"] = q.contractNo;
+                  item.name = item.itemName;
+                }
+              });
+            });
+          });
+
+          if (showData[0].children.length !== 0) {
+            showData[0].children[showData[0].children.length - 1].children =
+              arrnewson1;
+          }
+          if (showData[1].children.length !== 0) {
+            showData[1].children[showData[1].children.length - 1].children =
+              arrnewson2;
+          }
+          if (showData[2].children.length !== 0) {
+            showData[2].children[showData[2].children.length - 1].children =
+              arrnewson3;
+          }
+
+          // 对所有showPlace为1.1.1 的数据进行处理
+          // let arrone = [];
+          let arrGrandson1 = [];
+          let arrGrandson2 = [];
+          let arrGrandson3 = [];
+
+          for (let item of res.data.data.reportDetailList) {
+            if (item.showPlace === "1.1.1" && item.itemType === "REVENUE") {
+              arrGrandson1.push(item);
+            }
+            if (item.showPlace === "1.1.1" && item.itemType === "EXPENSES") {
+              arrGrandson2.push(item);
+            }
+            if (
+              item.showPlace === "1.1.1" &&
+              item.itemType === "OTHER COMPREHENSIVE INCOME"
+            ) {
+              arrGrandson3.push(item);
+            }
+          }
+          console.log(arrGrandson1, arrGrandson2, arrGrandson3, "??!!!");
+          let arrnewGrandson1 = [];
+          let arrnewGrandson2 = [];
+          let arrnewGrandson3 = [];
+          //
+          var objGrandson1 = {};
+          if (arrGrandson1.length !== 0) {
+            arrnewGrandson1 = arrGrandson1.reduce(function (item, next) {
+              objGrandson1[next.itemName]
+                ? ""
+                : (objGrandson1[next.itemName] = true && item.push(next));
+              return item;
+            }, []);
+            arrnewGrandson1.forEach((item) => {
+              this.headerList.forEach((p) => {
+                arrGrandson1.forEach((q) => {
+                  if (p.prop === q.balanceType + q.period) {
+                    item[p.prop] = q.amount;
+                    item[p.prop + "id"] = q.reportId;
+                    item[p.prop + "contractNo"] = q.contractNo;
+                    item.name = item.itemName;
+                  }
+                });
+              });
+            });
+          }
+
+          var objGrandson2 = {};
+          if (arrGrandson2.length !== 0) {
+            arrnewGrandson2 = arrson2.reduce(function (item, next) {
+              objGrandson2[next.itemName]
+                ? ""
+                : (objGrandson2[next.itemName] = true && item.push(next));
+              return item;
+            }, []);
+            arrnewGrandson2.forEach((item) => {
+              this.headerList.forEach((p) => {
+                arrGrandson2.forEach((q) => {
+                  if (p.prop === q.balanceType + q.period) {
+                    item[p.prop] = q.amount;
+                    item[p.prop + "id"] = q.reportId;
+                    item[p.prop + "contractNo"] = q.contractNo;
+                    item.name = item.itemName;
+                  }
+                });
+              });
+            });
+          }
+
+          var objGrandson3 = {};
+
+          if (arrGrandson3.length !== 0) {
+            arrnewGrandson3 = arrGrandson3.reduce(function (item, next) {
+              objGrandson3[next.itemName]
+                ? ""
+                : (objGrandson3[next.itemName] = true && item.push(next));
+              return item;
+            }, []);
+            arrnewGrandson3.forEach((item) => {
+              this.headerList.forEach((p) => {
+                arrGrandson3.forEach((q) => {
+                  if (p.prop === q.balanceType + q.period) {
+                    item[p.prop] = q.amount;
+                    item[p.prop + "id"] = q.reportId;
+                    item[p.prop + "contractNo"] = q.contractNo;
+                    item.name = item.itemName;
+                  }
+                });
+              });
+            });
+          }
+
+          if (
+            showData[0].children.length !== 0 &&
+            showData[0].children[showData[0].children.length - 1].length !==
+              0 &&
+            arrnewGrandson1.length !== 0
+          ) {
+            showData[0].children[showData[0].children.length - 1].children[
+              showData[0].children[showData[0].children.length - 1].children
+                .length - 1
+            ].children = arrnewGrandson1;
+          }
+          if (
+            showData[1].children.length !== 0 &&
+            showData[1].children[showData[1].children.length - 1].length !==
+              0 &&
+            arrnewGrandson2.length !== 0
+          ) {
+            console.log(arrnewGrandson2, "aaaa");
+
+            showData[1].children[showData[1].children.length - 1].children[
+              showData[1].children[showData[1].children.length - 1].children
+                .length - 1
+            ].children = arrnewGrandson2;
+          }
+          // if (
+          //   showData[2].children.length !== 0 &&
+          //   showData[2].children[showData[2].children.length - 1].length !== 0
+          // ) {
+          //   showData[2].children[showData[2].children.length - 1].children[
+          //     showData[2].children[showData[2].children.length - 1].children
+          //       .length - 1
+          //   ].children = arrnewGrandson3;
+          // }
+
+          console.log(showData, "showData");
+          this.tableData = showData;
+
+          // this.tablesProp.forEach((i) => {
+          //   res.data.data.reportDetailList.forEach((e) => {
+          //     if (i.itemType === e.itemType) {
+          //       i.tableData.push(e);
+          //     }
+          //   });
+          // });
+          // this.tablesProp.forEach((i) => {
+          //   // i.tableData.forEach((p) => {
+          //   let map = new Map();
+          //   for (let item of i.tableData) {
+          //     map.set(item.itemName, item);
+          //   }
+          //   i.itemNameList = [...map.values()];
+          //   // });
+          // });
+
+          // this.tablesProp.forEach((i) => {
+          //   i.itemNameList.forEach((q) => {
+          //     q.hasChildren = q.contractFlag === "N" ? false : true;
+          //     q.children = [];
+          //     //   if ()
+          //     q.prop = q.itemName;
+          //     this.headerList.forEach((r) => {
+          //       i.tableData.forEach((s) => {
+          //         if (r.prop === s.balanceType + s.period) {
+          //           q[r.prop] = s.amount;
+          //           q[r.prop + "id"] = s.reportId;
+          //           q[r.prop + "contractNo"] = s.contractNo;
+          //         }
+          //       });
+          //       // q[r.prop] = '1'
+          //       // i.
+          //       // if (r.prop === )
+          //     });
+          //   });
+          // });
+          // console.log(this.tablesProp, "this.tablesProp");
+        });
+    },
+    handleEdit() {
+      this.$http
+        .post(api.uyReportModify, { reportModifyList: this.changeList })
+        .then((res) => {
+          console.log(res, "resres");
+          if (res.data.code === "0") {
+            this.$message.success("修改成功");
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        }).finally(() => {
+          this.changeList = []
+        })
+    },
+    handleChage(row, column) {
+      console.log(row[column.property + "id"], "row", column);
+      if (
+        this.changeList.find((x) => x.reportId === row[column.property + "id"])
+      ) {
+        let nowObj = this.changeList.find(
+          (x) => x.reportId === row[column.property + "id"]
+        );
+        console.log(nowObj, "nowObj");
+        nowObj.reportId = row[column.property + "id"];
+        nowObj.contractNo = row[column.property + "contractNo"];
+        nowObj.amount = row[column.property];
+      } else {
+        this.changeList.push({
+          reportId: row[column.property + "id"],
+          contractNo: row[column.property + "contractNo"],
+          amount: row[column.property],
+        });
+      }
+
+      console.log(this.changeList, "changeList");
     },
     // handleResetClick() {},
   },

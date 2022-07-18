@@ -112,4 +112,6 @@ export default {
 
   // uy report查询
   uyReportQuery: "/estimate/finance/uyReportQuery",
+  // uy report修改
+  uyReportModify: '/estimate/finance/uyReportModify'
 };
