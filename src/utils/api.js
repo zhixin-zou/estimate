@@ -113,5 +113,7 @@ export default {
   // uy report查询
   uyReportQuery: "/estimate/finance/uyReportQuery",
   // uy report修改
-  uyReportModify: '/estimate/finance/uyReportModify'
+  uyReportModify: '/estimate/finance/uyReportModify',
+  // uy report合同明细查询
+  uyReportContractQuery: '/estimate/finance/uyReportContractQuery'
 };

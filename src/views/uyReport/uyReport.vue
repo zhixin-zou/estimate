@@ -57,6 +57,8 @@
         :data="tableData"
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
+        :load="load"
+        lazy
         border
         default-expand-all
         :tree-props="{ children: 'children' }"
@@ -214,6 +216,10 @@ export default {
           let arr2 = [];
           let arr3 = [];
 
+          console.log(
+            res.data.data.reportDetailList,
+            "res.data.data.reportDetailList"
+          );
           for (let item of res.data.data.reportDetailList) {
             if (item.showPlace === "1" && item.itemType === "REVENUE") {
               arr1.push(item);
@@ -229,6 +235,8 @@ export default {
             }
           }
 
+          // console.log(arr1, 'firstarr1');
+
           let arrnew1 = [];
           let arrnew2 = [];
           let arrnew3 = [];
@@ -240,19 +248,29 @@ export default {
               : (obj1[next.itemName] = true && item.push(next));
             return item;
           }, []);
-          console.log(arr1, 'arr1');
+
+          // console.log(arr1, 'arr1');
           arrnew1.forEach((item) => {
             this.headerList.forEach((p) => {
+              console.log(p.prop, "p.prop");
               arr1.forEach((q) => {
-                if (p.prop === q.balanceType + q.period) {
+                if (
+                  p.prop === q.balanceType + q.period &&
+                  item.itemName === q.itemName
+                ) {
                   item[p.prop] = q.amount;
                   item[p.prop + "id"] = q.reportId;
                   item[p.prop + "contractNo"] = q.contractNo;
                   item.name = item.itemName;
+                  if (item.contractFlag === "Y") {
+                    item.hasChildren = true;
+                  }
                 }
               });
             });
           });
+          console.log(arr1, "firstarr1", arrnew1, "arrnew1");
+
           var obj2 = {};
           arrnew2 = arr2.reduce(function (item, next) {
             obj2[next.itemName]
@@ -263,11 +281,17 @@ export default {
           arrnew2.forEach((item) => {
             this.headerList.forEach((p) => {
               arr2.forEach((q) => {
-                if (p.prop === q.balanceType + q.period) {
+                if (
+                  p.prop === q.balanceType + q.period &&
+                  item.itemName === q.itemName
+                ) {
                   item[p.prop] = q.amount;
                   item[p.prop + "id"] = q.reportId;
                   item[p.prop + "contractNo"] = q.contractNo;
                   item.name = item.itemName;
+                  if (item.contractFlag === "Y") {
+                    item.hasChildren = true;
+                  }
                 }
               });
             });
@@ -283,17 +307,35 @@ export default {
           arrnew3.forEach((item) => {
             this.headerList.forEach((p) => {
               arr3.forEach((q) => {
-                console.log(q.reportId, 'reportIdreportIdreportIdreportIdreportId');
-                if (p.prop === q.balanceType + q.period) {
+                console.log(
+                  q.reportId,
+                  "reportIdreportIdreportIdreportIdreportId"
+                );
+                if (
+                  p.prop === q.balanceType + q.period &&
+                  item.itemName === q.itemName
+                ) {
                   item[p.prop] = q.amount;
                   item[p.prop + "id"] = q.reportId;
                   item[p.prop + "contractNo"] = q.contractNo;
                   item.name = item.itemName;
+                  if (item.contractFlag === "Y") {
+                    item.hasChildren = true;
+                  }
                 }
               });
             });
           });
           console.log(arrnew1, arrnew2, arrnew3, "arrnew");
+          arrnew1.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
+          arrnew2.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
+          arrnew3.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
 
           showData[0].children = arrnew1;
           showData[1].children = arrnew2;
@@ -334,11 +376,17 @@ export default {
           arrnewson1.forEach((item) => {
             this.headerList.forEach((p) => {
               arrson1.forEach((q) => {
-                if (p.prop === q.balanceType + q.period) {
+                if (
+                  p.prop === q.balanceType + q.period &&
+                  item.itemName === q.itemName
+                ) {
                   item[p.prop] = q.amount;
                   item[p.prop + "id"] = q.reportId;
                   item[p.prop + "contractNo"] = q.contractNo;
                   item.name = item.itemName;
+                  if (item.contractFlag === "Y") {
+                    item.hasChildren = true;
+                  }
                 }
               });
             });
@@ -354,11 +402,17 @@ export default {
             arrnewson2.forEach((item) => {
               this.headerList.forEach((p) => {
                 arrson2.forEach((q) => {
-                  if (p.prop === q.balanceType + q.period) {
+                  if (
+                    p.prop === q.balanceType + q.period &&
+                    item.itemName === q.itemName
+                  ) {
                     item[p.prop] = q.amount;
                     item[p.prop + "id"] = q.reportId;
                     item[p.prop + "contractNo"] = q.contractNo;
                     item.name = item.itemName;
+                    if (item.contractFlag === "Y") {
+                      item.hasChildren = true;
+                    }
                   }
                 });
               });
@@ -375,14 +429,29 @@ export default {
           arrnewson3.forEach((item) => {
             this.headerList.forEach((p) => {
               arrson3.forEach((q) => {
-                if (p.prop === q.balanceType + q.period) {
+                if (
+                  p.prop === q.balanceType + q.period &&
+                  item.itemName === q.itemName
+                ) {
                   item[p.prop] = q.amount;
                   item[p.prop + "id"] = q.reportId;
                   item[p.prop + "contractNo"] = q.contractNo;
                   item.name = item.itemName;
+                  if (item.contractFlag === "Y") {
+                    item.hasChildren = true;
+                  }
                 }
               });
             });
+          });
+          arrnewson1.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
+          arrnewson2.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
+          arrnewson3.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
           });
 
           if (showData[0].children.length !== 0) {
@@ -434,11 +503,17 @@ export default {
             arrnewGrandson1.forEach((item) => {
               this.headerList.forEach((p) => {
                 arrGrandson1.forEach((q) => {
-                  if (p.prop === q.balanceType + q.period) {
+                  if (
+                    p.prop === q.balanceType + q.period &&
+                    item.itemName === q.itemName
+                  ) {
                     item[p.prop] = q.amount;
                     item[p.prop + "id"] = q.reportId;
                     item[p.prop + "contractNo"] = q.contractNo;
                     item.name = item.itemName;
+                    if (item.contractFlag === "Y") {
+                      item.hasChildren = true;
+                    }
                   }
                 });
               });
@@ -456,11 +531,17 @@ export default {
             arrnewGrandson2.forEach((item) => {
               this.headerList.forEach((p) => {
                 arrGrandson2.forEach((q) => {
-                  if (p.prop === q.balanceType + q.period) {
+                  if (
+                    p.prop === q.balanceType + q.period &&
+                    item.itemName === q.itemName
+                  ) {
                     item[p.prop] = q.amount;
                     item[p.prop + "id"] = q.reportId;
                     item[p.prop + "contractNo"] = q.contractNo;
                     item.name = item.itemName;
+                    if (item.contractFlag === "Y") {
+                      item.hasChildren = true;
+                    }
                   }
                 });
               });
@@ -479,16 +560,31 @@ export default {
             arrnewGrandson3.forEach((item) => {
               this.headerList.forEach((p) => {
                 arrGrandson3.forEach((q) => {
-                  if (p.prop === q.balanceType + q.period) {
+                  if (
+                    p.prop === q.balanceType + q.period &&
+                    item.itemName === q.itemName
+                  ) {
                     item[p.prop] = q.amount;
                     item[p.prop + "id"] = q.reportId;
                     item[p.prop + "contractNo"] = q.contractNo;
                     item.name = item.itemName;
+                    if (item.contractFlag === "Y") {
+                      item.hasChildren = true;
+                    }
                   }
                 });
               });
             });
           }
+          arrnewGrandson1.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
+          arrnewGrandson2.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
+          arrnewGrandson3.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
 
           if (
             showData[0].children.length !== 0 &&
@@ -514,15 +610,6 @@ export default {
                 .length - 1
             ].children = arrnewGrandson2;
           }
-          // if (
-          //   showData[2].children.length !== 0 &&
-          //   showData[2].children[showData[2].children.length - 1].length !== 0
-          // ) {
-          //   showData[2].children[showData[2].children.length - 1].children[
-          //     showData[2].children[showData[2].children.length - 1].children
-          //       .length - 1
-          //   ].children = arrnewGrandson3;
-          // }
 
           console.log(showData, "showData");
           this.tableData = showData;
@@ -604,18 +691,56 @@ export default {
 
       console.log(this.changeList, "changeList");
     },
-    createComprisonFunction(propName) {
-      return function (object1, object2) {
-        var value1 = Number(object1[propName]);
-        var value2 = Number(object2[propName]);
-        if (value1 < value2) {
-          return -1;
-        } else if (value1 > value2) {
-          return 1;
-        } else {
-          return 0;
-        }
-      };
+    load(tree, treeNode, resolve) {
+      console.log(tree, treeNode, "???????");
+      let periodList = [];
+      this.tags.forEach((element) => {
+        periodList.push(element.name);
+      });
+      $http
+        .post(api.uyReportContractQuery, {
+          periodList: periodList,
+          blanceTypeList: this.form.checkList,
+          itemCodeList: [tree.itemCode],
+        })
+        .then((res) => {
+          console.log(res, "finally");
+
+          //
+          let arrfin = res.data.data.reportDetailContractList || [];
+          let arrnewfin = [];
+          var obfin1 = {};
+          arrnewfin = arrfin.reduce(function (item, next) {
+            obfin1[next.contractNo]
+              ? ""
+              : (obfin1[next.contractNo] = true && item.push(next));
+            return item;
+          }, []);
+          console.log(arrfin, "arrfinarrfinarrfinarrfinarrfin");
+          console.log(arrnewfin, "arrnewfinarrnewfin");
+
+          arrnewfin.forEach((item) => {
+            this.headerList.forEach((p) => {
+              arrfin.forEach((q) => {
+                if (
+                  p.prop === q.balanceType + q.period &&
+                  item.itemName === q.itemName
+                ) {
+                  item[p.prop] = q.amount;
+                  item[p.prop + "id"] = q.reportId;
+                  item[p.prop + "contractNo"] = q.contractNo;
+                  item.name = item.contractNo;
+                }
+              });
+            });
+          });
+          arrnewfin.sort((a, b) => {
+            return Number(a.itemCode) - Number(b.itemCode);
+          });
+          setTimeout(() => {
+            resolve(arrnewfin);
+          }, 1000);
+        });
     },
 
     // handleResetClick() {},

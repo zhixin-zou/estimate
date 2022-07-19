@@ -3,7 +3,7 @@ module.exports = {
   publicPath: "/",
   // build目录
   outputDir: "dist",
-  indexPath: 'actuarialEstimates.html',
+  indexPath: 'uyReportSearch.html',
   productionSourceMap: false,
   // pages: {
   //   financialForecasts: {
