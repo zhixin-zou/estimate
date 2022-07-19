@@ -178,7 +178,7 @@
         ref="listBox"
       >
         <el-table-column prop="contractNo" label="合同号"> </el-table-column>
-        <el-table-column prop="estimateKey" label="estimateKey">
+        <el-table-column prop="合同预估id" label="estimateKey">
         </el-table-column>
         <el-table-column prop="sessionName" label="合同session">
         </el-table-column>
@@ -569,13 +569,13 @@ export default {
           .post(api.saveEpi, data)
           .then((res) => {
             console.log(res);
-            if (res.code == 0) {
+            if (res.data.code === '0') {
               this.$message.success("导入成功");
             } else {
-              if (res.data.msg) {
+              if (res.data.msg !== '') {
                 this.$message.error(res.data.msg);
               } else {
-                this.$message.error(res.data.msg);
+                this.$message.error('导入失败');
               }
             }
           })
@@ -733,3 +733,24 @@ export default {
   }
 }
 </style>
+
+<!-- <style scoped lang="scss">
+::v-deep .el-icon-arrow-right:before {
+  // content: "+";
+  color: #1890ff;
+  font-size: 20px;
+  font-weight: 700px;
+}
+::v-deep .el-table__expand-icon .el-icon-arrow-right:before {
+  content: "+";
+}
+::v-deep [class*="el-table__row--level"] .el-table__expand-icon {
+  transform: rotate(0);
+}
+::v-deep .el-table__expand-icon--expanded .el-icon-arrow-right:before {
+  content: "-";
+}
+::v-deep .el-table__placeholder::before {
+  margin-left: 20px;
+}
+</style> -->

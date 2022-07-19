@@ -13,7 +13,7 @@ import "element-ui/lib/theme-chalk/index.css";
 // import FilterPanel from '@/components/FilterPanelNew.vue'
 import FsListPanel from "@/components/listPanel.vue";
 import horizontalScroll from 'el-table-horizontal-scroll'
-import TreeTable from 'vue-table-with-tree-grid'
+// import TreeTable from 'vue-table-with-tree-grid'
 
 // Vue.use(TreeTable)
 Vue.use(horizontalScroll)
@@ -24,7 +24,7 @@ Vue.use(request);
 
 // Vue.component(FilterPanel.name, FilterPanel)
 Vue.component(FsListPanel.name, FsListPanel);
-Vue.component('tree-table', TreeTable)
+// Vue.component('tree-table', TreeTable)
 /* eslint-disable no-new */
 Vue.directive("permission", {
   bind: (el, binding) => {

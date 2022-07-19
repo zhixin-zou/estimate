@@ -240,6 +240,7 @@ export default {
               : (obj1[next.itemName] = true && item.push(next));
             return item;
           }, []);
+          console.log(arr1, 'arr1');
           arrnew1.forEach((item) => {
             this.headerList.forEach((p) => {
               arr1.forEach((q) => {
@@ -282,6 +283,7 @@ export default {
           arrnew3.forEach((item) => {
             this.headerList.forEach((p) => {
               arr3.forEach((q) => {
+                console.log(q.reportId, 'reportIdreportIdreportIdreportIdreportId');
                 if (p.prop === q.balanceType + q.period) {
                   item[p.prop] = q.amount;
                   item[p.prop + "id"] = q.reportId;
@@ -575,9 +577,10 @@ export default {
           } else {
             this.$message.error(res.data.msg);
           }
-        }).finally(() => {
-          this.changeList = []
         })
+        .finally(() => {
+          this.changeList = [];
+        });
     },
     handleChage(row, column) {
       console.log(row[column.property + "id"], "row", column);
@@ -601,6 +604,20 @@ export default {
 
       console.log(this.changeList, "changeList");
     },
+    createComprisonFunction(propName) {
+      return function (object1, object2) {
+        var value1 = Number(object1[propName]);
+        var value2 = Number(object2[propName]);
+        if (value1 < value2) {
+          return -1;
+        } else if (value1 > value2) {
+          return 1;
+        } else {
+          return 0;
+        }
+      };
+    },
+
     // handleResetClick() {},
   },
 };
