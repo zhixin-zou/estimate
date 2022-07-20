@@ -189,7 +189,7 @@
         ref="listBox"
       >
         <el-table-column prop="contractNo" label="合同号"> </el-table-column>
-        <el-table-column prop="合同预估id" label="estimateKey">
+        <el-table-column prop="estimateKey" label="合同预估id">
         </el-table-column>
         <el-table-column prop="sessionName" label="合同session">
         </el-table-column>
