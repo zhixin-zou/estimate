@@ -172,12 +172,6 @@
               size="small"
               >历史预估</el-button
             >
-            <!-- <el-button
-              @click="handleAdjustType(scope.row)"
-              type="text"
-              size="small"
-              >调整缴费方式</el-button
-            > -->
           </template>
         </el-table-column>
       </el-table>
