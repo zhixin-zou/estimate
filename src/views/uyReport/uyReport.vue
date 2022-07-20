@@ -58,10 +58,12 @@
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
         :load="load"
-        lazy
+        row-click="handlerow"
+        ref="lazyTableRef"
         border
-        default-expand-all
-        :tree-props="{ children: 'children' }"
+        lazy
+        :default-expanded-keys="treeDataShowList"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
         <el-table-column show-overflow-tooltip prop="name" label="" width="200">
         </el-table-column>
@@ -104,6 +106,7 @@ export default {
       tablesProp: [],
       tableData: [],
       reportModifyList: [],
+      treeDataShowList: ['0', '1', '2'],
       columns: [
         // {
         //   label: "",
@@ -184,7 +187,7 @@ export default {
               if (e.prop !== "name") {
                 showData.push({
                   name: i.itemType,
-                  reportId: index,
+                  reportId: index + '',
                   children: [],
                 });
               }
@@ -262,6 +265,7 @@ export default {
                   item[p.prop + "id"] = q.reportId;
                   item[p.prop + "contractNo"] = q.contractNo;
                   item.name = item.itemName;
+                  item.reportId = q.reportId;
                   if (item.contractFlag === "Y") {
                     item.hasChildren = true;
                   }
@@ -384,11 +388,26 @@ export default {
                   item[p.prop + "id"] = q.reportId;
                   item[p.prop + "contractNo"] = q.contractNo;
                   item.name = item.itemName;
+                  item.reportId = q.reportId;
+                  // item.itemCode = q.itemCode
                   if (item.contractFlag === "Y") {
                     item.hasChildren = true;
                   }
                 }
               });
+            });
+          });
+
+          console.log(arrnewson1, "arrn1arrnewson1arrnewson1");
+          showData[0].children.forEach((item) => {
+            arrnewson1.forEach((element) => {
+              if (item.itemCode === element.parentCode) {
+                if (!item.children) {
+                  item.children = [];
+                }
+                item.children.push(element);
+                // console.log(item.children, 'element');
+              }
             });
           });
           var objson2 = {};
@@ -418,6 +437,16 @@ export default {
               });
             });
           }
+          showData[1].children.forEach((item) => {
+            arrnewson2.forEach((element) => {
+              if (item.itemCode === element.parentCode) {
+                if (!item.children) {
+                  item.children = [];
+                }
+                item.children.push(element);
+              }
+            });
+          });
 
           var objson3 = {};
           arrnewson3 = arrson3.reduce(function (item, next) {
@@ -444,28 +473,38 @@ export default {
               });
             });
           });
-          arrnewson1.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
+          showData[2].children.forEach((item) => {
+            arrnewson3.forEach((element) => {
+              if (item.itemCode === element.parentCode) {
+                if (!item.children) {
+                  item.children = [];
+                }
+                item.children.push(element);
+              }
+            });
           });
-          arrnewson2.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
-          arrnewson3.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
+          // arrnewson1.sort((a, b) => {
+          //   return Number(a.itemCode) - Number(b.itemCode);
+          // });
+          // arrnewson2.sort((a, b) => {
+          //   return Number(a.itemCode) - Number(b.itemCode);
+          // });
+          // arrnewson3.sort((a, b) => {
+          //   return Number(a.itemCode) - Number(b.itemCode);
+          // });
 
-          if (showData[0].children.length !== 0) {
-            showData[0].children[showData[0].children.length - 1].children =
-              arrnewson1;
-          }
-          if (showData[1].children.length !== 0) {
-            showData[1].children[showData[1].children.length - 1].children =
-              arrnewson2;
-          }
-          if (showData[2].children.length !== 0) {
-            showData[2].children[showData[2].children.length - 1].children =
-              arrnewson3;
-          }
+          // if (showData[0].children.length !== 0) {
+          //   showData[0].children[showData[0].children.length - 1].children =
+          //     arrnewson1;
+          // }
+          // if (showData[1].children.length !== 0) {
+          //   showData[1].children[showData[1].children.length - 1].children =
+          //     arrnewson2;
+          // }
+          // if (showData[2].children.length !== 0) {
+          //   showData[2].children[showData[2].children.length - 1].children =
+          //     arrnewson3;
+          // }
 
           // 对所有showPlace为1.1.1 的数据进行处理
           // let arrone = [];
@@ -519,6 +558,27 @@ export default {
               });
             });
           }
+          console.log(
+            arrnewGrandson1,
+            "arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1"
+          );
+
+          showData[0].children.forEach((item) => {
+            if (item.children && item.children.length !== 0) {
+              item.children.forEach((p) => {
+                console.log(p.itemCode, "1.1.1item");
+
+                arrnewGrandson1.forEach((q) => {
+                  if (p.itemCode === q.parentCode) {
+                    if (!p.children) {
+                      p.children = [];
+                    }
+                    p.children.push(q);
+                  }
+                });
+              });
+            }
+          });
 
           var objGrandson2 = {};
           if (arrGrandson2.length !== 0) {
@@ -548,6 +608,23 @@ export default {
             });
           }
 
+          showData[1].children.forEach((item) => {
+            if (item.children && item.children.length !== 0) {
+              item.children.forEach((p) => {
+                console.log(p.itemCode, "1.1.1item");
+
+                arrnewGrandson2.forEach((q) => {
+                  if (p.itemCode === q.parentCode) {
+                    if (!p.children) {
+                      p.children = [];
+                    }
+                    p.children.push(q);
+                  }
+                });
+              });
+            }
+          });
+
           var objGrandson3 = {};
 
           if (arrGrandson3.length !== 0) {
@@ -576,82 +653,60 @@ export default {
               });
             });
           }
-          arrnewGrandson1.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
-          arrnewGrandson2.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
-          arrnewGrandson3.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
 
-          if (
-            showData[0].children.length !== 0 &&
-            showData[0].children[showData[0].children.length - 1].length !==
-              0 &&
-            arrnewGrandson1.length !== 0
-          ) {
-            showData[0].children[showData[0].children.length - 1].children[
-              showData[0].children[showData[0].children.length - 1].children
-                .length - 1
-            ].children = arrnewGrandson1;
-          }
-          if (
-            showData[1].children.length !== 0 &&
-            showData[1].children[showData[1].children.length - 1].length !==
-              0 &&
-            arrnewGrandson2.length !== 0
-          ) {
-            console.log(arrnewGrandson2, "aaaa");
+          showData[2].children.forEach((item) => {
+            if (item.children && item.children.length !== 0) {
+              item.children.forEach((p) => {
+                console.log(p.itemCode, "1.1.1item");
 
-            showData[1].children[showData[1].children.length - 1].children[
-              showData[1].children[showData[1].children.length - 1].children
-                .length - 1
-            ].children = arrnewGrandson2;
-          }
+                arrnewGrandson3.forEach((q) => {
+                  if (p.itemCode === q.parentCode) {
+                    if (!p.children) {
+                      p.children = [];
+                    }
+                    p.children.push(q);
+                  }
+                });
+              });
+            }
+          });
+          // arrnewGrandson1.sort((a, b) => {
+          //   return Number(a.itemCode) - Number(b.itemCode);
+          // });
+          // arrnewGrandson2.sort((a, b) => {
+          //   return Number(a.itemCode) - Number(b.itemCode);
+          // });
+          // arrnewGrandson3.sort((a, b) => {
+          //   return Number(a.itemCode) - Number(b.itemCode);
+          // });
+
+          // if (
+          //   showData[0].children.length !== 0 &&
+          //   showData[0].children[showData[0].children.length - 1].length !==
+          //     0 &&
+          //   arrnewGrandson1.length !== 0
+          // ) {
+          //   showData[0].children[showData[0].children.length - 1].children[
+          //     showData[0].children[showData[0].children.length - 1].children
+          //       .length - 1
+          //   ].children = arrnewGrandson1;
+          // }
+          // if (
+          //   showData[1].children.length !== 0 &&
+          //   showData[1].children[showData[1].children.length - 1].length !==
+          //     0 &&
+          //   arrnewGrandson2.length !== 0
+          // ) {
+          //   console.log(arrnewGrandson2, "aaaa");
+
+          //   showData[1].children[showData[1].children.length - 1].children[
+          //     showData[1].children[showData[1].children.length - 1].children
+          //       .length - 1
+          //   ].children = arrnewGrandson2;
+          // }
 
           console.log(showData, "showData");
           this.tableData = showData;
-
-          // this.tablesProp.forEach((i) => {
-          //   res.data.data.reportDetailList.forEach((e) => {
-          //     if (i.itemType === e.itemType) {
-          //       i.tableData.push(e);
-          //     }
-          //   });
-          // });
-          // this.tablesProp.forEach((i) => {
-          //   // i.tableData.forEach((p) => {
-          //   let map = new Map();
-          //   for (let item of i.tableData) {
-          //     map.set(item.itemName, item);
-          //   }
-          //   i.itemNameList = [...map.values()];
-          //   // });
-          // });
-
-          // this.tablesProp.forEach((i) => {
-          //   i.itemNameList.forEach((q) => {
-          //     q.hasChildren = q.contractFlag === "N" ? false : true;
-          //     q.children = [];
-          //     //   if ()
-          //     q.prop = q.itemName;
-          //     this.headerList.forEach((r) => {
-          //       i.tableData.forEach((s) => {
-          //         if (r.prop === s.balanceType + s.period) {
-          //           q[r.prop] = s.amount;
-          //           q[r.prop + "id"] = s.reportId;
-          //           q[r.prop + "contractNo"] = s.contractNo;
-          //         }
-          //       });
-          //       // q[r.prop] = '1'
-          //       // i.
-          //       // if (r.prop === )
-          //     });
-          //   });
-          // });
-          // console.log(this.tablesProp, "this.tablesProp");
         });
     },
     handleEdit() {
@@ -704,8 +759,7 @@ export default {
           itemCodeList: [tree.itemCode],
         })
         .then((res) => {
-          console.log(res, "finally");
-
+          console.log(this.$refs.lazyTableRef, "finally");
           //
           let arrfin = res.data.data.reportDetailContractList || [];
           let arrnewfin = [];
@@ -742,7 +796,6 @@ export default {
           }, 1000);
         });
     },
-
     // handleResetClick() {},
   },
 };
