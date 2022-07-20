@@ -62,7 +62,7 @@
         ref="lazyTableRef"
         border
         lazy
-        :default-expanded-keys="treeDataShowList"
+        :expand-row-keys="treeDataShowList"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
         <el-table-column show-overflow-tooltip prop="name" label="" width="200">
@@ -106,7 +106,7 @@ export default {
       tablesProp: [],
       tableData: [],
       reportModifyList: [],
-      treeDataShowList: ['0', '1', '2'],
+      treeDataShowList: ["0", "1", "2", "05317f2a-00fb-11ed-9a92-a4ae1204f49c"],
       columns: [
         // {
         //   label: "",
@@ -187,7 +187,7 @@ export default {
               if (e.prop !== "name") {
                 showData.push({
                   name: i.itemType,
-                  reportId: index + '',
+                  reportId: index + "",
                   children: [],
                 });
               }
