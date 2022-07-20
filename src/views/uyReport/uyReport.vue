@@ -48,6 +48,14 @@
             style="margin-left: 5px"
             >查询</el-button
           >
+          <el-button
+            class="exportButton"
+            size="mini"
+            type="primary"
+            plain
+            @click="handleExport('lazyTableRef', '导出信息')"
+            >导出</el-button
+          >
           <!-- <el-button size="mini" @click="handleResetClick">重置</el-button> -->
         </div>
       </div>
@@ -60,12 +68,11 @@
         :load="load"
         row-click="handlerow"
         ref="lazyTableRef"
-        border
         lazy
         :expand-row-keys="treeDataShowList"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
-        <el-table-column show-overflow-tooltip prop="name" label="" width="200">
+        <el-table-column show-overflow-tooltip prop="name" label="" width="400">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -92,6 +99,8 @@
 <script>
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
 
 export default {
   data() {
@@ -213,8 +222,6 @@ export default {
             });
           });
 
-          // 对所有showPlace为1 的数据进行处理
-          // let arrone = [];
           let arr1 = [];
           let arr2 = [];
           let arr3 = [];
@@ -224,16 +231,13 @@ export default {
             "res.data.data.reportDetailList"
           );
           for (let item of res.data.data.reportDetailList) {
-            if (item.showPlace === "1" && item.itemType === "REVENUE") {
+            if (item.itemType === "REVENUE") {
               arr1.push(item);
             }
-            if (item.showPlace === "1" && item.itemType === "EXPENSES") {
+            if (item.itemType === "EXPENSES") {
               arr2.push(item);
             }
-            if (
-              item.showPlace === "1" &&
-              item.itemType === "OTHER COMPREHENSIVE INCOME"
-            ) {
+            if (item.itemType === "OTHER COMPREHENSIVE INCOME") {
               arr3.push(item);
             }
           }
@@ -243,7 +247,6 @@ export default {
           let arrnew1 = [];
           let arrnew2 = [];
           let arrnew3 = [];
-          //
           var obj1 = {};
           arrnew1 = arr1.reduce(function (item, next) {
             obj1[next.itemName]
@@ -269,11 +272,16 @@ export default {
                   if (item.contractFlag === "Y") {
                     item.hasChildren = true;
                   }
+                  if (item.showPlace === "1.1") {
+                    item.name = "----" + " " + item.itemName;
+                  }
+                  if (item.showPlace === "1.1.1") {
+                    item.name = "--------" + " " + item.itemName;
+                  }
                 }
               });
             });
           });
-          console.log(arr1, "firstarr1", arrnew1, "arrnew1");
 
           var obj2 = {};
           arrnew2 = arr2.reduce(function (item, next) {
@@ -295,6 +303,12 @@ export default {
                   item.name = item.itemName;
                   if (item.contractFlag === "Y") {
                     item.hasChildren = true;
+                  }
+                  if (item.showPlace === "1.1") {
+                    item.name = "----" + " " + item.itemName;
+                  }
+                  if (item.showPlace === "1.1.1") {
+                    item.name = "--------" + " " + item.itemName;
                   }
                 }
               });
@@ -326,384 +340,513 @@ export default {
                   if (item.contractFlag === "Y") {
                     item.hasChildren = true;
                   }
+                  if (item.showPlace === "1.1") {
+                    item.name = "----" + " " + item.itemName;
+                  }
+                  if (item.showPlace === "1.1.1") {
+                    item.name = "--------" + " " + item.itemName;
+                  }
                 }
               });
             });
           });
-          console.log(arrnew1, arrnew2, arrnew3, "arrnew");
-          arrnew1.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
-          arrnew2.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
-          arrnew3.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
 
+          console.log(arr1, "firstarr1", arrnew1, "arrnew1");
           showData[0].children = arrnew1;
           showData[1].children = arrnew2;
           showData[2].children = arrnew3;
 
-          // 对所有showPlace为1.1 的数据进行处理
-          // let arrone = [];
-          let arrson1 = [];
-          let arrson2 = [];
-          let arrson3 = [];
+          // // 对所有showPlace为1 的数据进行处理
+          // // let arrone = [];
+          // let arr1 = [];
+          // let arr2 = [];
+          // let arr3 = [];
 
-          for (let item of res.data.data.reportDetailList) {
-            if (item.showPlace === "1.1" && item.itemType === "REVENUE") {
-              arrson1.push(item);
-            }
-            if (item.showPlace === "1.1" && item.itemType === "EXPENSES") {
-              arrson2.push(item);
-            }
-            if (
-              item.showPlace === "1.1" &&
-              item.itemType === "OTHER COMPREHENSIVE INCOME"
-            ) {
-              arrson3.push(item);
-            }
-          }
-
-          let arrnewson1 = [];
-          let arrnewson2 = [];
-          let arrnewson3 = [];
-          //
-          var objson1 = {};
-          arrnewson1 = arrson1.reduce(function (item, next) {
-            objson1[next.itemName]
-              ? ""
-              : (objson1[next.itemName] = true && item.push(next));
-            return item;
-          }, []);
-          arrnewson1.forEach((item) => {
-            this.headerList.forEach((p) => {
-              arrson1.forEach((q) => {
-                if (
-                  p.prop === q.balanceType + q.period &&
-                  item.itemName === q.itemName
-                ) {
-                  item[p.prop] = q.amount;
-                  item[p.prop + "id"] = q.reportId;
-                  item[p.prop + "contractNo"] = q.contractNo;
-                  item.name = item.itemName;
-                  item.reportId = q.reportId;
-                  // item.itemCode = q.itemCode
-                  if (item.contractFlag === "Y") {
-                    item.hasChildren = true;
-                  }
-                }
-              });
-            });
-          });
-
-          console.log(arrnewson1, "arrn1arrnewson1arrnewson1");
-          showData[0].children.forEach((item) => {
-            arrnewson1.forEach((element) => {
-              if (item.itemCode === element.parentCode) {
-                if (!item.children) {
-                  item.children = [];
-                }
-                item.children.push(element);
-                // console.log(item.children, 'element');
-              }
-            });
-          });
-          var objson2 = {};
-          if (arrson2.length !== 0) {
-            arrnewson2 = arrson2.reduce(function (item, next) {
-              objson2[next.itemName]
-                ? ""
-                : (objson2[next.itemName] = true && item.push(next));
-              return item;
-            }, []);
-            arrnewson2.forEach((item) => {
-              this.headerList.forEach((p) => {
-                arrson2.forEach((q) => {
-                  if (
-                    p.prop === q.balanceType + q.period &&
-                    item.itemName === q.itemName
-                  ) {
-                    item[p.prop] = q.amount;
-                    item[p.prop + "id"] = q.reportId;
-                    item[p.prop + "contractNo"] = q.contractNo;
-                    item.name = item.itemName;
-                    if (item.contractFlag === "Y") {
-                      item.hasChildren = true;
-                    }
-                  }
-                });
-              });
-            });
-          }
-          showData[1].children.forEach((item) => {
-            arrnewson2.forEach((element) => {
-              if (item.itemCode === element.parentCode) {
-                if (!item.children) {
-                  item.children = [];
-                }
-                item.children.push(element);
-              }
-            });
-          });
-
-          var objson3 = {};
-          arrnewson3 = arrson3.reduce(function (item, next) {
-            objson3[next.itemName]
-              ? ""
-              : (objson3[next.itemName] = true && item.push(next));
-            return item;
-          }, []);
-          arrnewson3.forEach((item) => {
-            this.headerList.forEach((p) => {
-              arrson3.forEach((q) => {
-                if (
-                  p.prop === q.balanceType + q.period &&
-                  item.itemName === q.itemName
-                ) {
-                  item[p.prop] = q.amount;
-                  item[p.prop + "id"] = q.reportId;
-                  item[p.prop + "contractNo"] = q.contractNo;
-                  item.name = item.itemName;
-                  if (item.contractFlag === "Y") {
-                    item.hasChildren = true;
-                  }
-                }
-              });
-            });
-          });
-          showData[2].children.forEach((item) => {
-            arrnewson3.forEach((element) => {
-              if (item.itemCode === element.parentCode) {
-                if (!item.children) {
-                  item.children = [];
-                }
-                item.children.push(element);
-              }
-            });
-          });
-          // arrnewson1.sort((a, b) => {
-          //   return Number(a.itemCode) - Number(b.itemCode);
-          // });
-          // arrnewson2.sort((a, b) => {
-          //   return Number(a.itemCode) - Number(b.itemCode);
-          // });
-          // arrnewson3.sort((a, b) => {
-          //   return Number(a.itemCode) - Number(b.itemCode);
-          // });
-
-          // if (showData[0].children.length !== 0) {
-          //   showData[0].children[showData[0].children.length - 1].children =
-          //     arrnewson1;
-          // }
-          // if (showData[1].children.length !== 0) {
-          //   showData[1].children[showData[1].children.length - 1].children =
-          //     arrnewson2;
-          // }
-          // if (showData[2].children.length !== 0) {
-          //   showData[2].children[showData[2].children.length - 1].children =
-          //     arrnewson3;
+          // console.log(
+          //   res.data.data.reportDetailList,
+          //   "res.data.data.reportDetailList"
+          // );
+          // for (let item of res.data.data.reportDetailList) {
+          //   if (item.showPlace === "1" && item.itemType === "REVENUE") {
+          //     arr1.push(item);
+          //   }
+          //   if (item.showPlace === "1" && item.itemType === "EXPENSES") {
+          //     arr2.push(item);
+          //   }
+          //   if (
+          //     item.showPlace === "1" &&
+          //     item.itemType === "OTHER COMPREHENSIVE INCOME"
+          //   ) {
+          //     arr3.push(item);
+          //   }
           // }
 
-          // 对所有showPlace为1.1.1 的数据进行处理
-          // let arrone = [];
-          let arrGrandson1 = [];
-          let arrGrandson2 = [];
-          let arrGrandson3 = [];
+          // // console.log(arr1, 'firstarr1');
 
-          for (let item of res.data.data.reportDetailList) {
-            if (item.showPlace === "1.1.1" && item.itemType === "REVENUE") {
-              arrGrandson1.push(item);
-            }
-            if (item.showPlace === "1.1.1" && item.itemType === "EXPENSES") {
-              arrGrandson2.push(item);
-            }
-            if (
-              item.showPlace === "1.1.1" &&
-              item.itemType === "OTHER COMPREHENSIVE INCOME"
-            ) {
-              arrGrandson3.push(item);
-            }
-          }
-          console.log(arrGrandson1, arrGrandson2, arrGrandson3, "??!!!");
-          let arrnewGrandson1 = [];
-          let arrnewGrandson2 = [];
-          let arrnewGrandson3 = [];
-          //
-          var objGrandson1 = {};
-          if (arrGrandson1.length !== 0) {
-            arrnewGrandson1 = arrGrandson1.reduce(function (item, next) {
-              objGrandson1[next.itemName]
-                ? ""
-                : (objGrandson1[next.itemName] = true && item.push(next));
-              return item;
-            }, []);
-            arrnewGrandson1.forEach((item) => {
-              this.headerList.forEach((p) => {
-                arrGrandson1.forEach((q) => {
-                  if (
-                    p.prop === q.balanceType + q.period &&
-                    item.itemName === q.itemName
-                  ) {
-                    item[p.prop] = q.amount;
-                    item[p.prop + "id"] = q.reportId;
-                    item[p.prop + "contractNo"] = q.contractNo;
-                    item.name = item.itemName;
-                    if (item.contractFlag === "Y") {
-                      item.hasChildren = true;
-                    }
-                  }
-                });
-              });
-            });
-          }
-          console.log(
-            arrnewGrandson1,
-            "arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1"
-          );
+          // let arrnew1 = [];
+          // let arrnew2 = [];
+          // let arrnew3 = [];
+          // //
+          // var obj1 = {};
+          // arrnew1 = arr1.reduce(function (item, next) {
+          //   obj1[next.itemName]
+          //     ? ""
+          //     : (obj1[next.itemName] = true && item.push(next));
+          //   return item;
+          // }, []);
 
-          showData[0].children.forEach((item) => {
-            if (item.children && item.children.length !== 0) {
-              item.children.forEach((p) => {
-                console.log(p.itemCode, "1.1.1item");
+          // // console.log(arr1, 'arr1');
+          // arrnew1.forEach((item) => {
+          //   this.headerList.forEach((p) => {
+          //     console.log(p.prop, "p.prop");
+          //     arr1.forEach((q) => {
+          //       if (
+          //         p.prop === q.balanceType + q.period &&
+          //         item.itemName === q.itemName
+          //       ) {
+          //         item[p.prop] = q.amount;
+          //         item[p.prop + "id"] = q.reportId;
+          //         item[p.prop + "contractNo"] = q.contractNo;
+          //         item.name = item.itemName;
+          //         item.reportId = q.reportId;
+          //         if (item.contractFlag === "Y") {
+          //           item.hasChildren = true;
+          //         }
+          //       }
+          //     });
+          //   });
+          // });
+          // console.log(arr1, "firstarr1", arrnew1, "arrnew1");
 
-                arrnewGrandson1.forEach((q) => {
-                  if (p.itemCode === q.parentCode) {
-                    if (!p.children) {
-                      p.children = [];
-                    }
-                    p.children.push(q);
-                  }
-                });
-              });
-            }
-          });
+          // var obj2 = {};
+          // arrnew2 = arr2.reduce(function (item, next) {
+          //   obj2[next.itemName]
+          //     ? ""
+          //     : (obj2[next.itemName] = true && item.push(next));
+          //   return item;
+          // }, []);
+          // arrnew2.forEach((item) => {
+          //   this.headerList.forEach((p) => {
+          //     arr2.forEach((q) => {
+          //       if (
+          //         p.prop === q.balanceType + q.period &&
+          //         item.itemName === q.itemName
+          //       ) {
+          //         item[p.prop] = q.amount;
+          //         item[p.prop + "id"] = q.reportId;
+          //         item[p.prop + "contractNo"] = q.contractNo;
+          //         item.name = item.itemName;
+          //         if (item.contractFlag === "Y") {
+          //           item.hasChildren = true;
+          //         }
+          //       }
+          //     });
+          //   });
+          // });
 
-          var objGrandson2 = {};
-          if (arrGrandson2.length !== 0) {
-            arrnewGrandson2 = arrson2.reduce(function (item, next) {
-              objGrandson2[next.itemName]
-                ? ""
-                : (objGrandson2[next.itemName] = true && item.push(next));
-              return item;
-            }, []);
-            arrnewGrandson2.forEach((item) => {
-              this.headerList.forEach((p) => {
-                arrGrandson2.forEach((q) => {
-                  if (
-                    p.prop === q.balanceType + q.period &&
-                    item.itemName === q.itemName
-                  ) {
-                    item[p.prop] = q.amount;
-                    item[p.prop + "id"] = q.reportId;
-                    item[p.prop + "contractNo"] = q.contractNo;
-                    item.name = item.itemName;
-                    if (item.contractFlag === "Y") {
-                      item.hasChildren = true;
-                    }
-                  }
-                });
-              });
-            });
-          }
-
-          showData[1].children.forEach((item) => {
-            if (item.children && item.children.length !== 0) {
-              item.children.forEach((p) => {
-                console.log(p.itemCode, "1.1.1item");
-
-                arrnewGrandson2.forEach((q) => {
-                  if (p.itemCode === q.parentCode) {
-                    if (!p.children) {
-                      p.children = [];
-                    }
-                    p.children.push(q);
-                  }
-                });
-              });
-            }
-          });
-
-          var objGrandson3 = {};
-
-          if (arrGrandson3.length !== 0) {
-            arrnewGrandson3 = arrGrandson3.reduce(function (item, next) {
-              objGrandson3[next.itemName]
-                ? ""
-                : (objGrandson3[next.itemName] = true && item.push(next));
-              return item;
-            }, []);
-            arrnewGrandson3.forEach((item) => {
-              this.headerList.forEach((p) => {
-                arrGrandson3.forEach((q) => {
-                  if (
-                    p.prop === q.balanceType + q.period &&
-                    item.itemName === q.itemName
-                  ) {
-                    item[p.prop] = q.amount;
-                    item[p.prop + "id"] = q.reportId;
-                    item[p.prop + "contractNo"] = q.contractNo;
-                    item.name = item.itemName;
-                    if (item.contractFlag === "Y") {
-                      item.hasChildren = true;
-                    }
-                  }
-                });
-              });
-            });
-          }
-
-          showData[2].children.forEach((item) => {
-            if (item.children && item.children.length !== 0) {
-              item.children.forEach((p) => {
-                console.log(p.itemCode, "1.1.1item");
-
-                arrnewGrandson3.forEach((q) => {
-                  if (p.itemCode === q.parentCode) {
-                    if (!p.children) {
-                      p.children = [];
-                    }
-                    p.children.push(q);
-                  }
-                });
-              });
-            }
-          });
-          // arrnewGrandson1.sort((a, b) => {
+          // var obj3 = {};
+          // arrnew3 = arr3.reduce(function (item, next) {
+          //   obj3[next.itemName]
+          //     ? ""
+          //     : (obj3[next.itemName] = true && item.push(next));
+          //   return item;
+          // }, []);
+          // arrnew3.forEach((item) => {
+          //   this.headerList.forEach((p) => {
+          //     arr3.forEach((q) => {
+          //       console.log(
+          //         q.reportId,
+          //         "reportIdreportIdreportIdreportIdreportId"
+          //       );
+          //       if (
+          //         p.prop === q.balanceType + q.period &&
+          //         item.itemName === q.itemName
+          //       ) {
+          //         item[p.prop] = q.amount;
+          //         item[p.prop + "id"] = q.reportId;
+          //         item[p.prop + "contractNo"] = q.contractNo;
+          //         item.name = item.itemName;
+          //         if (item.contractFlag === "Y") {
+          //           item.hasChildren = true;
+          //         }
+          //       }
+          //     });
+          //   });
+          // });
+          // console.log(arrnew1, arrnew2, arrnew3, "arrnew");
+          // arrnew1.sort((a, b) => {
           //   return Number(a.itemCode) - Number(b.itemCode);
           // });
-          // arrnewGrandson2.sort((a, b) => {
+          // arrnew2.sort((a, b) => {
           //   return Number(a.itemCode) - Number(b.itemCode);
           // });
-          // arrnewGrandson3.sort((a, b) => {
+          // arrnew3.sort((a, b) => {
           //   return Number(a.itemCode) - Number(b.itemCode);
           // });
 
-          // if (
-          //   showData[0].children.length !== 0 &&
-          //   showData[0].children[showData[0].children.length - 1].length !==
-          //     0 &&
-          //   arrnewGrandson1.length !== 0
-          // ) {
-          //   showData[0].children[showData[0].children.length - 1].children[
-          //     showData[0].children[showData[0].children.length - 1].children
-          //       .length - 1
-          //   ].children = arrnewGrandson1;
+          // showData[0].children = arrnew1;
+          // showData[1].children = arrnew2;
+          // showData[2].children = arrnew3;
+
+          // // 对所有showPlace为1.1 的数据进行处理
+          // // let arrone = [];
+          // let arrson1 = [];
+          // let arrson2 = [];
+          // let arrson3 = [];
+
+          // for (let item of res.data.data.reportDetailList) {
+          //   if (item.showPlace === "1.1" && item.itemType === "REVENUE") {
+          //     arrson1.push(item);
+          //   }
+          //   if (item.showPlace === "1.1" && item.itemType === "EXPENSES") {
+          //     arrson2.push(item);
+          //   }
+          //   if (
+          //     item.showPlace === "1.1" &&
+          //     item.itemType === "OTHER COMPREHENSIVE INCOME"
+          //   ) {
+          //     arrson3.push(item);
+          //   }
           // }
-          // if (
-          //   showData[1].children.length !== 0 &&
-          //   showData[1].children[showData[1].children.length - 1].length !==
-          //     0 &&
-          //   arrnewGrandson2.length !== 0
-          // ) {
-          //   console.log(arrnewGrandson2, "aaaa");
 
-          //   showData[1].children[showData[1].children.length - 1].children[
-          //     showData[1].children[showData[1].children.length - 1].children
-          //       .length - 1
-          //   ].children = arrnewGrandson2;
+          // let arrnewson1 = [];
+          // let arrnewson2 = [];
+          // let arrnewson3 = [];
+          // //
+          // var objson1 = {};
+          // arrnewson1 = arrson1.reduce(function (item, next) {
+          //   objson1[next.itemName]
+          //     ? ""
+          //     : (objson1[next.itemName] = true && item.push(next));
+          //   return item;
+          // }, []);
+          // arrnewson1.forEach((item) => {
+          //   this.headerList.forEach((p) => {
+          //     arrson1.forEach((q) => {
+          //       if (
+          //         p.prop === q.balanceType + q.period &&
+          //         item.itemName === q.itemName
+          //       ) {
+          //         item[p.prop] = q.amount;
+          //         item[p.prop + "id"] = q.reportId;
+          //         item[p.prop + "contractNo"] = q.contractNo;
+          //         item.name = item.itemName;
+          //         item.reportId = q.reportId;
+          //         // item.itemCode = q.itemCode
+          //         if (item.contractFlag === "Y") {
+          //           item.hasChildren = true;
+          //         }
+          //       }
+          //     });
+          //   });
+          // });
+
+          // console.log(arrnewson1, "arrn1arrnewson1arrnewson1");
+          // showData[0].children.forEach((item) => {
+          //   arrnewson1.forEach((element) => {
+          //     if (item.itemCode === element.parentCode) {
+          //       if (!item.children) {
+          //         item.children = [];
+          //       }
+          //       item.children.push(element);
+          //       // console.log(item.children, 'element');
+          //     }
+          //   });
+          // });
+          // var objson2 = {};
+          // if (arrson2.length !== 0) {
+          //   arrnewson2 = arrson2.reduce(function (item, next) {
+          //     objson2[next.itemName]
+          //       ? ""
+          //       : (objson2[next.itemName] = true && item.push(next));
+          //     return item;
+          //   }, []);
+          //   arrnewson2.forEach((item) => {
+          //     this.headerList.forEach((p) => {
+          //       arrson2.forEach((q) => {
+          //         if (
+          //           p.prop === q.balanceType + q.period &&
+          //           item.itemName === q.itemName
+          //         ) {
+          //           item[p.prop] = q.amount;
+          //           item[p.prop + "id"] = q.reportId;
+          //           item[p.prop + "contractNo"] = q.contractNo;
+          //           item.name = item.itemName;
+          //           if (item.contractFlag === "Y") {
+          //             item.hasChildren = true;
+          //           }
+          //         }
+          //       });
+          //     });
+          //   });
           // }
+          // showData[1].children.forEach((item) => {
+          //   arrnewson2.forEach((element) => {
+          //     if (item.itemCode === element.parentCode) {
+          //       if (!item.children) {
+          //         item.children = [];
+          //       }
+          //       item.children.push(element);
+          //     }
+          //   });
+          // });
+
+          // var objson3 = {};
+          // arrnewson3 = arrson3.reduce(function (item, next) {
+          //   objson3[next.itemName]
+          //     ? ""
+          //     : (objson3[next.itemName] = true && item.push(next));
+          //   return item;
+          // }, []);
+          // arrnewson3.forEach((item) => {
+          //   this.headerList.forEach((p) => {
+          //     arrson3.forEach((q) => {
+          //       if (
+          //         p.prop === q.balanceType + q.period &&
+          //         item.itemName === q.itemName
+          //       ) {
+          //         item[p.prop] = q.amount;
+          //         item[p.prop + "id"] = q.reportId;
+          //         item[p.prop + "contractNo"] = q.contractNo;
+          //         item.name = item.itemName;
+          //         if (item.contractFlag === "Y") {
+          //           item.hasChildren = true;
+          //         }
+          //       }
+          //     });
+          //   });
+          // });
+          // showData[2].children.forEach((item) => {
+          //   arrnewson3.forEach((element) => {
+          //     if (item.itemCode === element.parentCode) {
+          //       if (!item.children) {
+          //         item.children = [];
+          //       }
+          //       item.children.push(element);
+          //     }
+          //   });
+          // });
+          // // arrnewson1.sort((a, b) => {
+          // //   return Number(a.itemCode) - Number(b.itemCode);
+          // // });
+          // // arrnewson2.sort((a, b) => {
+          // //   return Number(a.itemCode) - Number(b.itemCode);
+          // // });
+          // // arrnewson3.sort((a, b) => {
+          // //   return Number(a.itemCode) - Number(b.itemCode);
+          // // });
+
+          // // if (showData[0].children.length !== 0) {
+          // //   showData[0].children[showData[0].children.length - 1].children =
+          // //     arrnewson1;
+          // // }
+          // // if (showData[1].children.length !== 0) {
+          // //   showData[1].children[showData[1].children.length - 1].children =
+          // //     arrnewson2;
+          // // }
+          // // if (showData[2].children.length !== 0) {
+          // //   showData[2].children[showData[2].children.length - 1].children =
+          // //     arrnewson3;
+          // // }
+
+          // // 对所有showPlace为1.1.1 的数据进行处理
+          // // let arrone = [];
+          // let arrGrandson1 = [];
+          // let arrGrandson2 = [];
+          // let arrGrandson3 = [];
+
+          // for (let item of res.data.data.reportDetailList) {
+          //   if (item.showPlace === "1.1.1" && item.itemType === "REVENUE") {
+          //     arrGrandson1.push(item);
+          //   }
+          //   if (item.showPlace === "1.1.1" && item.itemType === "EXPENSES") {
+          //     arrGrandson2.push(item);
+          //   }
+          //   if (
+          //     item.showPlace === "1.1.1" &&
+          //     item.itemType === "OTHER COMPREHENSIVE INCOME"
+          //   ) {
+          //     arrGrandson3.push(item);
+          //   }
+          // }
+          // console.log(arrGrandson1, arrGrandson2, arrGrandson3, "??!!!");
+          // let arrnewGrandson1 = [];
+          // let arrnewGrandson2 = [];
+          // let arrnewGrandson3 = [];
+          // //
+          // var objGrandson1 = {};
+          // if (arrGrandson1.length !== 0) {
+          //   arrnewGrandson1 = arrGrandson1.reduce(function (item, next) {
+          //     objGrandson1[next.itemName]
+          //       ? ""
+          //       : (objGrandson1[next.itemName] = true && item.push(next));
+          //     return item;
+          //   }, []);
+          //   arrnewGrandson1.forEach((item) => {
+          //     this.headerList.forEach((p) => {
+          //       arrGrandson1.forEach((q) => {
+          //         if (
+          //           p.prop === q.balanceType + q.period &&
+          //           item.itemName === q.itemName
+          //         ) {
+          //           item[p.prop] = q.amount;
+          //           item[p.prop + "id"] = q.reportId;
+          //           item[p.prop + "contractNo"] = q.contractNo;
+          //           item.name = item.itemName;
+          //           if (item.contractFlag === "Y") {
+          //             item.hasChildren = true;
+          //           }
+          //         }
+          //       });
+          //     });
+          //   });
+          // }
+          // console.log(
+          //   arrnewGrandson1,
+          //   "arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1arrnewGrandson1"
+          // );
+
+          // showData[0].children.forEach((item) => {
+          //   if (item.children && item.children.length !== 0) {
+          //     item.children.forEach((p) => {
+          //       console.log(p.itemCode, "1.1.1item");
+
+          //       arrnewGrandson1.forEach((q) => {
+          //         if (p.itemCode === q.parentCode) {
+          //           if (!p.children) {
+          //             p.children = [];
+          //           }
+          //           p.children.push(q);
+          //         }
+          //       });
+          //     });
+          //   }
+          // });
+
+          // var objGrandson2 = {};
+          // if (arrGrandson2.length !== 0) {
+          //   arrnewGrandson2 = arrson2.reduce(function (item, next) {
+          //     objGrandson2[next.itemName]
+          //       ? ""
+          //       : (objGrandson2[next.itemName] = true && item.push(next));
+          //     return item;
+          //   }, []);
+          //   arrnewGrandson2.forEach((item) => {
+          //     this.headerList.forEach((p) => {
+          //       arrGrandson2.forEach((q) => {
+          //         if (
+          //           p.prop === q.balanceType + q.period &&
+          //           item.itemName === q.itemName
+          //         ) {
+          //           item[p.prop] = q.amount;
+          //           item[p.prop + "id"] = q.reportId;
+          //           item[p.prop + "contractNo"] = q.contractNo;
+          //           item.name = item.itemName;
+          //           if (item.contractFlag === "Y") {
+          //             item.hasChildren = true;
+          //           }
+          //         }
+          //       });
+          //     });
+          //   });
+          // }
+
+          // showData[1].children.forEach((item) => {
+          //   if (item.children && item.children.length !== 0) {
+          //     item.children.forEach((p) => {
+          //       console.log(p.itemCode, "1.1.1item");
+
+          //       arrnewGrandson2.forEach((q) => {
+          //         if (p.itemCode === q.parentCode) {
+          //           if (!p.children) {
+          //             p.children = [];
+          //           }
+          //           p.children.push(q);
+          //         }
+          //       });
+          //     });
+          //   }
+          // });
+
+          // var objGrandson3 = {};
+
+          // if (arrGrandson3.length !== 0) {
+          //   arrnewGrandson3 = arrGrandson3.reduce(function (item, next) {
+          //     objGrandson3[next.itemName]
+          //       ? ""
+          //       : (objGrandson3[next.itemName] = true && item.push(next));
+          //     return item;
+          //   }, []);
+          //   arrnewGrandson3.forEach((item) => {
+          //     this.headerList.forEach((p) => {
+          //       arrGrandson3.forEach((q) => {
+          //         if (
+          //           p.prop === q.balanceType + q.period &&
+          //           item.itemName === q.itemName
+          //         ) {
+          //           item[p.prop] = q.amount;
+          //           item[p.prop + "id"] = q.reportId;
+          //           item[p.prop + "contractNo"] = q.contractNo;
+          //           item.name = item.itemName;
+          //           if (item.contractFlag === "Y") {
+          //             item.hasChildren = true;
+          //           }
+          //         }
+          //       });
+          //     });
+          //   });
+          // }
+
+          // showData[2].children.forEach((item) => {
+          //   if (item.children && item.children.length !== 0) {
+          //     item.children.forEach((p) => {
+          //       console.log(p.itemCode, "1.1.1item");
+
+          //       arrnewGrandson3.forEach((q) => {
+          //         if (p.itemCode === q.parentCode) {
+          //           if (!p.children) {
+          //             p.children = [];
+          //           }
+          //           p.children.push(q);
+          //         }
+          //       });
+          //     });
+          //   }
+          // });
+          // // arrnewGrandson1.sort((a, b) => {
+          // //   return Number(a.itemCode) - Number(b.itemCode);
+          // // });
+          // // arrnewGrandson2.sort((a, b) => {
+          // //   return Number(a.itemCode) - Number(b.itemCode);
+          // // });
+          // // arrnewGrandson3.sort((a, b) => {
+          // //   return Number(a.itemCode) - Number(b.itemCode);
+          // // });
+
+          // // if (
+          // //   showData[0].children.length !== 0 &&
+          // //   showData[0].children[showData[0].children.length - 1].length !==
+          // //     0 &&
+          // //   arrnewGrandson1.length !== 0
+          // // ) {
+          // //   showData[0].children[showData[0].children.length - 1].children[
+          // //     showData[0].children[showData[0].children.length - 1].children
+          // //       .length - 1
+          // //   ].children = arrnewGrandson1;
+          // // }
+          // // if (
+          // //   showData[1].children.length !== 0 &&
+          // //   showData[1].children[showData[1].children.length - 1].length !==
+          // //     0 &&
+          // //   arrnewGrandson2.length !== 0
+          // // ) {
+          // //   console.log(arrnewGrandson2, "aaaa");
+
+          // //   showData[1].children[showData[1].children.length - 1].children[
+          // //     showData[1].children[showData[1].children.length - 1].children
+          // //       .length - 1
+          // //   ].children = arrnewGrandson2;
+          // // }
 
           console.log(showData, "showData");
           this.tableData = showData;
@@ -797,6 +940,35 @@ export default {
         });
     },
     // handleResetClick() {},
+    // 导出方法
+    exportBtn(refProp, fname) {
+      // 获取表格元素
+      const el = this.$refs[refProp].$el;
+      // 文件名
+      console.log(this.$refs[refProp], "elelele");
+      const filename = fname + ".xlsx";
+      /* generate workbook object from table */
+      const wb = XLSX.utils.table_to_book(el);
+      /* get binary string as output */
+      const wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          filename
+        );
+      } catch (e) {
+        console.log(e);
+      }
+      return wbout;
+    },
+    handleExport(data, filename) {
+      this.exportBtn(data, filename);
+      // console.log(this.$refs.exportTableRef1.$el);
+    },
   },
 };
 </script>
