@@ -233,7 +233,11 @@
             <span>{{ getDictData(scope.row.estimateStatus) }}</span>
           </template>
         </el-table-column>
-
+        <el-table-column prop="estimateMonth" label="预估月份">
+          <template slot-scope="scope">
+            <span>{{ scope.row.estimateMonth }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button
@@ -373,7 +377,7 @@ export default {
             ? ""
             : getYearMonthDate(this.form.estimateMonth),
         ifNotZero: this.form.ifNotZero,
-        estimateStatus: this.form.estimateStatus
+        estimateStatus: this.form.estimateStatus,
       };
       if (this.form.estimateMonth !== "") {
         params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
