@@ -5,32 +5,23 @@
         <span>当前期间:</span> <span>{{ nowDate }}</span>
       </div>
       <div class="duringright">
-        <el-button size="mini" @click="handleNext()" :disabled="nextDuring">切换至下一期间</el-button>
+        <el-button size="mini" @click="handleNext()" :disabled="nextDuring"
+          >切换至下一期间</el-button
+        >
       </div>
     </div>
     <el-divider></el-divider>
     <div class="duringMain">
-      
       <el-table
         :data="this.duringList"
         border
         style="width: 100%"
         ref="listBox"
       >
-        <el-table-column
-          prop="checkItem"
-          label="检查项"
-        >
+        <el-table-column prop="checkItem" label="检查项"> </el-table-column>
+        <el-table-column prop="checkContent" label="检查内容">
         </el-table-column>
-        <el-table-column
-          prop="checkContent"
-          label="检查内容"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="checkResult"
-          label="检查结果"
-        >
+        <el-table-column prop="checkResult" label="检查结果">
           <template slot-scope="scope">
             <el-select
               v-model="scope.row.checkResult"
@@ -43,10 +34,7 @@
         </el-table-column>
         <el-table-column prop="estimateMonth" label="预估期间">
         </el-table-column>
-        <el-table-column
-          prop="checkRecordId"
-          label="检查记录Id"
-        >
+        <el-table-column prop="checkRecordId" label="检查记录Id">
         </el-table-column>
       </el-table>
       <!-- <fs-list-panel
@@ -89,29 +77,33 @@ export default {
         },
       ],
       duringList: [],
-      nextDuring: false
+      nextDuring: false,
     };
   },
   methods: {
     init() {
       $http.post(api.periodInfoQuery, {}).then((res) => {
         console.log(res);
-        this.duringList = res.data.data.periodCheckList
-        this.nowDate = res.data.data.periodCheckList[0].estimateMonth
+        this.duringList = res.data.data.periodCheckList;
+        this.nowDate = res.data.data.periodCheckList[0].estimateMonth;
       });
     },
-    handleNext () {
-      $http.post(api.periodSwitch, {
-        periodCheckList: this.duringList,
-        estimateMonth: this.nowDate
-      }).then(res => {
-        if (res.data.code === '0') {
-          this.nextDuring = true
-        } else {
-          this.$message.error(res.data.msg)
-        }
-      })
-    }
+    handleNext() {
+      $http
+        .post(api.periodSwitch, {
+          periodCheckList: this.duringList,
+          estimateMonth: this.nowDate,
+        })
+        .then((res) => {
+          this.nextDuring = true;
+
+          if (res.data.code === "0") {
+            this.$message.success("切换成功");
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
+    },
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());

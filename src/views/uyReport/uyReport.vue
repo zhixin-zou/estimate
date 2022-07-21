@@ -53,7 +53,7 @@
             size="mini"
             type="primary"
             plain
-            @click="handleExport('lazyTableRef', '导出信息')"
+            @click="handleExport('lazyTableRefdownload', '导出信息')"
             >导出</el-button
           >
           <!-- <el-button size="mini" @click="handleResetClick">重置</el-button> -->
@@ -89,6 +89,38 @@
               @change="handleChage(scope.row, scope.column)"
             ></el-input>
             <span v-else>{{ scope.row[item.prop] }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+            <el-table
+        :data="tableData"
+        style="width: 100%; margin-bottom: 20px"
+        row-key="reportId"
+        :load="load"
+        v-show="false"
+        row-click="handlerow"
+        ref="lazyTableRefdownload"
+        lazy
+        :expand-row-keys="treeDataShowList"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+      >
+        <el-table-column show-overflow-tooltip prop="name" label="" width="400">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          v-for="(item, index) in columns"
+          :key="index"
+          :prop="item.prop"
+          :label="item.label"
+          :width="item.width || ''"
+        >
+          <template slot-scope="scope">
+            <!-- <el-input
+              v-model="scope.row[item.prop]"
+              v-if="scope.row.modifyFlag === 'Y'"
+              @change="handleChage(scope.row, scope.column)"
+            ></el-input> -->
+            <span>{{ scope.row[item.prop] }}</span>
           </template>
         </el-table-column>
       </el-table>
