@@ -33,9 +33,9 @@
           <el-form-item label="合同号结束">
             <el-input v-model="form.contractNoEnd"></el-input>
           </el-form-item>
-           <el-form-item label="数据期间">
+          <el-form-item label="数据期间">
             <el-date-picker
-             type="month"
+              type="month"
               placeholder="选择日期"
               v-model="form.dataPeriod"
               value-format="yyyyMM"
@@ -177,7 +177,7 @@ export default {
         checkList: [],
         contractNoBegin: "",
         contractNoEnd: "",
-        dataPeriod: ''
+        dataPeriod: "",
       },
       tags: [],
       tablesProp: [],
@@ -270,7 +270,7 @@ export default {
             blanceTypeList: this.form.checkList,
             contractNoBegin: this.form.contractNoBegin,
             contractNoEnd: this.form.contractNoEnd,
-            dataPeriod: this.form.dataPeriod
+            dataPeriod: this.form.dataPeriod,
           })
           .then((res) => {
             console.log(res, "resres");
@@ -366,7 +366,7 @@ export default {
             blanceTypeList: this.form.checkList,
             contractNoBegin: "",
             contractNoEnd: "",
-            dataPeriod: this.form.dataPeriod
+            dataPeriod: this.form.dataPeriod,
           })
           .then((res) => {
             let showData = [];
@@ -376,6 +376,7 @@ export default {
             for (let item of res.data.data.reportDetailList) {
               map.set(item.itemType, item);
             }
+            console.log(11111);
             this.tablesProp = [...map.values()];
             console.log(
               this.tablesProp,
@@ -545,9 +546,15 @@ export default {
             });
 
             console.log(arr1, "firstarr1", arrnew1, "arrnew1");
-            showData[0].children = arrnew1;
-            showData[1].children = arrnew2;
-            showData[2].children = arrnew3;
+            if (showData[0] && showData[0].children) {
+              showData[0].children = arrnew1;
+            }
+            if (showData[1] && showData[1].children) {
+              showData[1].children = arrnew2;
+            }
+            if (showData[2] && showData[2].children) {
+              showData[2].children = arrnew3;
+            }
 
             // // 对所有showPlace为1 的数据进行处理
             // // let arrone = [];
