@@ -33,6 +33,15 @@
           <el-form-item label="合同号结束">
             <el-input v-model="form.contractNoEnd"></el-input>
           </el-form-item>
+           <el-form-item label="数据期间">
+            <el-date-picker
+             type="month"
+              placeholder="选择日期"
+              v-model="form.dataPeriod"
+              value-format="yyyyMM"
+              style="width: 100%"
+            ></el-date-picker>
+          </el-form-item>
         </el-form>
       </div>
 
@@ -45,6 +54,14 @@
             plain
             @click="downloadFromBase64()"
             >下载IBNR数据导入模板</el-button
+          >
+          <el-button
+            type="primary"
+            size="mini"
+            :loading="importing"
+            plain
+            @click="handleUpload"
+            >IBNR数据导入</el-button
           >
           <el-button
             :loading="loading"
@@ -139,6 +156,7 @@
         </el-table-column>
       </el-table>
     </div>
+    <input ref="file" type="file" class="hide" @change="fileChange" />
   </div>
 </template>
 
@@ -151,6 +169,7 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
+      importing: false,
       loading: false,
       headerList: [],
       form: {
@@ -158,6 +177,7 @@ export default {
         checkList: [],
         contractNoBegin: "",
         contractNoEnd: "",
+        dataPeriod: ''
       },
       tags: [],
       tablesProp: [],
@@ -212,6 +232,7 @@ export default {
       this.tags.splice(index, 1);
     },
     handleSearchClick() {
+      this.tableData = [];
       let periodList = [];
       this.tags.forEach((element) => {
         periodList.push(element.name);
@@ -249,6 +270,7 @@ export default {
             blanceTypeList: this.form.checkList,
             contractNoBegin: this.form.contractNoBegin,
             contractNoEnd: this.form.contractNoEnd,
+            dataPeriod: this.form.dataPeriod
           })
           .then((res) => {
             console.log(res, "resres");
@@ -344,6 +366,7 @@ export default {
             blanceTypeList: this.form.checkList,
             contractNoBegin: "",
             contractNoEnd: "",
+            dataPeriod: this.form.dataPeriod
           })
           .then((res) => {
             let showData = [];
@@ -1030,7 +1053,7 @@ export default {
           console.log(res, "resres");
           if (res.data.code === "0") {
             this.$message.success("修改成功");
-            this.handleSearchClick()
+            this.handleSearchClick();
           } else {
             this.$message.error(res.data.msg);
           }
@@ -1177,6 +1200,35 @@ export default {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    },
+    handleUpload() {
+      this.$refs["file"].click();
+    },
+    fileChange(e) {
+      var target = e.target;
+      if (target.files && target.files.length) {
+        var data = new FormData();
+        data.append("file", target.files[0]);
+        this.importing = true;
+        $http
+          .post(api.saveEpi, data)
+          .then((res) => {
+            console.log(res);
+            if (res.data.code === "0") {
+              this.$message.success("导入成功");
+            } else {
+              if (res.data.msg !== "") {
+                this.$message.error(res.data.msg);
+              } else {
+                this.$message.error("导入失败");
+              }
+            }
+          })
+          .finally(() => {
+            this.importing = false;
+            this.$refs.file.value = "";
+          });
+      }
     },
   },
 };
