@@ -276,20 +276,6 @@ export default {
                 obj[arrs[i].itemName] = true;
               }
             }
-            //    let obj = {};
-            // let arrnews = arrs.reduce(function (item, next) {
-            //   obj[next.itemName]
-            //     ? ""
-            //     : (obj[next.itemName] = true && item.push(next));
-            //   return item;
-            // }, []);
-
-            // let contractList = arr.reduce(function (item, next) {
-            //   obj[next.contractNo]
-            //     ? ""
-            //     : (obj[next.contractNo] = true && item.push(next));
-            //   return item;
-            // }, []);
             arrnews.forEach((item) => {
               item.nextchild = [];
               item.name = item.itemName;
@@ -349,59 +335,6 @@ export default {
             });
             console.log(arrnews, "result");
             console.log(arrnew, "arrssss");
-
-            // console.log(arrnews, "arrnw", arrs, "arr");
-
-            // arrnews.forEach((item) => {
-            //   arrs.forEach((element) => {
-            //     if (item.itemName === element.itemName) {
-            //       console.log(element, "element");
-            //     }
-            //   });
-            // });
-
-            // arrnew.forEach((e) => {
-            //   if (e.child && e.child.length !== 0) {
-            //     e.child.forEach((item) => {
-            //       if (!item.children) {
-            //         item.children = [];
-            //       }
-            //       var objson = {};
-            //       item.children = arr.reduce(function (n, next) {
-            //         objson[next.contractNo]
-            //           ? ""
-            //           : (objson[next.contractNo] = true && n.push(next));
-            //         return n;
-            //       }, []);
-            //     });
-            //   }
-            // });
-            //   arrnew.forEach((item) => {
-            //   this.headerList.forEach((p) => {
-            //     console.log(p.prop, "p.prop");
-            //     arr.forEach((q) => {
-            //       if (
-            //         p.prop === q.balanceType + q.period &&
-            //         item.itemName === q.itemName
-            //       ) {
-            //         item[p.prop] = q.amount;
-            //         item[p.prop + "id"] = q.reportId;
-            //         item[p.prop + "contractNo"] = q.contractNo;
-            //         item.name = item.itemName;
-            //         item.reportId = q.reportId;
-            //         // if (item.contractFlag === "Y") {
-            //         //   item.hasChildren = true;
-            //         // }
-            //         // if (item.showPlace === "1.1") {
-            //         //   item.name = "----" + " " + item.itemName;
-            //         // }
-            //         // if (item.showPlace === "1.1.1") {
-            //         //   item.name = "--------" + " " + item.itemName;
-            //         // }
-            //       }
-            //     });
-            //   });
-            // });
             this.tableData = arrnews;
           });
       } else {
@@ -1160,7 +1093,7 @@ export default {
               arrfin.forEach((q) => {
                 if (
                   p.prop === q.balanceType + q.period &&
-                  item.itemName === q.itemName
+                  item.contractNo === q.contractNo
                 ) {
                   item[p.prop] = q.amount;
                   item[p.prop + "id"] = q.reportId;
