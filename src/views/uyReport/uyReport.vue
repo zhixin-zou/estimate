@@ -1097,6 +1097,7 @@ export default {
           console.log(res, "resres");
           if (res.data.code === "0") {
             this.$message.success("修改成功");
+            this.handleSearchClick()
           } else {
             this.$message.error(res.data.msg);
           }
