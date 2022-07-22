@@ -315,7 +315,7 @@ export default {
                   i.nextchild.forEach((q) => {
                     if (
                       p.prop === q.balanceType + q.period &&
-                      item.itemName === q.itemName
+                      item.contractNo === q.contractNo
                     ) {
                       item[p.prop] = q.amount;
                       item[p.prop + "id"] = q.reportId;
