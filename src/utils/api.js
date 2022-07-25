@@ -117,5 +117,5 @@ export default {
   // uy report合同明细查询
   uyReportContractQuery: '/estimate/finance/uyReportContractQuery',
   // Ibnr导入
-  saveIbnr: '/estimate/finance/saveIbnr'
+  saveUyReportDetail: '/estimate/finance/saveUyReportDetail'
 };
