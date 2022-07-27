@@ -67,7 +67,19 @@
               <el-option label="已入账" value="3"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="获取非0EPI记录" style="margin-left: 20px">
+          <el-form-item label="缴费方式">
+            <el-select v-model="form.payType" placeholder="请选择" clearable>
+              <el-option value="annual">annual</el-option>
+              <el-option value="monthly">monthly</el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="合同session">
+            <el-input v-model="form.sessionName"></el-input>
+          </el-form-item>
+          <el-form-item
+            label="获取非0EPI记录"
+            style="margin-left: 20px; width: 230px"
+          >
             <el-switch
               v-model="form.ifNotZero"
               active-color="#ff4949"
@@ -171,6 +183,13 @@
               type="text"
               size="small"
               >历史预估</el-button
+            >
+            <el-button
+              @click="handleAddFinance(scope.row)"
+              type="text"
+              size="small"
+              style="margin-left: 0"
+              >新增预估</el-button
             >
           </template>
         </el-table-column>
@@ -301,12 +320,195 @@
         </el-pagination>
       </div>
     </div>
-    <!-- <el-dialog title="选择修改" :visible.sync="showTypeDialog" width="500px">
-      <el-select v-model="payTypeInfo" placeholder="请选择">
-        <el-option label="年缴" value="annual"> </el-option>
-        <el-option label="月缴" value="monthly"> </el-option>
-      </el-select>
-    </el-dialog> -->
+    <el-dialog title="新增预估" :visible.sync="showAddFinance" width="690px">
+      <el-form ref="addForm" :model="addForm" style="overflow: hidden">
+        <el-form-item
+          label="合同号"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-input
+            v-model="addForm.contractNo"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="合同session"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-input
+            v-model="addForm.sessionName"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="合同类型"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-select
+            v-model="addForm.contractType"
+            placeholder="请选择"
+            clearable
+            style="width: 200px"
+          >
+            <el-option label="比例合约" value="PROPTTY"></el-option>
+            <el-option label="非比例合约" value="NONPROPTTY"></el-option>
+            <el-option label="比例临分" value="PROPFAC"></el-option>
+            <el-option label="非比例临分" value="NONPROPFAC"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="主险种"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-input v-model="addForm.planName" style="width: 200px"></el-input>
+        </el-form-item>
+
+        <el-form-item
+          label="产品名称"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-input
+            v-model="addForm.productName"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="分入公司"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-select
+            v-model="addForm.cedentName"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option
+              v-for="(item, index) in companyList"
+              :key="index"
+              :label="item.partnerName"
+              :value="item.partnerCode"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="开始日期"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-date-picker
+            type="date"
+            placeholder="选择日期"
+            v-model="addForm.contractTimeBegin"
+            style="width: 200px"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item
+          label="结束日期"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-date-picker
+            type="date"
+            placeholder="选择日期"
+            v-model="addForm.contractTimeEnd"
+            style="width: 200px"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item
+          label="缴费方式"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-select
+            v-model="addForm.payType"
+            placeholder="请选择"
+            clearable
+            style="width: 200px"
+          >
+            <el-option value="annual">annual</el-option>
+            <el-option value="monthly">monthly</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="预估保费"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-input v-model="addForm.epi" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="手续费比例"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-input
+            v-model="addForm.commissionRate"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="经纪费比例"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-input
+            v-model="addForm.brokerageRate"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="分出比例"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-input
+            v-model="addForm.cedentRate"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="预估状态"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-select
+            v-model="addForm.estimateStatus"
+            placeholder="请选择"
+            clearable
+            style="width: 200px"
+          >
+            <el-option label="待预估" value="0"></el-option>
+            <el-option label="已入账" value="3"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="预估月份"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
+          <el-date-picker
+            v-model="addForm.estimateMonth"
+            type="month"
+            placeholder="选择月"
+            style="width: 200px"
+          >
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div class="dialogFoot" style="text-align: right">
+        <el-button type="primary" size="mini" @click="handleCancel"
+          >取消</el-button
+        >
+        <el-button type="primary" size="mini" @click="handleClick"
+          >确认</el-button
+        >
+      </div>
+    </el-dialog>
     <input ref="file" type="file" class="hide" @change="fileChange" />
   </div>
 </template>
@@ -332,6 +534,8 @@ export default {
         estimateMonth: "",
         ifNotZero: "Y",
         estimateStatus: "",
+        payType: "",
+        sessionName: "",
       },
       currentPageData: [],
       tableData: [],
@@ -346,6 +550,8 @@ export default {
       payTypeInfo: "",
       dataMonth: "",
       importing: false,
+      showAddFinance: false,
+      addForm: {},
     };
   },
   methods: {
@@ -359,8 +565,11 @@ export default {
     onSubmit() {
       console.log("submit!");
     },
-    handleClick(row) {
-      console.log(row);
+    handleClick() {
+      this.showAddFinance = false;
+    },
+    handleCancel() {
+      this.showAddFinance = false;
     },
     handleSearchClick() {
       this.loading = true;
@@ -378,6 +587,8 @@ export default {
             : getYearMonthDate(this.form.estimateMonth),
         ifNotZero: this.form.ifNotZero,
         estimateStatus: this.form.estimateStatus,
+        payType: this.form.payType,
+        sessionName: this.form.sessionName,
       };
       if (this.form.estimateMonth !== "") {
         params.estimateMonth = getYearMonthDate(this.form.estimateMonth);
@@ -539,6 +750,10 @@ export default {
       //   this.$router.push("/monthHistory");
       // }
     },
+    handleAddFinance(row) {
+      console.log(row);
+      this.showAddFinance = true;
+    },
     handleAdjustType(row) {
       this.showTypeDialog = true;
       this.$http(api.contractPayModeAdjust, {
@@ -563,6 +778,8 @@ export default {
         estimateMonth: "",
         ifNotZero: "",
         estimateStatus: "",
+        payType: "",
+        sessionName: "",
       };
     },
     // handleDownload() {
