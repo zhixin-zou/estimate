@@ -362,14 +362,14 @@
         :loading="loading"
         plain
         @click="handleCheck"
-        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
+         
         :disabled="canEdit"
         >账务修改</el-button
       >
       <el-button
         :loading="editLoading"
         @click="handleEditClick"
-        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
+         
         :disabled="canEdit"
         >账务下发</el-button
       >

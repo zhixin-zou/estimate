@@ -127,6 +127,7 @@
         :load="load"
         row-click="handlerow"
         ref="lazyTableRef"
+        @row-click="editCurrentApplicationApproval"
         lazy
         :expand-row-keys="treeDataShowList"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -158,7 +159,7 @@
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
         :load="load"
-        v-show="true"
+        v-show="false"
         row-click="handlerow"
         ref="lazyTableRefdownload"
         lazy
@@ -1242,6 +1243,9 @@ export default {
             resolve(arrnewfin);
           }, 1000);
         });
+    },
+    editCurrentApplicationApproval (row) {
+      console.log(row, 'row');
     },
     // handleResetClick() {},
     // 导出方法

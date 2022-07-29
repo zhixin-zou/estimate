@@ -346,7 +346,7 @@
         :loading="editLoading"
         @click="handleEditClick"
         :disabled="canEdit"
-        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
+         
         >账务修改</el-button
       >
       <el-button
@@ -354,7 +354,7 @@
         plain
         @click="handleCheck"
         :disabled="canEdit"
-        v-permission="'FINANCE_BUSINESS_FINANCIALSEARCH'"
+         
         >账务下发</el-button
       >
     </div>
