@@ -47,7 +47,7 @@ this.handleSearchClick();
 onSubmit() {
 console.log("submit!");
 },
-handleClick() {
+handleClick(row) {
 console.log(row);
 },
 handleCancel() {

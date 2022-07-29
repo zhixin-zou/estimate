@@ -795,7 +795,7 @@ export default {
         data.append("file", target.files[0]);
         this.importing = true;
         $http
-          .post(api.saveIbnr, data)
+          .post(api.saveUyReportDetail, data)
           .then((res) => {
             console.log(res);
             if (res.data.code === "0") {
