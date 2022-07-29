@@ -3,42 +3,43 @@
     <div class="searchBox">
       <div class="searchMain">
         <el-form ref="form" :model="form" label-width="100px">
-          <el-form-item label="统计月份" style="width: 450px; float: left">
-            <el-date-picker
-              v-model="form.time"
-              type="month"
-              format="yyyy-MM"
-              value-format="yyyyMM"
-              @change="dateChange"
-            />
+          <div style="height: 102px">
+            <el-form-item label="统计月份" style="width: 450px; float: left">
+              <el-date-picker
+                v-model="form.time"
+                type="month"
+                format="yyyy-MM"
+                value-format="yyyyMM"
+                @change="dateChange"
+              />
 
-            <el-tag
-              v-for="(tag, index) in tags"
-              :key="tag.name"
-              @close="(params) => tagClose(params, index)"
-              closable
-              type="success"
-            >
-              {{ tag.name }}
-            </el-tag>
-          </el-form-item>
+              <el-tag
+                v-for="(tag, index) in tags"
+                :key="tag.name"
+                @close="(params) => tagClose(params, index)"
+                closable
+                type="success"
+              >
+                {{ tag.name }}
+              </el-tag>
+            </el-form-item>
 
-          <el-form-item label="报告类型" style="width: 400px; float: left">
-            <el-checkbox-group v-model="form.checkList">
-              <el-checkbox label="Year-to-Date">Year-to-Date</el-checkbox>
+            <el-form-item label="报告类型" style="width: 400px; float: left">
+              <el-checkbox-group v-model="form.checkList">
+                <el-checkbox label="Year-to-Date">Year-to-Date</el-checkbox>
 
-              <el-checkbox label="Period-to-Date">Period-to-Date</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
+                <el-checkbox label="Period-to-Date">Period-to-Date</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
 
-          <el-form-item label="合同号开始" style="width: 400px; float: left">
-            <el-input v-model="form.contractNoBegin"></el-input>
-          </el-form-item>
+            <el-form-item label="合同号开始" style="width: 400px; float: left">
+              <el-input v-model="form.contractNoBegin"></el-input>
+            </el-form-item>
 
-          <el-form-item label="合同号结束" style="width: 400px; float: left">
-            <el-input v-model="form.contractNoEnd"></el-input>
-          </el-form-item>
-
+            <el-form-item label="合同号结束" style="width: 400px; float: left">
+              <el-input v-model="form.contractNoEnd"></el-input>
+            </el-form-item>
+          </div>
           <el-form-item label="数据期间" style="width: 400px; float: left">
             <el-date-picker
               type="month"
@@ -48,8 +49,13 @@
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
-          <el-form-item label="分入公司" style="float: left; width: 400px" >
-            <el-select v-model="form.cedent" placeholder="请选择" clearable style="width: 300px">
+          <el-form-item label="分入公司" style="float: left; width: 400px">
+            <el-select
+              v-model="form.cedent"
+              placeholder="请选择"
+              clearable
+              style="width: 300px"
+            >
               <el-option
                 v-for="(item, index) in companyList"
                 :key="index"
@@ -148,15 +154,15 @@
         </el-table-column>
       </el-table>
       <el-table
-        :data="tableData"
+        :data="anotherTableData"
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
         :load="load"
-        v-show="false"
+        v-show="true"
         row-click="handlerow"
         ref="lazyTableRefdownload"
         lazy
-        :expand-row-keys="treeDataShowList"
+        default-expand-all
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
         <el-table-column show-overflow-tooltip prop="name" label="" width="400">
@@ -208,11 +214,12 @@ export default {
         contractNoBegin: "",
         contractNoEnd: "",
         dataPeriod: "",
-        cedent: ''
+        cedent: "",
       },
       tags: [],
       tablesProp: [],
       tableData: [],
+      anotherTableData: [],
       reportModifyList: [],
       treeDataShowList: [
         "0",
@@ -270,7 +277,7 @@ export default {
     };
   },
   methods: {
-     init() {
+    init() {
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;
       });
@@ -324,7 +331,7 @@ export default {
             contractNoBegin: this.form.contractNoBegin,
             contractNoEnd: this.form.contractNoEnd,
             dataPeriod: this.form.dataPeriod,
-            cedent: this.form.cedent
+            cedent: this.form.cedent,
           })
           .then((res) => {
             console.log(res, "resres");
@@ -356,7 +363,24 @@ export default {
               item.nextchild = [];
               item.name = item.itemName;
               item.children = [];
+              item[item.balanceType + item.period] = "";
             });
+            arrnews.forEach((item) => {
+              this.headerList.forEach((p) => {
+                arrs.forEach((q) => {
+                  if (
+                    p.prop === q.balanceType + q.period &&
+                    item.itemName === q.itemName &&
+                    q.contractNo === ""
+                  ) {
+                    item[p.prop] = q.amount;
+                    item[p.prop + "id"] = q.reportId;
+                    item[p.prop + "contractNo"] = q.contractNo;
+                  }
+                });
+              });
+            });
+            console.log(arrnews, "arrnewslllllllllllllllllllllllllllllllllll");
             let arrnew = JSON.parse(localStorage.getItem("reportDetailList"));
             for (let i = 0; i < arrnews.length; i++) {
               let arrcopy = [];
@@ -372,7 +396,10 @@ export default {
               let childArr = [];
               var obj = {};
               for (var i = 0; i < item.nextchild.length; i++) {
-                if (!obj[item.nextchild[i].contractNo]) {
+                if (
+                  !obj[item.nextchild[i].contractNo] &&
+                  item.nextchild[i].contractNo !== ""
+                ) {
                   childArr.push(item.nextchild[i]);
                   obj[item.nextchild[i].contractNo] = true;
                 }
@@ -412,6 +439,7 @@ export default {
             console.log(arrnews, "result");
             console.log(arrnew, "arrssss");
             this.tableData = arrnews;
+            this.anotherTableData = arrnews
           });
       } else {
         $http
@@ -421,7 +449,7 @@ export default {
             contractNoBegin: "",
             contractNoEnd: "",
             dataPeriod: this.form.dataPeriod,
-            cedent: this.form.cedent
+            cedent: this.form.cedent,
           })
           .then((res) => {
             let showData = [];
@@ -1105,6 +1133,7 @@ export default {
 
             console.log(showData, "showData");
             this.tableData = showData;
+            localStorage.setItem("showData", JSON.stringify(showData))
           });
       }
     },
@@ -1157,6 +1186,10 @@ export default {
           periodList: periodList,
           blanceTypeList: this.form.checkList,
           itemCodeList: [tree.itemCode],
+          contractNoBegin: this.form.contractNoBegin || '',
+          contractNoEnd: this.form.contractNoEnd || '',
+          dataPeriod: this.form.dataPeriod || '',
+          cedent: this.form.cedent || '',
         })
         .then((res) => {
           console.log(this.$refs.lazyTableRef, "finally");
@@ -1188,6 +1221,20 @@ export default {
               });
             });
           });
+          let anotherTableData = JSON.parse(localStorage.getItem('showData'))
+          anotherTableData.forEach(item => {
+            console.log(item.itemType, 'item.itemType')
+            if (item.name === tree.itemType) {
+              item.children.forEach(element => {
+                if (element.itemName === tree.itemName) {
+                  delete element.hasChildren
+                  element.children = arrnewfin
+                }
+              })
+            }
+          })
+          this.anotherTableData = anotherTableData
+        
           arrnewfin.sort((a, b) => {
             return Number(a.itemCode) - Number(b.itemCode);
           });
