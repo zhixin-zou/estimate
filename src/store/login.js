@@ -62,6 +62,7 @@ export default {
           commit("SET_USER_PERMISSION_LIST", data.data.result || data.result || []);
           localStorage.setItem('localpermissionList', JSON.stringify(data.data.result) || JSON.stringify(data.result) || [])
           console.log(JSON.parse(localStorage.getItem('localpermissionList')), '权限data')
+          state.userPermissionFetced = true
         });
       }
     },
