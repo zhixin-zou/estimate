@@ -46,7 +46,7 @@ export default {
   },
 
   actions: {
-    getUserPermissionList({ commit }) {
+    getUserPermissionList({ state, commit }) {
       // if (!state.userPermissionFetced) {
         // 线上环境无需传入参数，通过网关获取当前用户
         let params = null;
@@ -56,15 +56,18 @@ export default {
         //     systemId: SYSTEM_ID
         //   }
         // }
+        if (!state.userPermissionFetced) {
         return $http.post(api.getUserPermissionList, params).then((data) => {
-          console.log(data, '权限data')
+          
           commit("SET_USER_PERMISSION_LIST", data.data.result || data.result || []);
+          localStorage.setItem('localpermissionList', JSON.stringify(data.data.result) || JSON.stringify(data.result) || [])
+          console.log(JSON.parse(localStorage.getItem('localpermissionList')), '权限data')
         });
-      // }
+      }
     },
     getLocalUserPermissionList({ state }) {
       if (!state.localUserPermissionFetced) {
-        state.userPermissionList = [
+        localStorage.setItem('localpermissionList', JSON.stringify([
           {
             id: 9010,
             systemId: 229,
@@ -461,7 +464,8 @@ export default {
             iconColor: "",
             permissionDesc: "",
           },
-        ];
+        ]))
+
         state.localUserPermissionFetced = true;
         console.log(state.userPermissionList);
       }

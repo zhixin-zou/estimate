@@ -246,7 +246,10 @@
         </el-table-column>
         <el-table-column prop="icp" label="ICP"> </el-table-column>
         <!-- <el-table-column prop="spare" label="SPARE"> </el-table-column> -->
-        <el-table-column prop="debit" label="Debit" width="150" 
+        <el-table-column
+          prop="debit"
+          label="Debit"
+          width="150"
           show-overflow-tooltip
         >
           <template slot-scope="scope">
@@ -258,7 +261,10 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="credit" label="Credit" width="150"
+        <el-table-column
+          prop="credit"
+          label="Credit"
+          width="150"
           show-overflow-tooltip
         >
           <template slot-scope="scope">
@@ -270,7 +276,12 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="batchName" label="Batch Name" width="120" show-overflow-tooltip>
+        <el-table-column
+          prop="batchName"
+          label="Batch Name"
+          width="120"
+          show-overflow-tooltip
+        >
         </el-table-column>
         <el-table-column
           prop="batchDescription"
@@ -279,7 +290,12 @@
           width="150"
         >
         </el-table-column>
-        <el-table-column prop="journalName" label="Journal Name" width="150" show-overflow-tooltip>
+        <el-table-column
+          prop="journalName"
+          label="Journal Name"
+          width="150"
+          show-overflow-tooltip
+        >
         </el-table-column>
         <el-table-column
           prop="journalDescription"
@@ -346,7 +362,7 @@
         :loading="editLoading"
         @click="handleEditClick"
         :disabled="canEdit"
-         
+        v-if="hasFeaturePermission"
         >账务修改</el-button
       >
       <el-button
@@ -354,7 +370,7 @@
         plain
         @click="handleCheck"
         :disabled="canEdit"
-         
+        v-if="hasFeaturePermission"
         >账务下发</el-button
       >
     </div>
@@ -502,7 +518,23 @@ export default {
       firstInFlag: true,
     };
   },
+  computed: {
+    hasFeaturePermission() {
+      return JSON.parse(localStorage.getItem("localpermissionList")).find(
+        (x) => x.permissionValue === "finance:business:financialSearch"
+      );
+    },
+  },
   methods: {
+    // hasFeaturePermission() {
+    //   console.log(
+    //     JSON.parse(localStorage.getItem("localpermissionList")),
+    //     "?????????????????"
+    //   );
+    //   // return JSON.parse(localStorage.getItem("localpermissionList")).find(
+    //   //   (x) => x.permissionValue === "finance:business:financialSearch"
+    //   // );
+    // },
     init() {
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;

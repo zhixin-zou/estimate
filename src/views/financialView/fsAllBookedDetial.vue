@@ -363,6 +363,7 @@
         plain
         @click="handleCheck"
         :disabled="canEdit"
+         v-if="hasFeaturePermission"
          
         >账务修改</el-button
       >
@@ -370,6 +371,7 @@
         :loading="editLoading"
         @click="handleEditClick"
         :disabled="canEdit"
+         v-if="hasFeaturePermission"
          
         >账务下发</el-button
       >
@@ -517,6 +519,13 @@ export default {
       ebsModifyList: [],
       firstInFlag: true,
     };
+  },
+      computed: {
+    hasFeaturePermission() {
+      return JSON.parse(localStorage.getItem("localpermissionList")).find(
+        (x) => x.permissionValue === "finance:business:financialSearch"
+      );
+    },
   },
   methods: {
     init() {
