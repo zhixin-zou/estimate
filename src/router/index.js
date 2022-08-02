@@ -50,187 +50,186 @@ import UyReportSearch from "@/views/uyReport/uyReport.vue"
 
 Vue.use(Router);
 
-const routes = [
-  {
-    path: "/",
-    component: FinancialForecasts,
-    meta: {
-      title: "test",
-      requireAuth: false,
+const routes = [{
+        path: "/",
+        component: FinancialForecasts,
+        meta: {
+            title: "test",
+            requireAuth: false,
+        },
     },
-  },
-  {
-    path: "/financialForecasts",
-    component: FinancialForecasts,
-  },
-  {
-    path: "/separateEstimates",
-    component: SeparateEstimates,
-  },
-  {
-    path: "/actuarialEstimates",
-    component: ActuarialEstimates,
-  },
-  {
-    path: "/financialSearch",
-    component: FinancialSearch,
-  },
-  {
-    path: "/auditLog",
-    component: AuditLog,
-  },
-  {
-    path: "/estimateDuring",
-    component: EstimateDuring,
-  },
-  {
-    path: "/trialSearchView",
-    component: TrialSearchView,
-  },
-  {
-    path: "/ebsDetailSearch",
-    component: EbsDetailSearch,
-  },
-  {
-    path: "/uyReport",
-    component: UyReportSearch,
-  },
-  {
-    path: "/annualEstimates",
-    component: AnnualEstimates,
-  },
-  {
-    path: "/bookedDetial",
-    component: BookedDetial,
-  },
-  {
-    path: "/viewHistory",
-    component: ViewHistory,
-  },
-  {
-    path: "/yearAdjustDetail",
-    component: YearAdjustDetail,
-  },
-  {
-    path: "/monthContractDetail",
-    component: MonthContractDetail,
-  },
-  {
-    path: "/monthAdjustDetail",
-    component: MonthAdjustDetail,
-  },
-  {
-    path: "/separateEstimateDetial",
-    component: SeparateEstimateDetial,
-  },
-  {
-    path: "/yearActuarial",
-    component: YearActuarial,
-  },
-  {
-    path: "/monthActuarial",
-    component: MonthActuarial,
-  },
-  {
-    path: "/calculationResult",
-    component: CalculationResult,
-  },
-  {
-    path: "/tryCalculateResult",
-    component: TryCalculationResult,
-  },
-  {
-    path: "/fsBookedDetial",
-    component: FsBookedDetial,
-  },
-  {
-    path: "/fsAllBookedDetial",
-    component: FsAllBookedDetial,
-  },
-  {
-    path: "/seBookedDetial",
-    component: SeBookedDetial,
-  },
-  {
-    path: "/seviewHistory",
-    component: SeViewHistory,
-  },
-  {
-    path: "/jsnViewHistory",
-    component: JsnViewHistory,
-  },
-  {
-    path: "/jsyViewHistory",
-    component: JsyViewHistory,
-  },
-  // {
-  //   path: "/auditLog",
-  //   component: AuditLog,
-  // },
-  {
-    path: "/auditLog/yearAudit",
-    component: YearAudit,
-  },
-  {
-    path: "/auditLog/monthAudit",
-    component: MonthAudit,
-  },
-  {
-    path: "/auditLog/annualEstimatesAudit",
-    component: AnnualEstimatesAudit,
-  },
-  {
-    path: "/auditLog/monthContractDetailAudit",
-    component: MonthContractDetailAudit,
-  },
-  {
-    path: "/trialSearch",
-    component: TrialSearch,
-  },
-  {
-    path: "/yearTrial",
-    component: YearTrial,
-  },
-  {
-    path: "/monthTrial",
-    component: MonthTrial,
-  },
-  {
-    path: "/yearTrialSearch",
-    component: YearTrialSearch,
-  },
-  {
-    path: "/monthTrialSearch",
-    component: MonthTrialSearch,
-  },
-  {
-    path: "/yearTrialAdd",
-    component: YearTrialAdd,
-  },
-  {
-    path: "/monthTrialAdd",
-    component: MonthTrialAdd,
-  },
-  {
-    path: "/404",
-    component: NotFound,
-    meta: {
-      layout: "error",
-      requireAuth: false,
+    {
+        path: "/financialForecasts",
+        component: FinancialForecasts,
     },
-  },
-  // {
-  //     path: '/forbidden',
-  //     component: Forbidden,
-  //     meta: {
-  //         layout: 'error',
-  //         requireAuth: false
-  //     }
-  // },
-  {
-    path: "*",
-    redirect: "/404",
-  },
+    {
+        path: "/separateEstimates",
+        component: SeparateEstimates,
+    },
+    {
+        path: "/actuarialEstimates",
+        component: ActuarialEstimates,
+    },
+    {
+        path: "/financialSearch",
+        component: FinancialSearch,
+    },
+    {
+        path: "/auditLog",
+        component: AuditLog,
+    },
+    {
+        path: "/estimateDuring",
+        component: EstimateDuring,
+    },
+    {
+        path: "/trialSearchView",
+        component: TrialSearchView,
+    },
+    {
+        path: "/ebsDetailSearch",
+        component: EbsDetailSearch,
+    },
+    {
+        path: "/uyReport",
+        component: UyReportSearch,
+    },
+    {
+        path: "/annualEstimates",
+        component: AnnualEstimates,
+    },
+    {
+        path: "/bookedDetial",
+        component: BookedDetial,
+    },
+    {
+        path: "/viewHistory",
+        component: ViewHistory,
+    },
+    {
+        path: "/yearAdjustDetail",
+        component: YearAdjustDetail,
+    },
+    {
+        path: "/monthContractDetail",
+        component: MonthContractDetail,
+    },
+    {
+        path: "/monthAdjustDetail",
+        component: MonthAdjustDetail,
+    },
+    {
+        path: "/separateEstimateDetial",
+        component: SeparateEstimateDetial,
+    },
+    {
+        path: "/yearActuarial",
+        component: YearActuarial,
+    },
+    {
+        path: "/monthActuarial",
+        component: MonthActuarial,
+    },
+    {
+        path: "/calculationResult",
+        component: CalculationResult,
+    },
+    {
+        path: "/tryCalculateResult",
+        component: TryCalculationResult,
+    },
+    {
+        path: "/fsBookedDetial",
+        component: FsBookedDetial,
+    },
+    {
+        path: "/fsAllBookedDetial",
+        component: FsAllBookedDetial,
+    },
+    {
+        path: "/seBookedDetial",
+        component: SeBookedDetial,
+    },
+    {
+        path: "/seviewHistory",
+        component: SeViewHistory,
+    },
+    {
+        path: "/jsnViewHistory",
+        component: JsnViewHistory,
+    },
+    {
+        path: "/jsyViewHistory",
+        component: JsyViewHistory,
+    },
+    // {
+    //   path: "/auditLog",
+    //   component: AuditLog,
+    // },
+    {
+        path: "/auditLog/yearAudit",
+        component: YearAudit,
+    },
+    {
+        path: "/auditLog/monthAudit",
+        component: MonthAudit,
+    },
+    {
+        path: "/auditLog/annualEstimatesAudit",
+        component: AnnualEstimatesAudit,
+    },
+    {
+        path: "/auditLog/monthContractDetailAudit",
+        component: MonthContractDetailAudit,
+    },
+    {
+        path: "/trialSearch",
+        component: TrialSearch,
+    },
+    {
+        path: "/yearTrial",
+        component: YearTrial,
+    },
+    {
+        path: "/monthTrial",
+        component: MonthTrial,
+    },
+    {
+        path: "/yearTrialSearch",
+        component: YearTrialSearch,
+    },
+    {
+        path: "/monthTrialSearch",
+        component: MonthTrialSearch,
+    },
+    {
+        path: "/yearTrialAdd",
+        component: YearTrialAdd,
+    },
+    {
+        path: "/monthTrialAdd",
+        component: MonthTrialAdd,
+    },
+    {
+        path: "/404",
+        component: NotFound,
+        meta: {
+            layout: "error",
+            requireAuth: false,
+        },
+    },
+    // {
+    //     path: '/forbidden',
+    //     component: Forbidden,
+    //     meta: {
+    //         layout: 'error',
+    //         requireAuth: false
+    //     }
+    // },
+    {
+        path: "*",
+        redirect: "/404",
+    },
 ];
 
 // // 路由元信息默认值
@@ -282,47 +281,46 @@ const router = new Router({ mode: "hash", routes });
 //         return originalPush.call(this, location).catch(err => err)
 //     }
 router.beforeEach((to, from, next) => {
-  // console.log(to, from, next, "beforein", window.location.href);
-  if (
-    !window.location.href.includes("localhost") &&
-    !window.location.href.includes("10.10.128.14")
-  ) {
-    store.dispatch("login/getUserPermissionList").then(() => {
-      // next();
-    });
-  } else {
-    store.dispatch("login/getLocalUserPermissionList").then(() => {
-      // next()
-    });
-  }
-  next();
+    // console.log(to, from, next, "beforein", window.location.href);
+    if (!window.location.href.includes("localhost") &&
+        !window.location.href.includes("10.10.128.14")
+    ) {
+        store.dispatch("login/getUserPermissionList").then(() => {
+            // next();
+        });
+    } else {
+        store.dispatch("login/getLocalUserPermissionList").then(() => {
+            // next()
+        });
+    }
+    next();
 
-  // const path = to.matched[0].path
-  // store
-  //     .dispatch('login/getUserInfo')
-  //     .then(() => {
-  // store.dispatch('login/getUserPermissionList').then(() => {
-  //     if (!to.meta.requireAuth) {
-  //         next()
-  //         return
-  //     }
+    // const path = to.matched[0].path
+    // store
+    //     .dispatch('login/getUserInfo')
+    //     .then(() => {
+    // store.dispatch('login/getUserPermissionList').then(() => {
+    //     if (!to.meta.requireAuth) {
+    //         next()
+    //         return
+    //     }
 
-  //     // if (store.getters['login/hasRoutePermission'](path)) {
-  //     //     next()
-  //     // } else {
-  //     //     next('/forbidden')
-  //     // }
-  // })
-  // const account = store.state.login.userInfo.ename
-  // if (!store.state.login.userRole) {
-  //     store.dispatch('login/viewUser', account).then(() => {
-  //         store.dispatch('common/getDict')
-  //     })
-  // }
-  // })
-  // .catch(() => {
-  //     Message.error('用户权限获取失败')
-  // })
+    //     // if (store.getters['login/hasRoutePermission'](path)) {
+    //     //     next()
+    //     // } else {
+    //     //     next('/forbidden')
+    //     // }
+    // })
+    // const account = store.state.login.userInfo.ename
+    // if (!store.state.login.userRole) {
+    //     store.dispatch('login/viewUser', account).then(() => {
+    //         store.dispatch('common/getDict')
+    //     })
+    // }
+    // })
+    // .catch(() => {
+    //     Message.error('用户权限获取失败')
+    // })
 });
 
 export default router;
