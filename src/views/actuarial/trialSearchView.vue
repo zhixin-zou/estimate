@@ -169,7 +169,7 @@
 import { $http } from "@/utils/request";
 import { kiloSplit, toPercent, getYearMonthDate } from "@/utils/utils";
 import { getText } from "@/utils/dict.js";
-// import api from "@/utils/api";
+import api from "@/utils/api";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
 
@@ -290,11 +290,11 @@ export default {
         params.estimateMonth = "";
       }
       $http
-        // .post(api.trialListQuery, params)
-        .post(
-          "http://yapi.smart-xwork.cn/mock/134845/estimate/actuarial/trialListQuery",
-          params
-        )
+        .post(api.trialListQuery, params)
+        // .post(
+        //   "/estimate/actuarial/trialListQuery",
+        //   params
+        // )
         .then((res) => {
           // this.$message.success(res.data.msg);
           this.tableData = res.data.data.trialList;

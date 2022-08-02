@@ -683,7 +683,9 @@ export default {
         });
       });
       $http
-        .post(api.ebsInfoPush, ebsPushList)
+        .post(api.ebsInfoPush, {
+          ebsPushList: ebsPushList
+        })
         .then((res) => {
           console.log(res);
           if (res.data.code === "0") {
