@@ -125,9 +125,8 @@
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
         :load="load"
-        row-click="handlerow"
         ref="lazyTableRef"
-        @row-click="editCurrentApplicationApproval"
+        @expand-change="handleNodeClick"
         lazy
         :expand-row-keys="treeDataShowList"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -158,9 +157,7 @@
         :data="anotherTableData"
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
-        :load="load"
-        v-show="false"
-        row-click="handlerow"
+        v-show="true"
         ref="lazyTableRefdownload"
         lazy
         default-expand-all
@@ -440,7 +437,7 @@ export default {
             console.log(arrnews, "result");
             console.log(arrnew, "arrssss");
             this.tableData = arrnews;
-            this.anotherTableData = arrnews
+            this.anotherTableData = arrnews;
           });
       } else {
         $http
@@ -1134,7 +1131,7 @@ export default {
 
             console.log(showData, "showData");
             this.tableData = showData;
-            localStorage.setItem("showData", JSON.stringify(showData))
+            localStorage.setItem("showData", JSON.stringify(showData));
           });
       }
     },
@@ -1187,10 +1184,10 @@ export default {
           periodList: periodList,
           blanceTypeList: this.form.checkList,
           itemCodeList: [tree.itemCode],
-          contractNoBegin: this.form.contractNoBegin || '',
-          contractNoEnd: this.form.contractNoEnd || '',
-          dataPeriod: this.form.dataPeriod || '',
-          cedent: this.form.cedent || '',
+          contractNoBegin: this.form.contractNoBegin || "",
+          contractNoEnd: this.form.contractNoEnd || "",
+          dataPeriod: this.form.dataPeriod || "",
+          cedent: this.form.cedent || "",
         })
         .then((res) => {
           console.log(this.$refs.lazyTableRef, "finally");
@@ -1222,30 +1219,97 @@ export default {
               });
             });
           });
-          let anotherTableData = JSON.parse(localStorage.getItem('showData'))
-          anotherTableData.forEach(item => {
-            console.log(item.itemType, 'item.itemType')
-            if (item.name === tree.itemType) {
-              item.children.forEach(element => {
-                if (element.itemName === tree.itemName) {
-                  delete element.hasChildren
-                  element.children = arrnewfin
-                }
-              })
-            }
-          })
-          this.anotherTableData = anotherTableData
-        
-          arrnewfin.sort((a, b) => {
-            return Number(a.itemCode) - Number(b.itemCode);
-          });
+          let anotherTableData = JSON.parse(localStorage.getItem("showData"));
+          // anotherTableData.forEach((item) => {
+          //   console.log(item.itemType, "item.itemType");
+          //   if (item.name === tree.itemType) {
+          //     item.children.forEach((element) => {
+          //       if (element.itemName === tree.itemName) {
+          //         delete element.hasChildren;
+          //         element.children = arrnewfin;
+          //       }
+          //     });
+          //   }
+          // });
+          this.anotherTableData = anotherTableData;
+
+          // arrnewfin.sort((a, b) => {
+          //   return Number(a.itemCode) - Number(b.itemCode);
+          // });
           setTimeout(() => {
             resolve(arrnewfin);
           }, 1000);
         });
     },
-    editCurrentApplicationApproval (row) {
-      console.log(row, 'row');
+    handleNodeClick(row, expandedRows) {
+      console.log(row, "rowrownode", expandedRows);
+      this.anotherTableData.forEach((item) => {
+        if (item.children) {
+          // console.log(item, "item");
+          item.children.forEach((element) => {
+            if (element.reportId === row.reportId && !expandedRows) {
+              console.log(row.reportId, "idididididdi");
+              console.log(element.children, "...........");
+              this.$nextTick(() => {
+                element.children = [];
+              });
+              console.log(this.anotherTableData, "aaaaatableData");
+            } else if (element.reportId === row.reportId && expandedRows) {
+              console.log(1);
+              let periodList = [];
+              this.tags.forEach((e) => {
+                periodList.push(e.name);
+              });
+              $http
+                .post(api.uyReportContractQuery, {
+                  periodList: periodList,
+                  blanceTypeList: this.form.checkList,
+                  itemCodeList: [row.itemCode],
+                  contractNoBegin: this.form.contractNoBegin || "",
+                  contractNoEnd: this.form.contractNoEnd || "",
+                  dataPeriod: this.form.dataPeriod || "",
+                  cedent: this.form.cedent || "",
+                })
+                .then((res) => {
+                  let arrfin = res.data.data.reportDetailContractList || [];
+                  let arrnewfin = [];
+                  var obfin1 = {};
+                  arrnewfin = arrfin.reduce(function (item, next) {
+                    obfin1[next.contractNo]
+                      ? ""
+                      : (obfin1[next.contractNo] = true && item.push(next));
+                    return item;
+                  }, []);
+                  arrnewfin.forEach((item) => {
+                    this.headerList.forEach((p) => {
+                      arrfin.forEach((q) => {
+                        if (
+                          p.prop === q.balanceType + q.period &&
+                          item.contractNo === q.contractNo
+                        ) {
+                          item[p.prop] = q.amount;
+                          item[p.prop + "id"] = q.reportId;
+                          item[p.prop + "contractNo"] = q.contractNo;
+                          item.name = item.contractNo;
+                        }
+                      });
+                    });
+                  });
+                  console.log(element, "element");
+                  delete element.hasChildren;
+                  this.$nextTick(() => {
+                    element.children = arrnewfin;
+                  });
+                });
+            }
+          });
+        }
+      });
+          console.log(this.anotherTableData, "this.anotherTableData");
+
+    },
+    editCurrentApplicationApproval(row) {
+      console.log(row, "row");
     },
     // handleResetClick() {},
     // 导出方法
@@ -1342,6 +1406,14 @@ export default {
             this.$refs.file.value = "";
           });
       }
+    },
+  },
+  watch: {
+    anotherTableData: {
+      handler(newValue) {
+        console.log(newValue, "newVals");
+      },
+      immediate: true,
     },
   },
   beforeRouteEnter(to, from, next) {
