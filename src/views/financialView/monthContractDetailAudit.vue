@@ -52,12 +52,12 @@
           <div class="input">
             <el-input
               v-model="totalEPI"
-              :disabled="historyShow === 'Y'"
+              :disabled="historyShow === 'Y' || this.viewTitle === '财务视图'"
             ></el-input>
           </div>
         </div>
         <el-button
-          v-if="historyShow !== 'Y'"
+          v-if="historyShow !== 'Y' && this.viewTitle !== '财务视图'"
           :loading="adjustLoading"
           type="primary"
           round
@@ -74,6 +74,9 @@
         >
         <el-button class="historyQuery" @click="handleExport('epiData', 'epi')"
           >导出</el-button
+        >
+         <el-button class="historyQuery" @click="handleChangeView()"
+          >视图切换</el-button
         >
       </div>
       <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
@@ -121,7 +124,7 @@
               v-else
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
-              :disabled="scope.row.commandFlag === '1'"
+              :disabled="scope.row.commandFlag === '1' || viewTitle === '财务视图'"
             ></el-input>
           </template>
         </el-table-column>
@@ -214,7 +217,7 @@
       >
       <br />
       <el-dropdown
-        v-if="historyShow !== 'Y'"
+        v-if="historyShow !== 'Y' && this.viewTitle !== '财务视图'"
         :loading="dropLoading"
         class="dropdownButton"
         split-button
@@ -364,6 +367,7 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
+      viewTitle: "精算视图",
       historyShow: sessionStorage.getItem("yahistoryShow"),
       dropLoading: false,
       adjustLoading: false,
@@ -635,6 +639,34 @@ export default {
     handleExport(data, filename) {
       this.exportBtn(data, filename);
       // console.log(this.$refs.exportTableRef1.$el);
+    },
+    handleChangeView() {
+      this.viewTitle = this.viewTitle === "精算视图" ? "财务视图" : "精算视图";
+      if (this.viewTitle === "精算视图") {
+        $http
+          .post(api.monthSpiltViewDetailQuery, {
+            estimateKey: sessionStorage.getItem("finEstimateKey"),
+            viewType: "0",
+          })
+          .then((res) => {
+            console.log(res);
+            let epiSplitInfo = res.data.data.epiSplitInfo;
+            this.totalEPI = epiSplitInfo.totalEPI;
+            this.dataProcess(epiSplitInfo);
+          });
+      } else {
+        $http
+          .post(api.monthSpiltViewDetailQuery, {
+            estimateKey: sessionStorage.getItem("finEstimateKey"),
+            viewType: "1",
+          })
+          .then((res) => {
+            console.log(res);
+            let epiSplitInfo = res.data.data.epiSplitInfo;
+            this.totalEPI = epiSplitInfo.totalEPI;
+            this.dataProcess(epiSplitInfo);
+          });
+      }
     },
     dataProcess(epiSplitInfo) {
       // 横向时间处理
@@ -1320,8 +1352,6 @@ export default {
     padding: 10px;
     background-color: #fff;
     margin-bottom: 20px;
-    h2 {
-    }
     .adjustHeader {
       // display: flex;
       width: 100%;
@@ -1348,6 +1378,7 @@ export default {
       }
       .historyQuery {
         float: right;
+        margin-left: 10px;
       }
     }
     .dropdownButton {

@@ -24,7 +24,7 @@
               </el-tag>
             </el-form-item>
 
-            <el-form-item label="报告类型" style="width: 400px; float: left">
+            <el-form-item label="报告类型" style="width: 380px; float: left">
               <el-checkbox-group v-model="form.checkList">
                 <el-checkbox label="Year-to-Date">Year-to-Date</el-checkbox>
 
@@ -32,15 +32,15 @@
               </el-checkbox-group>
             </el-form-item>
 
-            <el-form-item label="合同号开始" style="width: 400px; float: left">
+            <el-form-item label="合同号开始" style="width: 380px; float: left">
               <el-input v-model="form.contractNoBegin"></el-input>
             </el-form-item>
 
-            <el-form-item label="合同号结束" style="width: 400px; float: left">
+            <el-form-item label="合同号结束" style="width: 380px; float: left">
               <el-input v-model="form.contractNoEnd"></el-input>
             </el-form-item>
           </div>
-          <el-form-item label="数据期间" style="width: 400px; float: left">
+          <el-form-item label="数据期间" style="width: 380px; float: left">
             <el-date-picker
               type="month"
               placeholder="选择日期"
@@ -49,7 +49,7 @@
               style="width: 100%"
             ></el-date-picker>
           </el-form-item>
-          <el-form-item label="分入公司" style="float: left; width: 400px">
+          <el-form-item label="分入公司" style="float: left; width: 380px">
             <el-select
               v-model="form.cedent"
               placeholder="请选择"
@@ -157,7 +157,8 @@
         :data="anotherTableData"
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
-        v-show="true"
+        v-show="false"
+        v-if="showAnotherTable"
         ref="lazyTableRefdownload"
         lazy
         default-expand-all
@@ -202,6 +203,7 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
+      showAnotherTable: true,
       importing: false,
       loading: false,
       headerList: [],
@@ -1250,10 +1252,12 @@ export default {
             if (element.reportId === row.reportId && !expandedRows) {
               console.log(row.reportId, "idididididdi");
               console.log(element.children, "...........");
-              this.$nextTick(() => {
-                element.children = [];
-              });
+              element.children = [];
               console.log(this.anotherTableData, "aaaaatableData");
+              this.showAnotherTable = false;
+              this.$nextTick(() => {
+                this.showAnotherTable = true;
+              });
             } else if (element.reportId === row.reportId && expandedRows) {
               console.log(1);
               let periodList = [];
@@ -1297,16 +1301,17 @@ export default {
                   });
                   console.log(element, "element");
                   delete element.hasChildren;
+                  element.children = arrnewfin;
+                  this.showAnotherTable = false;
                   this.$nextTick(() => {
-                    element.children = arrnewfin;
+                    this.showAnotherTable = true;
                   });
                 });
             }
           });
         }
       });
-          console.log(this.anotherTableData, "this.anotherTableData");
-
+      console.log(this.anotherTableData, "this.anotherTableData");
     },
     editCurrentApplicationApproval(row) {
       console.log(row, "row");

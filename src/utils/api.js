@@ -117,5 +117,7 @@ export default {
   // uy report合同明细查询
   uyReportContractQuery: '/estimate/finance/uyReportContractQuery',
   // Ibnr导入
-  saveUyReportDetail: '/estimate/finance/saveUyReportDetail'
+  saveUyReportDetail: '/estimate/finance/saveUyReportDetail',
+  // 月缴预估明细拆分视图查询
+  monthSpiltViewDetailQuery: '/estimate/finance/monthSpiltViewDetailQuery'
 };

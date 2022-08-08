@@ -44,15 +44,22 @@
       ></fs-list-panel>
     </div>
     <div class="separateInfo">
-      <h2>EPI拆分</h2>
+      <h2>
+        EPI拆分<span>({{ viewTitle }})</span>
+      </h2>
       <el-divider></el-divider>
       <div class="adjustHeader">
         <div class="adjustBox">
           <div class="adjustName"><span>总EPI：</span></div>
-          <div class="input"><el-input v-model="totalEPI" :disabled="historyShow === '2'"></el-input></div>
+          <div class="input">
+            <el-input
+              v-model="totalEPI"
+              :disabled="historyShow === '2' || this.viewTitle === '财务视图'"
+            ></el-input>
+          </div>
         </div>
         <el-button
-          v-if="historyShow !== '2'"
+          v-if="historyShow !== '2' && this.viewTitle !== '财务视图'"
           :loading="adjustLoading"
           type="primary"
           round
@@ -69,6 +76,9 @@
         >
         <el-button class="historyQuery" @click="handleExport('epiData', 'epi')"
           >导出</el-button
+        >
+        <el-button class="historyQuery" @click="handleChangeView()"
+          >视图切换</el-button
         >
       </div>
       <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
@@ -116,7 +126,7 @@
               v-else
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
-              :disabled="scope.row.commandFlag === '1'"
+              :disabled="scope.row.commandFlag === '1' || viewTitle === '财务视图'"
             ></el-input>
           </template>
         </el-table-column>
@@ -209,7 +219,7 @@
       >
       <br />
       <el-dropdown
-        v-if="historyShow !== '2'"
+        v-if="historyShow !== '2' && this.viewTitle !== '财务视图'"
         :loading="dropLoading"
         class="dropdownButton"
         split-button
@@ -231,30 +241,48 @@
         <div class="adjustBox">
           <div class="adjustName"><span>手续费比例：</span></div>
           <div class="input">
-            <el-input v-model="commRate" :disabled="historyShow === '2'"></el-input>
+            <el-input
+              v-model="commRate"
+              :disabled="historyShow === '2'"
+            ></el-input>
           </div>
           <div class="adjustName"><span>预付手续费比例：</span></div>
           <div class="input">
-            <el-input v-model="provCommRate" :disabled="historyShow === '2'"></el-input>
+            <el-input
+              v-model="provCommRate"
+              :disabled="historyShow === '2'"
+            ></el-input>
           </div>
           <div class="adjustName"><span>经纪费比例：</span></div>
           <div class="input">
-            <el-input v-model="brokerageRate" :disabled="historyShow === '2'"></el-input>
+            <el-input
+              v-model="brokerageRate"
+              :disabled="historyShow === '2'"
+            ></el-input>
           </div>
           <div class="adjustName"><span>分出比例：</span></div>
           <div class="input">
-            <el-input v-model="cedentRate" :disabled="historyShow === '2'"></el-input>
+            <el-input
+              v-model="cedentRate"
+              :disabled="historyShow === '2'"
+            ></el-input>
           </div>
           <br />
           <div style="height: 30px"></div>
           <br />
           <div class="adjustName"><span>分入浮动因子：</span></div>
           <div class="input">
-            <el-input v-model="iabSlidingScaleAdjustRate" :disabled="historyShow === '2'"></el-input>
+            <el-input
+              v-model="iabSlidingScaleAdjustRate"
+              :disabled="historyShow === '2'"
+            ></el-input>
           </div>
           <div class="adjustName"><span>分出浮动因子：</span></div>
           <div class="input">
-            <el-input v-model="orpSlidingScaleAdjustRate" :disabled="historyShow === '2'"></el-input>
+            <el-input
+              v-model="orpSlidingScaleAdjustRate"
+              :disabled="historyShow === '2'"
+            ></el-input>
           </div>
         </div>
         <el-button
@@ -321,11 +349,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-button
-      plain
-      class="checkDetial"
-      @click="handleDetial"
-       
+    <el-button plain class="checkDetial" @click="handleDetial"
       >查看入账明细</el-button
     >
   </div>
@@ -341,6 +365,7 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
+      viewTitle: "精算视图",
       historyShow: sessionStorage.getItem("licl"),
       dropLoading: false,
       adjustLoading: false,
@@ -595,6 +620,34 @@ export default {
     handleExport(data, filename) {
       this.exportBtn(data, filename);
       // console.log(this.$refs.exportTableRef1.$el);
+    },
+    handleChangeView() {
+      this.viewTitle = this.viewTitle === "精算视图" ? "财务视图" : "精算视图";
+      if (this.viewTitle === "精算视图") {
+        $http
+          .post(api.monthSpiltViewDetailQuery, {
+            estimateKey: sessionStorage.getItem("finEstimateKey"),
+            viewType: "0",
+          })
+          .then((res) => {
+            console.log(res);
+            let epiSplitInfo = res.data.data.epiSplitInfo;
+            this.totalEPI = epiSplitInfo.totalEPI;
+            this.dataProcess(epiSplitInfo);
+          });
+      } else {
+        $http
+          .post(api.monthSpiltViewDetailQuery, {
+            estimateKey: sessionStorage.getItem("finEstimateKey"),
+            viewType: "1",
+          })
+          .then((res) => {
+            console.log(res);
+            let epiSplitInfo = res.data.data.epiSplitInfo;
+            this.totalEPI = epiSplitInfo.totalEPI;
+            this.dataProcess(epiSplitInfo);
+          });
+      }
     },
     dataProcess(epiSplitInfo) {
       // 横向时间处理
@@ -1308,6 +1361,7 @@ export default {
       }
       .historyQuery {
         float: right;
+        margin-left: 10px;
       }
     }
     .dropdownButton {
