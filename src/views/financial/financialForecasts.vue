@@ -364,9 +364,15 @@
           style="float: left; width: 300px"
           label-width="100px"
         >
+          <el-input v-model="addForm.planCode" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="险种名称"
+          style="float: left; width: 300px"
+          label-width="100px"
+        >
           <el-input v-model="addForm.planName" style="width: 200px"></el-input>
         </el-form-item>
-
         <el-form-item
           label="产品名称"
           style="float: left; width: 300px"
@@ -382,11 +388,7 @@
           style="float: left; width: 300px"
           label-width="100px"
         >
-          <el-select
-            v-model="addForm.cedentName"
-            placeholder="请选择"
-            clearable
-          >
+          <el-select v-model="addForm.cedent" placeholder="请选择" clearable>
             <el-option
               v-for="(item, index) in companyList"
               :key="index"
@@ -403,7 +405,9 @@
           <el-date-picker
             type="date"
             placeholder="选择日期"
-            v-model="addForm.contractTimeBegin"
+            v-model="addForm.effectivePeriodBegin"
+            value-format="yyyy-MM-dd"
+            format="yyyy-MM-dd"
             style="width: 200px"
           ></el-date-picker>
         </el-form-item>
@@ -415,7 +419,7 @@
           <el-date-picker
             type="date"
             placeholder="选择日期"
-            v-model="addForm.contractTimeEnd"
+            v-model="addForm.effectivePeriodEnd"
             style="width: 200px"
           ></el-date-picker>
         </el-form-item>
@@ -551,7 +555,31 @@ export default {
       dataMonth: "",
       importing: false,
       showAddFinance: false,
-      addForm: {},
+      addForm: {
+        contractNo: "",
+        sessionName: "",
+        contractType: "",
+        planName: "",
+        planCode: "",
+        productName: "",
+        reinsurer: "",
+        broker: "",
+        effectivePeriodBegin: "",
+        effectivePeriodEnd: "",
+        payType: "",
+        epi: "",
+        commissionRate: "",
+        brokerageRate: "",
+        cedentRate: "",
+        commRate: "",
+        provCommRate: "",
+        profitCommRate: "",
+        estimateMonth: "",
+        estimateStatus: "",
+        cedent: "",
+        estimateKey: "",
+        contractKey: "",
+      },
     };
   },
   methods: {
@@ -566,6 +594,15 @@ export default {
       console.log("submit!");
     },
     handleClick() {
+      console.log(this.addForm, "addform");
+      $http.post(api.addContractEstimate, this.addForm).then((res) => {
+        console.log(res, "res");
+        if (res.data.code === '0') {
+          this.$message.success('新增成功')
+        } else {
+          this.$message.error('新增失败')
+        }
+      });
       this.showAddFinance = false;
     },
     handleCancel() {
@@ -752,7 +789,30 @@ export default {
     },
     handleAddFinance(row) {
       console.log(row);
-      this.showAddFinance = true;
+        (this.addForm.contractNo = row.contractNo || '' ),
+        (this.addForm.sessionName = row.sessionName || '' ),
+        (this.addForm.contractType = row.contractType || '' ),
+        (this.addForm.planName = row.planName || '' ),
+        (this.addForm.planCode = row.planCode || '' ),
+        (this.addForm.productName = row.productName || '' ),
+        (this.addForm.reinsurer = row.reinsurer || '' ),
+        (this.addForm.broker = row.broker || '' ),
+        (this.addForm.effectivePeriodBegin = row.effectivePeriodBegin || '' ),
+        (this.addForm.effectivePeriodEnd = row.effectivePeriodEnd || '' ),
+        (this.addForm.payType = row.payType || '' ),
+        (this.addForm.epi = row.epi || '' ),
+        (this.addForm.commissionRate = row.commissionRate || '' ),
+        (this.addForm.brokerageRate = row.brokerageRate || '' ),
+        (this.addForm.cedentRate = row.cedentRate || '' ),
+        (this.addForm.commRate = row.commRate || '' ),
+        (this.addForm.provCommRate = row.provCommRate || '' ),
+        (this.addForm.profitCommRate = row.profitCommRate || '' ),
+        (this.addForm.estimateMonth = row.estimateMonth || '' ),
+        (this.addForm.estimateStatus = row.estimateStatus || '' ),
+        (this.addForm.cedent = row.cedent || '' ),
+        (this.addForm.estimateKey = row.estimateKey || '' ),
+        (this.addForm.contractKey = row.contractKey || '' ),
+        (this.showAddFinance = true);
     },
     handleAdjustType(row) {
       this.showTypeDialog = true;

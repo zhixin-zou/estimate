@@ -44,6 +44,9 @@ export default {
   monthRateAdjust: "/estimate/finance/monthRateAdjust",
   // 上传预估数据文件
   saveEpi: "/estimate/finance/saveEpi",
+  // 新增分入预估
+  addContractEstimate: '/estimate/finance/addContractEstimate',
+
 
   // 精算查询
   contractListQuery: "/estimate/actuarial/contractListQuery",
@@ -119,5 +122,6 @@ export default {
   // Ibnr导入
   saveUyReportDetail: '/estimate/finance/saveUyReportDetail',
   // 月缴预估明细拆分视图查询
-  monthSpiltViewDetailQuery: '/estimate/finance/monthSpiltViewDetailQuery'
+  monthSpiltViewDetailQuery: '/estimate/finance/monthSpiltViewDetailQuery',
+  // 
 };
