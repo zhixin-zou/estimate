@@ -3,7 +3,7 @@ module.exports = {
     publicPath: "/",
     // build目录
     outputDir: "dist",
-    indexPath: 'financialForecasts.html',
+    indexPath: 'contractSearch.html',
     productionSourceMap: false,
     // pages: {
     //   financialForecasts: {
@@ -52,6 +52,10 @@ module.exports = {
             //     changeOrigin: true,
             //   },
             "/estimate": {
+                target: "http://10.10.128.14:8106",
+                changeOrigin: true,
+            },
+            "/ifrs17/": {
                 target: "http://10.10.128.14:8106",
                 changeOrigin: true,
             },

@@ -123,5 +123,6 @@ export default {
   saveUyReportDetail: '/estimate/finance/saveUyReportDetail',
   // 月缴预估明细拆分视图查询
   monthSpiltViewDetailQuery: '/estimate/finance/monthSpiltViewDetailQuery',
-  // 
+  // i17
+  ifrcontractListQuery: '/ifrs17/contractListQuery',
 };

@@ -69,14 +69,14 @@
 
       <div slot="footer" style="float: right" class="searchFoot">
         <div class="searchButton">
-          <el-button
+          <!-- <el-button
             class="exportButton"
             size="mini"
             type="primary"
             plain
             @click="showAllData()"
             >一键展开合同数据</el-button
-          >
+          > -->
           <el-button
             class="exportButton"
             size="mini"

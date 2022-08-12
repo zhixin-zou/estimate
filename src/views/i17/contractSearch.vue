@@ -216,7 +216,7 @@
 
 <script>
 import { $http } from "@/utils/request";
-// import api from "@/utils/api";
+import api from "@/utils/api";
 import { kiloSplit, toPercent } from "@/utils/utils";
 // import * as XLSX from "xlsx";
 // import FileSaver from "file-saver";
@@ -334,7 +334,7 @@ export default {
         this.loading = true;
 
         $http
-          .post('http://yapi.smart-xwork.cn/mock/134845/ifrs17/contractListQuery', this.form)
+          .post(api.ifrcontractListQuery, this.form)
           .then((res) => {
             // this.$message.success('');
             if (res.data.code === "0") {
