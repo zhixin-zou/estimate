@@ -53,6 +53,7 @@
           </template>
           <el-menu-item-group>
             <el-menu-item index="/uyReport">UY Report</el-menu-item>
+            <el-menu-item index="/contractSearch">合同查询</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>

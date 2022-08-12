@@ -74,6 +74,14 @@
             size="mini"
             type="primary"
             plain
+            @click="showAllData()"
+            >一键展开合同数据</el-button
+          >
+          <el-button
+            class="exportButton"
+            size="mini"
+            type="primary"
+            plain
             @click="downloadFromBase64()"
             >UY明细导入模板下载</el-button
           >
@@ -157,7 +165,7 @@
         :data="anotherTableData"
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
-        v-show="false"
+        v-show="true"
         v-if="showAnotherTable"
         ref="lazyTableRefdownload"
         lazy
@@ -274,6 +282,7 @@ export default {
         // },
       ],
       changeList: [],
+      anotherTableDataFlag: false,
     };
   },
   methods: {
@@ -1221,7 +1230,11 @@ export default {
               });
             });
           });
-          let anotherTableData = JSON.parse(localStorage.getItem("showData"));
+          if (!this.anotherTableDataFlag) {
+            let anotherTableData = JSON.parse(localStorage.getItem("showData"));
+            this.anotherTableData = anotherTableData;
+            this.anotherTableDataFlag = true;
+          }
           // anotherTableData.forEach((item) => {
           //   console.log(item.itemType, "item.itemType");
           //   if (item.name === tree.itemType) {
@@ -1233,7 +1246,6 @@ export default {
           //     });
           //   }
           // });
-          this.anotherTableData = anotherTableData;
 
           // arrnewfin.sort((a, b) => {
           //   return Number(a.itemCode) - Number(b.itemCode);
@@ -1250,8 +1262,6 @@ export default {
           // console.log(item, "item");
           item.children.forEach((element) => {
             if (element.reportId === row.reportId && !expandedRows) {
-              console.log(row.reportId, "idididididdi");
-              console.log(element.children, "...........");
               element.children = [];
               console.log(this.anotherTableData, "aaaaatableData");
               this.showAnotherTable = false;
@@ -1368,6 +1378,16 @@ export default {
 
       const blob = new Blob(byteArrays, { type: contentType });
       return blob;
+    }, 
+    showAllData () {
+      console.log(this.tableData, 'this.tabledata');
+      // this.tableData.forEach(item => {
+      //   if(item.children) {
+      //     item.children.forEach(e => {
+
+      //     })
+      //   }
+      // })
     },
     downloadFromBase64() {
       let b64Data =
