@@ -126,7 +126,9 @@
               v-else
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
-              :disabled="scope.row.commandFlag === '1' || viewTitle === '财务视图'"
+              :disabled="
+                scope.row.commandFlag === '1' || viewTitle === '财务视图'
+              "
             ></el-input>
           </template>
         </el-table-column>
@@ -148,7 +150,6 @@
               v-if="
                 scope.row.calculatMonth === '累计' ||
                 scope.row.calculatMonth === '预估+实际' ||
-                scope.row.calculatMonth === '合计' ||
                 scope.row.calculatMonth === '原始epi' ||
                 scope.row.calculatMonth === '调整epi' ||
                 scope.row.calculatMonth === '实际账单金额' ||
@@ -165,7 +166,8 @@
               :disabled="
                 scope.row[item.month] === ' ' ||
                 item.month < estimateMonth ||
-                scope.row.commandFlag === '0'
+                (scope.row.commandFlag === '0' &&
+                  scope.row.calculatMonth !== '合计')
               "
               placeholder=""
               v-model="scope.row[item.month]"
@@ -541,6 +543,7 @@ export default {
       brokerageRate: "",
       cedentRate: "",
       commandFlag: "0",
+      sumDataList: [],
     };
   },
   methods: {
@@ -656,17 +659,17 @@ export default {
         "-" +
         epiSplitInfo.contractMonthBegin.slice(4) +
         "-01";
-      console.log(startTime, "startTime");
+      // console.log(startTime, "startTime");
       let endTime = "";
       // 年份处理
       let monthInfo = epiSplitInfo.calculatMonths % 12;
       let yearsInfo = parseInt(epiSplitInfo.calculatMonths / 12);
-      console.log(yearsInfo, "?????", monthInfo);
+      // console.log(yearsInfo, "?????", monthInfo);
       let endYear =
         Number(epiSplitInfo.contractMonthBegin.slice(0, 4)) + yearsInfo;
       let endMonth =
         Number(epiSplitInfo.contractMonthBegin.slice(4)) + monthInfo;
-      console.log(endYear, endMonth, "===============");
+      // console.log(endYear, endMonth, "===============");
       if (endMonth > 12) {
         endYear += 1;
         endMonth = endMonth - 12;
@@ -676,9 +679,9 @@ export default {
       } else {
         endTime = String(endYear) + "-" + String(endMonth - 1) + "-01";
       }
-      console.log(endTime, "endTime");
+      // console.log(endTime, "endTime");
       this.monthList = getMonthBetween(startTime, endTime);
-      console.log(this.monthList, "monthList");
+      // console.log(this.monthList, "monthList");
       // end
       let newEPIObj = {};
       let sumObj = {};
@@ -727,7 +730,7 @@ export default {
         // console.log(newKeys, "========================");
         newKeys.map((e, idx) => {
           if (e === item.calculatMonth) {
-            console.log(idx, "idx");
+            // console.log(idx, "idx");
             let startId = idx;
             newKeys.map((i, id) => {
               if (id < startId + 12 && id >= startId) {
@@ -764,19 +767,19 @@ export default {
           // console.log(i, 'iiiiiii')
           lastData[i] = MData[finArr2[index]];
         });
-        console.log(lastData, "lastData");
+        // console.log(lastData, "lastData");
         for (var p in item) {
           for (var q in lastData) {
             if (p === q) {
               item[p] = lastData[q];
             }
           }
-          console.log(item[p], p);
+          // console.log(item[p], p);
           if (item[p] === "") {
             item[p] = " ";
           }
         }
-        console.log(item, "item");
+        // console.log(item, "item");
       });
       this.EPIData = epiSplitInfo.epiSplitList;
       // 合计累计预估加实际处理
@@ -854,11 +857,11 @@ export default {
             workSheetAmountHeader[key5] = item.workSheetAmount;
             workSheetAmountHeaderSum =
               workSheetAmountHeaderSum + Number(item.workSheetAmount);
-            console.log(
-              workSheetAmountHeaderSum,
-              "workSheetAmountHeader",
-              key5
-            );
+            // console.log(
+            //   workSheetAmountHeaderSum,
+            //   "workSheetAmountHeader",
+            //   key5
+            // );
           }
         }
 
@@ -897,11 +900,11 @@ export default {
         workSheetAdjustEPIHeaderSum.toFixed(2);
       actuarialAmountHeader.calculatedEPI = actuarialAmountHeaderSum.toFixed(2);
       calculatedEPIHeader.calculatedEPI = calculatedEPIHeaderSum.toFixed(2);
-      console.log(
-        sumObj,
-        originEPIObj,
-        "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
-      );
+      // console.log(
+      //   sumObj,
+      //   originEPIObj,
+      //   "sumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjsumHeaderObjj"
+      // );
       this.EPIData.push(calculatedEPIHeader);
       this.EPIData.push(originEPIHeaderObj);
       this.EPIData.push(manualAdjustEPIHeaderObj);
@@ -999,15 +1002,15 @@ export default {
       this.EPIData.forEach((item) => {
         item.commandFlag = this.commandFlag;
       });
-      console.log(this.commandFlag);
+      // console.log(this.commandFlag);
     },
     handleAdjustEPI() {
-      console.log(
-        JSON.parse(localStorage.getItem("epiDatacopy")),
-        "epiDatacopy",
-        this.EPIData,
-        "sadad"
-      );
+      // console.log(
+      //   JSON.parse(localStorage.getItem("epiDatacopy")),
+      //   "epiDatacopy",
+      //   this.EPIData,
+      //   "sadad"
+      // );
       let monthEpiSplitList = JSON.parse(localStorage.getItem("epiDatacopy"));
       this.dropLoading = true;
       if (this.commandFlag === "0") {
@@ -1018,11 +1021,35 @@ export default {
             }
           });
         });
+        this.sumDataList = [];
+        this.EPIData.forEach((item) => {
+          if (item.calculatMonth === "合计") {
+            for (let key in item) {
+              // console.log(key, "key");
+              this.sumDataList.push({
+                calculatMonth: key,
+                sumAmount: item[key],
+              });
+            }
+            this.sumDataList = this.sumDataList.splice(
+              0,
+              this.sumDataList.length - 2
+            );
+            console.log(this.sumDataList, "Object.keys(item)");
+          }
+        });
+        // console.log(
+        //   this.EPIData,
+        //   "this.EPIDatathis.EPIDatathis.EPIDatathis.EPIDatathis.EPIDatathis.EPIDatathis.EPIData"
+        // );
+
+        console.log(monthEpiSplitList, this.EPIData, "monthEpiSplitList");
         $http
           .post(api.monthDetailEPIAdjust, {
             estimateKey: sessionStorage.getItem("finEstimateKey"),
             monthAdjustType: this.commandFlag,
             monthEpiSplitList: monthEpiSplitList,
+            epiSplitSumList: this.sumDataList,
           })
           .then((res) => {
             if (res.data.code == "0") {
@@ -1031,7 +1058,6 @@ export default {
               this.cedentList = res.data.data.cedentList;
               this.workSheetList = res.data.data.workSheetList;
               let epiSplitInfo = res.data.data.epiSplitInfo;
-              // this.epiDatacopy = res.data.data.epiSplitInfo.epiSplitList
               localStorage.setItem(
                 "epiDatacopy",
                 JSON.stringify(res.data.data.epiSplitInfo.epiSplitList)
@@ -1058,6 +1084,23 @@ export default {
             this.dropLoading = false;
           });
       } else {
+        this.sumDataList = [];
+        this.EPIData.forEach((item) => {
+          if (item.calculatMonth === "合计") {
+            for (let key in item) {
+              // console.log(key, "key");
+              this.sumDataList.push({
+                calculatMonth: key,
+                sumAmount: item[key],
+              });
+            }
+            this.sumDataList = this.sumDataList.splice(
+              0,
+              this.sumDataList.length - 2
+            );
+            console.log(this.sumDataList, "Object.keys(item)");
+          }
+        });
         // console.log(this.EPIData, 'this.EPIDatathis.EPIDatathis.EPIData');
         let epiList = this.EPIData.splice(0, this.EPIData.length - 3);
         epiList.forEach((item) => {
@@ -1095,11 +1138,13 @@ export default {
           });
           // console.log(monthEpiSplitList, mArr, "monthArrmonthArrmonthArr", index);
         });
+
         $http
           .post(api.monthDetailEPIAdjust, {
             estimateKey: sessionStorage.getItem("finEstimateKey"),
             monthAdjustType: this.commandFlag,
             monthEpiSplitList: monthEpiSplitList,
+            epiSplitSumList: this.sumDataList,
           })
           .then((res) => {
             if (res.data.code == "0") {
@@ -1136,18 +1181,10 @@ export default {
             this.dropLoading = false;
           });
         console.log(monthEpiSplitList, "epiList");
-        //      $http.post(api.monthTotalEPIAdjust, {
-        //   estimateKey: sessionStorage.getItem("estimateKey"),
-        //   monthAdjustType: this.commandFlag,
-        //   monthEpiSplitList: monthEpiSplitList
-        // })
-        // epiList.forEach(item => {
-        //   // if ()
-        // })
       }
     },
     keydown(e) {
-      console.log(e.target);
+      // console.log(this.EPIData);
       if (e.code === "Space") {
         console.log(1111);
         e.target.value = 0;
