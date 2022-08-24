@@ -732,7 +732,7 @@ export default {
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
-          this.premiumUpdateFlag = res.data.data.contractInfo.premiumUpdateFlag
+          this.premiumUpdateFlag = res.data.data.contractInfo.premiumUpdateFlag || 'N'
           this.feeInfoList = res.data.data.feeList;
           // localStorage.setItem("dacRateData", this.feeInfoList[0].dacRate);
 
