@@ -44,7 +44,7 @@
           </el-table-column>
           <el-table-column prop="dacRate" label="DAC比例">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5' || isDAC === true">{{
+              <span v-if="historyShow === '5' || isDAC === true || premiumUpdateFlag === 'Y'">{{
                 scope.row.dacRate
               }}</span>
               <el-input
@@ -56,7 +56,7 @@
           </el-table-column>
           <el-table-column prop="expectClaimRate" label="预计赔付率">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'Y'">{{
                 scope.row.expectClaimRate
               }}</span>
               <el-input
@@ -71,7 +71,7 @@
           </el-table-column>
           <el-table-column prop="expectXOLRate" label="预期XOL費用率">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'Y'">{{
                 scope.row.expectXOLRate
               }}</span>
               <el-input
@@ -83,7 +83,7 @@
           </el-table-column>
           <el-table-column prop="expectMaintainRate" label="预计维持費用">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'Y'">{{
                 scope.row.expectMaintainRate
               }}</span>
               <el-input
@@ -95,7 +95,7 @@
           </el-table-column>
           <el-table-column prop="riskMargin" label="Risk Margin">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{ scope.row.riskMargin }}</span>
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'Y'">{{ scope.row.riskMargin }}</span>
               <el-input
                 v-else
                 v-model="scope.row.riskMargin"
@@ -105,7 +105,7 @@
           </el-table-column>
           <el-table-column prop="discounting" label="Discounting">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'Y'">{{
                 scope.row.discounting
               }}</span>
               <el-input
@@ -120,7 +120,7 @@
             label="Adjusted Risk Margin factor"
           >
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'Y'">{{
                 scope.row.adjustedRiskMarginFactor
               }}</span>
               <el-input
@@ -132,7 +132,7 @@
           </el-table-column>
           <el-table-column prop="cedentRate" label="比例分出">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{ scope.row.cedentRate }}</span>
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'Y'">{{ scope.row.cedentRate }}</span>
               <el-input
                 v-else
                 v-model="scope.row.cedentRate"
@@ -141,7 +141,7 @@
           ></el-table-column>
           <el-table-column prop="retroDacRate" label="转分保DAC比例">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5'">{{
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'Y'">{{
                 scope.row.retroDacRate
               }}</span>
               <el-input
@@ -534,6 +534,7 @@ export default {
     return {
       feeIndex: Number,
       adjustLoading: false,
+      premiumUpdateFlag: 'N',
       historyShow: sessionStorage.getItem("licl"),
       columns: [
         {
@@ -731,6 +732,7 @@ export default {
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
+          this.premiumUpdateFlag = res.data.data.contractInfo.premiumUpdateFlag
           this.feeInfoList = res.data.data.feeList;
           // localStorage.setItem("dacRateData", this.feeInfoList[0].dacRate);
 
