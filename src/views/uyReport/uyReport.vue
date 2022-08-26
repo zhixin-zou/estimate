@@ -157,7 +157,7 @@
               @change="handleChage(scope.row, scope.column)"
             ></el-input>
 
-            <span v-else>{{ scope.row[item.prop] }}</span>
+            <span v-else>{{ kiloSplitData(scope.row[item.prop]) }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -207,6 +207,8 @@ import { $http } from "@/utils/request";
 import api from "@/utils/api";
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
+import { kiloSplit } from "@/utils/utils";
+
 
 export default {
   data() {
@@ -290,6 +292,9 @@ export default {
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;
       });
+    },
+     kiloSplitData(data) {
+      return kiloSplit(data);
     },
     dateChange(val) {
       // console.log(val.getTime(), 'val');
@@ -1378,16 +1383,86 @@ export default {
 
       const blob = new Blob(byteArrays, { type: contentType });
       return blob;
-    }, 
-    showAllData () {
-      console.log(this.tableData, 'this.tabledata');
-      // this.tableData.forEach(item => {
-      //   if(item.children) {
-      //     item.children.forEach(e => {
+    },
+    showAllData() {
+      console.log(this.tableData, "this.tabledata");
+      // uyReportContractQuery
+      // this.tableData = [];
+      let periodList = [];
+      this.tags.forEach((element) => {
+        periodList.push(element.name);
+      });
+      this.columns = [
+        // {
+        //   label: "",
+        //   prop: "name",
+        //   type: "template",
+        //   template: "isEdit",
+        //   width: 200,
+        // },
+      ];
+      this.headerList = [];
+      periodList.forEach((e) => {
+        this.form.checkList.forEach((i) => {
+          this.headerList.push({
+            prop: i + e,
+            label: i + e,
+          });
+          this.columns.push({
+            label: i + e,
+            prop: i + e,
+            type: "template",
+            template: "isEdit",
+          });
+        });
+      });
+      let reqList = [];
+      this.tableData.forEach((item) => {
+        if (item.children) {
+          item.children.forEach((e) => {
+            if (e.hasChildren) {
+              reqList.push(e.itemCode);
+              e.children = [];
+            }
+          });
+        }
+      });
+      $http
+        .post(api.uyReportContractQuery, {
+          periodList: periodList,
+          blanceTypeList: this.form.checkList,
+          itemCodeList: reqList,
+          contractNoBegin: this.form.contractNoBegin || "",
+          contractNoEnd: this.form.contractNoEnd || "",
+          dataPeriod: this.form.dataPeriod || "",
+          cedent: this.form.cedent || "",
+        })
+        .then((res) => {
+          console.log(res, "?res");
+          let resList = res.data.data.reportDetailContractList;
+          console.log(resList, "resLsit");
+          this.tableData.forEach((item) => {
+            if (item.children) {
+              item.children.forEach((p) => {
+                if (p.hasChildren) {
+                  console.log(111111);
+                  resList.forEach((q) => {
+                    if (p.itemCode === q.parentCode) {
+                      console.log(1111);
+                      p.children.push(q);
+                    }
+                  });
+                }
+              });
+            }
+          });
+          console.log(this.tableData, "this.tableData");
+          // resList.forEach(p => {
 
-      //     })
-      //   }
-      // })
+          // })
+        });
+
+      console.log(reqList, "11111111111");
     },
     downloadFromBase64() {
       let b64Data =
@@ -1443,6 +1518,23 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());
+  },
+  stateFormat(row, column, cellValue) {
+    if (cellValue === "") {
+      cellValue += "";
+    } else {
+      cellValue += " 元";
+    }
+
+    if (!cellValue.includes(".")) cellValue += ".";
+
+    return cellValue
+
+      .replace(/(\d)(?=(\d{3})+\.)/g, function ($0, $1) {
+        return $1 + ",";
+      })
+
+      .replace(/\.$/, "");
   },
 };
 </script>
