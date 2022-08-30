@@ -165,7 +165,7 @@
         :data="anotherTableData"
         style="width: 100%; margin-bottom: 20px"
         row-key="reportId"
-        v-show="true"
+        v-show="false"
         v-if="showAnotherTable"
         ref="lazyTableRefdownload"
         lazy

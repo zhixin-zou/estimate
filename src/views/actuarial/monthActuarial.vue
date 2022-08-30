@@ -214,42 +214,12 @@
       ></fs-list-panel>
     </div>
 
-    <div class="separateInfo">
-      <h2>EPI拆分</h2>
-      <el-divider></el-divider>
-      <div class="adjustHeader">
-        <div class="adjustBox">
-          <div class="adjustName"><span>总EPI：</span></div>
-          <div class="input">
-            <el-input
-              v-model="totalEPI"
-              :disabled="historyShow === '5'"
-            ></el-input>
-          </div>
-        </div>
-        <el-button
-          v-if="historyShow !== '5'"
-          :loading="adjustLoading"
-          type="primary"
-          round
-          class="adjustButton"
-          @click="handleTotalEPI"
-          >调整</el-button
-        >
-        <!-- <el-button
-          type="primary"
-          plain
-          class="historyQuery"
-          @click="handleHistoryQuery"
-          >查看历史</el-button
-        > -->
-        <el-button class="historyQuery" @click="handleExport('epiData', 'epi')"
+    <div class="separateInfo" v-if="premiumUpdateFlag !== 'N'">
+      <span style="width: 400px;font-size: 20px;font-weight: 600;">EPI拆分</span>        
+      <el-button class="historyQuery" @click="handleExport('epiData', 'epi')" style="float: right"
           >导出</el-button
         >
-        <!-- <el-button class="historyQuery" @click="handleChangeView()"
-          >视图切换</el-button
-        > -->
-      </div>
+      <el-divider></el-divider>
       <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
         <el-table-column
           fixed="left"
@@ -383,11 +353,11 @@
         >
         </el-table-column>
       </el-table>
-      <span
+      <!-- <span
         >温馨提示：每月6号前调整的可调整上月EPI，每月6号后只能调整本月EPI</span
-      >
+      > -->
       <br />
-      <el-dropdown
+      <!-- <el-dropdown
         v-if="historyShow !== '5'"
         :loading="dropLoading"
         class="dropdownButton"
@@ -401,7 +371,7 @@
           <el-dropdown-item command="0">月份金额调整</el-dropdown-item>
           <el-dropdown-item command="1">分摊明细调整</el-dropdown-item>
         </el-dropdown-menu>
-      </el-dropdown>
+      </el-dropdown> -->
     </div>
 
     <div class="monthHeader">
