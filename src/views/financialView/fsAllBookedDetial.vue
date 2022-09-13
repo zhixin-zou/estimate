@@ -359,20 +359,18 @@
     <!-- <fs-list-panel :columns="columns" :listData="listData"> </fs-list-panel> -->
     <div class="bookDetialButton" v-if="historyShow !== '0'">
       <el-button
-        :loading="loading"
-        plain
-        @click="handleCheck"
+        :loading="editLoading"
+        @click="handleEditClick"
+        v-if="hasFeaturePermission"
         :disabled="canEdit"
-         v-if="hasFeaturePermission"
-         
         >账务修改</el-button
       >
       <el-button
-        :loading="editLoading"
-        @click="handleEditClick"
+        :loading="loading"
+        plain
+        @click="handleCheck"
+        v-if="hasFeaturePermission"
         :disabled="canEdit"
-         v-if="hasFeaturePermission"
-         
         >账务下发</el-button
       >
     </div>
@@ -520,7 +518,7 @@ export default {
       firstInFlag: true,
     };
   },
-      computed: {
+  computed: {
     hasFeaturePermission() {
       return JSON.parse(localStorage.getItem("localpermissionList")).find(
         (x) => x.permissionValue === "finance:business:financialSearch"
@@ -684,7 +682,7 @@ export default {
       });
       $http
         .post(api.ebsInfoPush, {
-          ebsPushList: ebsPushList
+          ebsPushList: ebsPushList,
         })
         .then((res) => {
           console.log(res);
