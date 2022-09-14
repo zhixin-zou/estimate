@@ -580,7 +580,7 @@ export default {
         .then((res) => {
           if (res.data.code === "0") {
             console.log(res, "res");
-            this.listData = res.data.data.ebsDetail;
+            this.listData = res.data.data.ebsDetail || [];
             this.EBSSummaryForm =
               res.data.data.ebsSummary || this.initEBSSummaryForm;
             this.listData.forEach((item) => {

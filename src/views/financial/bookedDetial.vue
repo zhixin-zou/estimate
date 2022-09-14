@@ -563,7 +563,7 @@ export default {
             console.log(res, "res");
             this.EBSSummaryForm =
               res.data.data.ebsSummary || this.initEBSSummaryForm;
-            this.listData = res.data.data.ebsDetail;
+            this.listData = res.data.data.ebsDetail || [];
             this.listData.forEach((item) => {
               if (item.updateFlag == "Y") {
                 this.canEdit = false;

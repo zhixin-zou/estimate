@@ -552,8 +552,8 @@ export default {
         .then((res) => {
           if (res.data.code === "0") {
             console.log(res, "res");
-            this.EBSSummaryForm = res.data.data.ebsSummary;
-            this.listData = res.data.data.ebsDetail;
+            this.EBSSummaryForm = res.data.data.ebsSummary || {};
+            this.listData = res.data.data.ebsDetail || [];
             this.listData.forEach((item) => {
               console.log(item);
               if (item.updateFlag == "Y") {
