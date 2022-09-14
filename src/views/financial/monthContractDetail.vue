@@ -631,6 +631,7 @@ export default {
           .post(api.monthSpiltViewDetailQuery, {
             estimateKey: sessionStorage.getItem("finEstimateKey"),
             viewType: "0",
+            accountType: "0"
           })
           .then((res) => {
             console.log(res);
@@ -643,6 +644,7 @@ export default {
           .post(api.monthSpiltViewDetailQuery, {
             estimateKey: sessionStorage.getItem("finEstimateKey"),
             viewType: "1",
+            accountType: "1"
           })
           .then((res) => {
             console.log(res);
