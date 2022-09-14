@@ -163,6 +163,16 @@
                 <el-form-item label="产品">
                   <el-input v-model="form.productCode"></el-input>
                 </el-form-item>
+                <el-form-item label="是否过账">
+                  <el-select
+                    v-model="form.postFlag"
+                    placeholder="请选择"
+                    clearable
+                  >
+                    <el-option label="是" value="Y"></el-option>
+                    <el-option label="否" value="N"></el-option>
+                  </el-select>
+                </el-form-item>
               </el-form>
             </div>
           </div>
@@ -405,6 +415,7 @@ export default {
         accountCode: "",
         productCode: "",
         accountClass: "",
+        postFlag: ''
       },
       companyList: [],
       loading: false,
@@ -584,6 +595,7 @@ export default {
         accountCode: this.form.accountCode,
         productCode: this.form.productCode,
         accountClass: this.form.accountClass,
+        postFlag: this.form.postFlag
       };
       params.estimateMonth =
         params.estimateMonth === "197001" ? "" : params.estimateMonth;
@@ -631,6 +643,7 @@ export default {
         accountCode: "",
         productCode: "",
         accountClass: "",
+        postFlag: ""
       };
     },
     handleSelectionChange(val) {
