@@ -44,6 +44,7 @@ import TryCalculationResult from "@/views/actuarial/tryCalculateResult.vue";
 import EbsDetailSearch from "@/views/financialView/ebsDetailSearch.vue";
 import UyReportSearch from "@/views/uyReport/uyReport.vue";
 import ContractSearch from "@/views/i17/contractSearch.vue"
+import GroupInfo from "@/views/i17/groupInfo.vue"
 
 // import { Message } from 'element-ui'
 // const CustomAppView = () =>
@@ -54,7 +55,7 @@ Vue.use(Router);
 const routes = [
   {
     path: "/",
-    component: FinancialSearch,
+    component: FinancialForecasts,
     meta: {
       title: "test",
       requireAuth: false,
@@ -99,6 +100,10 @@ const routes = [
   {
     path: "/contractSearch",
     component: ContractSearch,
+  },
+  {
+    path: "/groupInfo",
+    component: GroupInfo,
   },
   {
     path: "/annualEstimates",
