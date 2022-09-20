@@ -92,8 +92,11 @@
         border
         style="width: 100%"
         ref="listBox"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column
+          width="120"
           prop="contractNo"
           label="合同号"
           v-if="columns[0].show"
@@ -122,6 +125,7 @@
         <el-table-column
           prop="cedentName"
           label="分出公司"
+          show-overflow-tooltip
           v-if="columns[5].show"
         >
         </el-table-column>
@@ -178,12 +182,7 @@
         >
         <!-- <el-table-column prop="estimateStatus" label="预估状态">
         </el-table-column> -->
-        <!-- <el-table-column
-          prop="grop"
-          label="合同分组？？？？"
-          v-if="columns[12].show"
-        >
-        </el-table-column> -->
+        <el-table-column prop="groupName" label="合同分组"> </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <el-button
@@ -211,6 +210,35 @@
         </el-pagination>
       </div>
     </div>
+    <div class="checkGroup">
+      <el-button @click="handleShowDialog">确认分组</el-button>
+    </div>
+    <el-dialog
+      title="选择分组"
+      class="groupDialog"
+      :visible.sync="showGroupDialog"
+      width="400px"
+    >
+      <div class="dialogBody">
+        分组名称
+        <el-select v-model="groupValue">
+          <el-option
+            v-for="(item, index) in groupList"
+            :key="index"
+            :label="item.groupName"
+            :value="item.groupId"
+          ></el-option>
+        </el-select>
+      </div>
+      <div class="dialogFoot" style="text-align: right">
+        <el-button type="primary" size="mini" @click="handleCancel"
+          >取消</el-button
+        >
+        <el-button type="primary" size="mini" @click="handleClick"
+          >确认</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -230,6 +258,8 @@ export default {
       pageSize: 10,
       currentPage: 1,
       totalPage: 1,
+      showGroupDialog: false,
+      groupValue: "",
       form: {
         contractType: "",
         contractNoBegin: "",
@@ -311,18 +341,20 @@ export default {
       currentPageData: [],
       tableData: [],
       companyList: [],
+      groupList: [],
+      contractGroupList: [],
     };
   },
   methods: {
     // ...mapActions('actuarial/actuarialEstimates', ['handleSearch']),
     init() {
-      // $http.get("/estimate/partnerQuery").then((res) => {
-      //   console.log(res, "queryCompany");
-      //   this.companyList = res.data.data.partnerList;
-      // });
+      $http.post(api.groupQuery, {}).then((res) => {
+        console.log(res, "groupList");
+        this.groupList = res.data.data.groupInfoList;
+      });
       this.handleSearchClick();
     },
-          handleookedDetail() {},
+    handleookedDetail() {},
     toPercentData(data) {
       return toPercent(data);
     },
@@ -331,25 +363,25 @@ export default {
     },
     handleSearchClick() {
       this.currentPage = 1;
-        this.loading = true;
+      this.loading = true;
 
-        $http
-          .post(api.ifrcontractListQuery, this.form)
-          .then((res) => {
-            // this.$message.success('');
-            if (res.data.code === "0") {
-              this.tableData = res.data.data.contractList;
-              this.total = res.data.data.contractList.length;
-              this.totalPage = Math.ceil(this.total / this.pageSize);
-              this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
-              this.setCurrentPageData();
-            } else {
-              this.$message.error(res.data.msg);
-            }
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+      $http
+        .post(api.ifrcontractListQuery, this.form)
+        .then((res) => {
+          // this.$message.success('');
+          if (res.data.code === "0") {
+            this.tableData = res.data.data.contractList;
+            this.total = res.data.data.contractList.length;
+            this.totalPage = Math.ceil(this.total / this.pageSize);
+            this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
+            this.setCurrentPageData();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     handleResetClick() {
       this.form = {
@@ -388,6 +420,37 @@ export default {
     handleCurrentChange(page) {
       this.currentPage = page;
       this.setCurrentPageData();
+    },
+    handleSelectionChange(val) {
+      console.log(val, "val");
+      this.contractGroupList = val;
+    },
+    handleShowDialog() {
+      this.groupValue = "";
+      this.showGroupDialog = true;
+    },
+    handleCancel() {
+      this.showGroupDialog = false;
+    },
+    handleClick() {
+      let contractGroupRelateArr = [];
+      this.contractGroupList.forEach((item) => {
+        contractGroupRelateArr.push(item.contractNo);
+      });
+      $http
+        .post(api.contractGroupRelate, {
+          groupId: this.groupValue,
+          contractNo: contractGroupRelateArr,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("分组成功");
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
+      this.showGroupDialog = false;
+      this.init();
     },
     // 导出方法
     // exportBtn(refProp, fname) {
@@ -525,6 +588,17 @@ export default {
       // position: absolute;
       margin-top: 10px;
       float: right;
+    }
+  }
+  .checkGroup {
+    text-align: center;
+    padding-bottom: 20px;
+  }
+  .groupDialog {
+    .dialogBody {
+    }
+    .dialogFoot {
+      margin-top: 10px;
     }
   }
   .calculateResult {

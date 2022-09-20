@@ -125,4 +125,10 @@ export default {
   monthSpiltViewDetailQuery: '/estimate/finance/monthSpiltViewDetailQuery',
   // i17
   ifrcontractListQuery: '/ifrs17/contractListQuery',
+  // 合同分组信息查询
+  groupQuery: '/ifrs17/groupQuery',
+  // 合同分组创建
+  groupAdd: '/ifrs17/groupAdd',
+  // 合同管理合同分组
+  contractGroupRelate: '/ifrs17/contractGroupRelate'
 };
