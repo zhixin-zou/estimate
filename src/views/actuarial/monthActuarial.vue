@@ -44,9 +44,14 @@
           </el-table-column>
           <el-table-column prop="dacRate" label="DAC比例">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5' || isDAC === true || premiumUpdateFlag === 'N'">{{
-                scope.row.dacRate
-              }}</span>
+              <span
+                v-if="
+                  historyShow === '5' ||
+                  isDAC === true ||
+                  premiumUpdateFlag === 'N'
+                "
+                >{{ scope.row.dacRate }}</span
+              >
               <el-input
                 v-else
                 v-model="scope.row.dacRate"
@@ -95,7 +100,9 @@
           </el-table-column>
           <el-table-column prop="riskMargin" label="Risk Margin">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5' || premiumUpdateFlag === 'N'">{{ scope.row.riskMargin }}</span>
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'N'">{{
+                scope.row.riskMargin
+              }}</span>
               <el-input
                 v-else
                 v-model="scope.row.riskMargin"
@@ -132,7 +139,9 @@
           </el-table-column>
           <el-table-column prop="cedentRate" label="比例分出">
             <template slot-scope="scope">
-              <span v-if="historyShow === '5' || premiumUpdateFlag === 'N'">{{ scope.row.cedentRate }}</span>
+              <span v-if="historyShow === '5' || premiumUpdateFlag === 'N'">{{
+                scope.row.cedentRate
+              }}</span>
               <el-input
                 v-else
                 v-model="scope.row.cedentRate"
@@ -215,10 +224,15 @@
     </div>
 
     <div class="separateInfo" v-if="premiumUpdateFlag !== 'N'">
-      <span style="width: 400px;font-size: 20px;font-weight: 600;">EPI拆分</span>        
-      <el-button class="historyQuery" @click="handleExport('epiData', 'epi')" style="float: right"
-          >导出</el-button
-        >
+      <span style="width: 400px; font-size: 20px; font-weight: 600"
+        >EPI拆分</span
+      >
+      <el-button
+        class="historyQuery"
+        @click="handleExport('epiData', 'epi')"
+        style="float: right"
+        >导出</el-button
+      >
       <el-divider></el-divider>
       <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
         <el-table-column
@@ -400,6 +414,14 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-button
+        :loading="adjustLoading"
+        type="primary"
+        plain
+        @click="handleEditPremium"
+        style="margin-top: 10px; margin-left: 45%"
+        >试算</el-button
+      >
       <el-table
         :data="UPRData"
         ref="upr"
@@ -504,7 +526,7 @@ export default {
     return {
       feeIndex: Number,
       adjustLoading: false,
-      premiumUpdateFlag: 'N',
+      premiumUpdateFlag: "N",
       historyShow: sessionStorage.getItem("licl"),
       columns: [
         {
@@ -685,10 +707,10 @@ export default {
       uprEstimateList: [],
       isDAC: false,
       totalEPI: "",
-      commandFlag: '0',
+      commandFlag: "0",
       EPIData: [],
       monthList: [],
-      dropLoading: false
+      dropLoading: false,
     };
   },
   methods: {
@@ -702,7 +724,8 @@ export default {
           this.contractInfoList = [];
           this.feeInfoList = [];
           this.contractInfoList.push(res.data.data.contractInfo);
-          this.premiumUpdateFlag = res.data.data.contractInfo.premiumUpdateFlag || 'N'
+          this.premiumUpdateFlag =
+            res.data.data.contractInfo.premiumUpdateFlag || "N";
           this.feeInfoList = res.data.data.feeList;
           // localStorage.setItem("dacRateData", this.feeInfoList[0].dacRate);
 
@@ -760,7 +783,7 @@ export default {
         .post(api.monthSpiltViewDetailQuery, {
           estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
           viewType: "1",
-          accountType: "1"
+          accountType: "1",
         })
         .then((res) => {
           // console.log(res, "resrrrrrrrrrrrrrrrrrr");
@@ -1517,12 +1540,118 @@ export default {
         console.log(monthEpiSplitList, "epiList");
       }
     },
-      handleCommand(command) {
+    handleCommand(command) {
       this.commandFlag = command;
       this.EPIData.forEach((item) => {
         item.commandFlag = this.commandFlag;
       });
       // console.log(this.commandFlag);
+    },
+    handleEditPremium() {
+      for (var key in this.uprRateListData[0]) {
+        this.uprRateList.forEach((item) => {
+          if (key === item.policyMonth) {
+            item.uprRate = this.uprRateListData[0][key];
+          }
+        });
+      }
+      console.log(this.UPRData, "this.UPRData");
+      let premiumList = [];
+      this.UPRData.map((item) => {
+        if (item.class === "月预估保费") {
+          for (var key in item) {
+            console.log(key, item[key]);
+            key === "class"
+              ? console.log("class")
+              : premiumList.push({
+                  calculatMonth: key,
+                  financePremium: item[key],
+                  // uprAmount: "",
+                });
+          }
+        }
+        // if (item.class === "预估UPR") {
+        //   // console.log(premiumList, 'premiumList');
+        //   premiumList.map((e) => {
+        //     for (var key in item) {
+        //       if (e.calculatMonth === key) {
+        //         e.uprAmount = item[key]
+        //       }
+        //     }
+        //   })
+        // }
+      });
+      console.log(premiumList, "premiumList");
+      this.adjustLoading = true;
+      this.$http
+        .post(api.monthContractPremiumModify, {
+          estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
+          // feeList: this.feeInfoList,
+          // uprRateList: this.uprRateList,
+          premiumList: premiumList,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("调整成功");
+            // this.$router.push("/actuarialEstimates");
+            // this.init();
+            this.contractInfoList = [];
+            this.feeInfoList = [];
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.feeInfoList = res.data.data.feeList;
+            if (res.data.data.feeList.length !== 0) {
+              localStorage.setItem(
+                "feeInfoListCopy",
+                JSON.stringify(res.data.data.feeList)
+              );
+            }
+            this.cedentList = res.data.data.cedentList;
+            let obj = { policyMonth: "UPR 分布" };
+            this.uprRateList = res.data.data.uprRateList;
+            this.uprRateList.map((item) => {
+              obj[item.policyMonth] = item.uprRate;
+            });
+            this.uprRateListData = [];
+            this.uprRateListData.push(obj);
+            this.uprEstimateList = res.data.data.uprEstimateList;
+            let upryuguList = [{ class: "月预估保费" }, { class: "预估UPR" }];
+            let uprObj = {};
+            this.uprEstimateList.forEach((item) => {
+              uprObj[item.calculatMonth] = item.calculatMonth;
+            });
+            upryuguList.forEach((item) => {
+              Object.assign(item, uprObj);
+            });
+            upryuguList.forEach((item) => {
+              if (item.class === "月预估保费") {
+                for (var key in item) {
+                  this.uprEstimateList.forEach((e) => {
+                    if (key === e.calculatMonth) {
+                      item[key] = e.financeEPI;
+                    }
+                  });
+                }
+              } else {
+                for (var key2 in item) {
+                  this.uprEstimateList.forEach((e) => {
+                    if (key2 === e.calculatMonth) {
+                      item[key2] = e.uprAmount;
+                    }
+                  });
+                }
+              }
+            });
+            this.UPRData = upryuguList;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+            this.handleFloatChange();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.adjustLoading = false;
+        });
     },
   },
   beforeRouteEnter(to, from, next) {

@@ -130,5 +130,9 @@ export default {
   // 合同分组创建
   groupAdd: '/ifrs17/groupAdd',
   // 合同管理合同分组
-  contractGroupRelate: '/ifrs17/contractGroupRelate'
+  contractGroupRelate: '/ifrs17/contractGroupRelate',
+  // 精算年缴预估保费修改
+  yearContractPremiumModify: '/estimate/actuarial/yearContractPremiumModify',
+  // 精算年缴预估保费修改
+  monthContractPremiumModify: '/estimate/actuarial/monthContractPremiumModify'
 };

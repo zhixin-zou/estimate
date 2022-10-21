@@ -212,7 +212,11 @@
         </el-table-column>
         <el-table-column prop="financePremium" label="月年缴保费" width="150">
           <template slot-scope="scope">
-            <span> {{ kiloSplitData(scope.row.financePremium) }} </span>
+            <el-input
+              placeholder="请输入内容"
+              v-model="scope.row.financePremium"
+            ></el-input>
+            <!-- <span> {{ kiloSplitData(scope.row.financePremium) }} </span> -->
           </template>
         </el-table-column>
         <el-table-column
@@ -223,10 +227,23 @@
           width="130"
         >
           <template slot-scope="scope">
+            <!-- <el-input
+              placeholder="请输入内容"
+              disabled
+              v-model="scope.row[item.month]"
+            ></el-input> -->
             <span>{{ kiloSplitData(scope.row[item.month]) }}</span>
           </template>
         </el-table-column>
       </el-table>
+      <el-button
+        :loading="adjustLoading"
+        type="primary"
+        plain
+        @click="handleEditPremium"
+        style="margin-top: 10px; margin-left: 45%"
+        >预估保费修改</el-button
+      >
       <el-table
         :data="UPRData"
         ref="upr"
@@ -967,6 +984,73 @@ export default {
           }
         });
     },
+    handleEditPremium () {
+      console.log(this.UPRData, 'UPRDataUPRDataUPRDataUPRData');
+      for (var key in this.uprRateListData[0]) {
+        this.uprRateList.forEach((item) => {
+          if (key === item.policyMonth) {
+            item.uprRate = this.uprRateListData[0][key];
+          }
+        });
+      }
+      this.adjustLoading = true;
+      console.log(this.UPRData, "UPRDataUPRDataUPRDataUPRDataUPRDataUPRData");
+      let premiumList = [];
+      this.UPRData.map((item) => {
+        premiumList.push({
+          calculatMonth: item.calculatMonth,
+          financePremium: item.financePremium,
+        });
+      });
+
+      this.$http
+        .post(api.yearContractPremiumModify, {
+          estimateKey: sessionStorage.getItem("jsAnnualEstimateKey"),
+          premiumList: premiumList,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("成功");
+            this.contractInfoList = [];
+            this.feeInfoList = [];
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.feeInfoList.push(res.data.data.feeInfo);
+            this.cedentList = res.data.data.cedentList;
+            let obj = { policyMonth: "UPR 分布" };
+            this.uprRateList = res.data.data.uprRateList;
+            // 对this.uprRAteList进行冒泡排序
+            for (var i = 0; i < this.uprRateList.length; i++) {
+              for (var j = 0; j < this.uprRateList.length - 1 - i; j++) {
+                if (
+                  Number(this.uprRateList[j].policyMonth) >
+                  Number(this.uprRateList[j + 1].policyMonth)
+                ) {
+                  //相邻元素两两对比
+                  var temp = this.uprRateList[j + 1]; //元素交换
+                  this.uprRateList[j + 1] = this.uprRateList[j];
+                  this.uprRateList[j] = temp;
+                }
+              }
+            }
+            // 排序结束
+            this.uprRateList.map((item) => {
+              obj[item.policyMonth] = item.uprRate;
+            });
+            this.uprRateListData = [];
+            this.uprRateListData.push(obj);
+            let uprSplitInfo = res.data.data.uprEstimateList;
+            this.dataProcess(uprSplitInfo);
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+            this.handleFloatChange();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.adjustLoading = false;
+        });
+    }
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());
