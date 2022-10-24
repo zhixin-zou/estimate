@@ -29,7 +29,7 @@
         </el-header>
         <el-main class="main">
           <!-- <financial-forecasts /> -->
-            <router-view/>
+          <router-view />
         </el-main>
       </el-container>
     </el-container>
@@ -46,9 +46,9 @@ import NavSide from "./views/NavSide.vue";
 export default {
   name: "App",
   computed: {
-    isLocal () {
-      return window.location.href.includes('localhost:300')
-    }
+    isLocal() {
+      return window.location.href.includes("0");
+    },
     // routes () {
     //   return findRouteAncestors(this.$route)
     // },
@@ -123,24 +123,24 @@ export default {
 .name {
   margin-right: 15px;
 }
-  .main {
-    background-color: #f0f2f5;
-    width: 100%;
-    height: 100%;
-    padding: 15px;
-    overflow: auto;
-  }
-  .route-resolving {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 100px;
-    height: 100px;
-    margin-left: -50px;
-    margin-top: -50px;
-    text-align: center;
-    font-size: 24px;
-  }
+.main {
+  background-color: #f0f2f5;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  overflow: auto;
+}
+.route-resolving {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100px;
+  height: 100px;
+  margin-left: -50px;
+  margin-top: -50px;
+  text-align: center;
+  font-size: 24px;
+}
 </style>
 
 <style>
@@ -152,6 +152,6 @@ body .el-table colgroup.gutter {
   display: table-cell !important;
 }
 .el-col-24 {
-    width: 101% !important;
+  width: 101% !important;
 }
 </style>
