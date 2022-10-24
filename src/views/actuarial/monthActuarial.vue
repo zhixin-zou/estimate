@@ -405,11 +405,11 @@
           width="130"
         >
           <template slot-scope="scope">
-            <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span>
-            <!-- <el-input
+            <!-- <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span> -->
+            <el-input
               placeholder=""
               v-model="scope.row[item.calculatMonth]"
-            ></el-input> -->
+            ></el-input>
             <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
           </template>
         </el-table-column>
@@ -420,7 +420,7 @@
         plain
         @click="handleEditPremium"
         style="margin-top: 10px; margin-left: 45%"
-        >试算</el-button
+        >预估保费修改</el-button
       >
       <el-table
         :data="UPRData"
@@ -782,12 +782,13 @@ export default {
       $http
         .post(api.monthSpiltViewDetailQuery, {
           estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
-          viewType: "1",
+          viewType: "0",
           accountType: "1",
         })
         .then((res) => {
           // console.log(res, "resrrrrrrrrrrrrrrrrrr");
           let epiSplitInfo = res.data.data.epiSplitInfo;
+          this.dataProcess(epiSplitInfo)
           // this.epiDatacopy = res.data.data.epiSplitInfo.epiSplitList
           localStorage.setItem(
             "epiDatacopy",
