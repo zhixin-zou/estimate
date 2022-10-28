@@ -134,5 +134,9 @@ export default {
   // 精算年缴预估保费修改
   yearContractPremiumModify: '/estimate/actuarial/yearContractPremiumModify',
   // 精算年缴预估保费修改
-  monthContractPremiumModify: '/estimate/actuarial/monthContractPremiumModify'
+  monthContractPremiumModify: '/estimate/actuarial/monthContractPremiumModify',
+  // 项目凭证列表获取
+  journalProjectQuery: '/ifrs17/journalProjectQuery',
+  // i17项目列表获取
+  projectListQuery: '/ifrs17/projectListQuery'
 };

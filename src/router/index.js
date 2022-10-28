@@ -45,6 +45,9 @@ import EbsDetailSearch from "@/views/financialView/ebsDetailSearch.vue";
 import UyReportSearch from "@/views/uyReport/uyReport.vue";
 import ContractSearch from "@/views/i17/contractSearch.vue"
 import GroupInfo from "@/views/i17/groupInfo.vue"
+import JournalProjectQuery from "@/views/i17/journalProjectQuery.vue"
+import ProjectListQuery from "@/views/i17/ProjectListQuery.vue"
+
 
 // import { Message } from 'element-ui'
 // const CustomAppView = () =>
@@ -220,6 +223,14 @@ const routes = [
   {
     path: "/monthTrialAdd",
     component: MonthTrialAdd,
+  },
+  {
+    path: "/journalProjectQuery",
+    component: JournalProjectQuery,
+  },
+  {
+    path: "/projectListQuery",
+    component: ProjectListQuery,
   },
   {
     path: "/404",

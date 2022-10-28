@@ -17,9 +17,7 @@
             <span>财务预估</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/financialForecasts"
-              >财务分入预估</el-menu-item
-            >
+            <el-menu-item index="/financialForecasts">财务分入预估</el-menu-item>
             <el-menu-item index="/separateEstimates">财务分出预估</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
@@ -49,12 +47,14 @@
         <el-submenu index="4">
           <template slot="title">
             <i class="el-icon-location"></i>
-            <span>预估分析</span>
+            <span>i7</span>
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/uyReport">UY Report</el-menu-item>
+            <!-- <el-menu-item index="/uyReport">UY Report</el-menu-item> -->
             <el-menu-item index="/contractSearch">合同查询</el-menu-item>
             <el-menu-item index="/groupInfo">分组信息</el-menu-item>
+            <el-menu-item index="/journalProjectQuery">凭证查询</el-menu-item>
+            <el-menu-item index="/projectListQuery">项目查询</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>
