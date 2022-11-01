@@ -292,6 +292,14 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-button
+        :loading="adjustLoading"
+        type="primary"
+        plain
+        @click="handleBreakPremium"
+        style="margin-top: 10px; margin-left: 45%"
+        >预估保费拆分修改</el-button
+      >
       <el-table
         v-show="false"
         :ref="'epiData'"
@@ -374,7 +382,7 @@
         plain
         @click="handleEditPremium"
         style="margin-top: 10px; margin-left: 45%"
-        >预估保费修改</el-button
+        >预估保费汇总修改</el-button
       >
       <el-table
         :data="UPRData"
@@ -1569,6 +1577,147 @@ export default {
           estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
           // feeList: this.feeInfoList,
           // uprRateList: this.uprRateList,
+          modifyType: "1",
+          monthEpiSplitList: monthEpiSplitList,
+          premiumList: premiumList,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("调整成功");
+            // this.$router.push("/actuarialEstimates");
+            // this.init();
+            this.contractInfoList = [];
+            this.feeInfoList = [];
+            this.contractInfoList.push(res.data.data.contractInfo);
+            this.feeInfoList = res.data.data.feeList;
+            if (res.data.data.feeList.length !== 0) {
+              localStorage.setItem(
+                "feeInfoListCopy",
+                JSON.stringify(res.data.data.feeList)
+              );
+            }
+            this.cedentList = res.data.data.cedentList;
+            let obj = { policyMonth: "UPR 分布" };
+            this.uprRateList = res.data.data.uprRateList;
+            this.uprRateList.map((item) => {
+              obj[item.policyMonth] = item.uprRate;
+            });
+            this.uprRateListData = [];
+            this.uprRateListData.push(obj);
+            this.uprEstimateList = res.data.data.uprEstimateList;
+            let upryuguList = [{ class: "月预估保费" }, { class: "预估UPR" }];
+            let uprObj = {};
+            this.uprEstimateList.forEach((item) => {
+              uprObj[item.calculatMonth] = item.calculatMonth;
+            });
+            upryuguList.forEach((item) => {
+              Object.assign(item, uprObj);
+            });
+            upryuguList.forEach((item) => {
+              if (item.class === "月预估保费") {
+                for (var key in item) {
+                  this.uprEstimateList.forEach((e) => {
+                    if (key === e.calculatMonth) {
+                      item[key] = e.financeEPI;
+                    }
+                  });
+                }
+              } else {
+                for (var key2 in item) {
+                  this.uprEstimateList.forEach((e) => {
+                    if (key2 === e.calculatMonth) {
+                      item[key2] = e.uprAmount;
+                    }
+                  });
+                }
+              }
+            });
+            this.UPRData = upryuguList;
+            this.calculatedFeeList = res.data.data.calculatedFeeList;
+            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+            this.handleFloatChange();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.adjustLoading = false;
+        });
+    },
+    handleBreakPremium() {
+      for (var key in this.uprRateListData[0]) {
+        this.uprRateList.forEach((item) => {
+          if (key === item.policyMonth) {
+            item.uprRate = this.uprRateListData[0][key];
+          }
+        });
+      }
+      console.log(this.UPRData, "this.UPRData");
+      let premiumList = [];
+      this.UPRData.map((item) => {
+        if (item.class === "月预估保费") {
+          for (var key in item) {
+            console.log(key, item[key]);
+            key === "class"
+              ? console.log("class")
+              : premiumList.push({
+                  calculatMonth: key,
+                  financePremium: item[key],
+                  // uprAmount: "",
+                });
+          }
+        }
+      });
+      console.log(premiumList, "premiumList");
+      this.adjustLoading = true;
+
+      // epiList
+      this.sumDataList = [];
+      let monthEpiSplitList = JSON.parse(localStorage.getItem("epiDatacopy"));
+      console.log(monthEpiSplitList, "monthEpiSplitListmonthEpiSplitList");
+      let epiList = this.EPIData.splice(0, this.EPIData.length - 3);
+      epiList.forEach((item) => {
+        let monthArrNew = [];
+        let mArr = [];
+        let monthArr = Object.keys(item);
+        monthArr.map((e, idx) => {
+          if (e === item.calculatMonth) {
+            console.log(idx, "idx");
+            let startId = idx;
+            monthArr.map((i, id) => {
+              if (id < startId + 12 && id >= startId) {
+                monthArrNew[i] = item[i];
+                mArr.push(item[i]);
+              }
+            });
+          }
+        });
+
+        monthEpiSplitList.forEach((element) => {
+          if (element.calculatMonth === item.calculatMonth) {
+            element.m1 = mArr[0];
+            element.m2 = mArr[1];
+            element.m3 = mArr[2];
+            element.m4 = mArr[3];
+            element.m5 = mArr[4];
+            element.m6 = mArr[5];
+            element.m7 = mArr[6];
+            element.m8 = mArr[7];
+            element.m9 = mArr[8];
+            element.m10 = mArr[9];
+            element.m11 = mArr[10];
+            element.m12 = mArr[11];
+          }
+        });
+        // console.log(monthEpiSplitList, mArr, "monthArrmonthArrmonthArr", index);
+      });
+
+      this.$http
+        .post(api.monthContractPremiumModify, {
+          estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
+          // feeList: this.feeInfoList,
+          // uprRateList: this.uprRateList,
+          modifyType: "1",
           monthEpiSplitList: monthEpiSplitList,
           premiumList: premiumList,
         })

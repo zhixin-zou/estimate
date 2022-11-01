@@ -47,7 +47,10 @@ export default {
   name: "App",
   computed: {
     isLocal() {
-      return window.location.href.includes(":300");
+      return (
+        window.location.href.includes(":300") ||
+        window.location.href.includes("10.98.164.109:30")
+      );
     },
     // routes () {
     //   return findRouteAncestors(this.$route)

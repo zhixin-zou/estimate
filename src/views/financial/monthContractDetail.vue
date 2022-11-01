@@ -50,12 +50,12 @@
           <div class="input">
             <el-input
               v-model="totalEPI"
-              :disabled="historyShow === '2' || this.viewTitle === '财务视图'"
+              :disabled="historyShow === '2' || this.viewTitle !== '财务视图'"
             ></el-input>
           </div>
         </div>
         <el-button
-          v-if="historyShow !== '2' && this.viewTitle !== '财务视图'"
+          v-if="historyShow !== '2' && this.viewTitle === '财务视图'"
           :loading="adjustLoading"
           type="primary"
           round
