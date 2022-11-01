@@ -1717,7 +1717,7 @@ export default {
           estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
           // feeList: this.feeInfoList,
           // uprRateList: this.uprRateList,
-          modifyType: "1",
+          modifyType: "0",
           monthEpiSplitList: monthEpiSplitList,
           premiumList: premiumList,
         })
