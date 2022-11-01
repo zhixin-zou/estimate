@@ -2,9 +2,7 @@
   <div class="monthContractDetial">
     <div class="monthHeader">
       <el-button @click="handleBack">返回</el-button>
-      <el-button @click="handleExport('cwMonthContract', '合同信息')"
-        >导出</el-button
-      >
+      <el-button @click="handleExport('cwMonthContract', '合同信息')">导出</el-button>
     </div>
     <div class="separateInfo">
       <h2>合同信息</h2>
@@ -16,9 +14,7 @@
       ></fs-list-panel>
     </div>
     <div class="monthHeader">
-      <el-button @click="handleExport('cwMonthCedent', '分出信息')"
-        >导出</el-button
-      >
+      <el-button @click="handleExport('cwMonthCedent', '分出信息')">导出</el-button>
     </div>
     <div class="separateInfo">
       <h2>分出信息</h2>
@@ -67,33 +63,18 @@
           @click="handleTotalEPI"
           >调整</el-button
         >
-        <el-button
-          type="primary"
-          plain
-          class="historyQuery"
-          @click="handleHistoryQuery"
+        <el-button type="primary" plain class="historyQuery" @click="handleHistoryQuery"
           >查看历史</el-button
         >
         <el-button class="historyQuery" @click="handleExport('epiData', 'epi')"
           >导出</el-button
         >
-        <el-button class="historyQuery" @click="handleChangeView()"
-          >视图切换</el-button
-        >
+        <el-button class="historyQuery" @click="handleChangeView()">视图切换</el-button>
       </div>
       <el-table :data="EPIData" border style="width: 100%; margin-top: 20px">
-        <el-table-column
-          fixed="left"
-          prop="calculatMonth"
-          label="计算月份"
-          width="180"
-        >
+        <el-table-column fixed="left" prop="calculatMonth" label="计算月份" width="180">
         </el-table-column>
-        <el-table-column
-          prop="calculatedEPI"
-          label="月最终预估保费/合计"
-          width="200"
-        >
+        <el-table-column prop="calculatedEPI" label="月最终预估保费/合计" width="200">
           <template slot-scope="scope">
             <span> {{ kiloSplitData(scope.row.calculatedEPI) }} </span>
           </template>
@@ -126,9 +107,7 @@
               v-else
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
-              :disabled="
-                scope.row.commandFlag === '1' || viewTitle === '财务视图'
-              "
+              :disabled="scope.row.commandFlag === '1' || viewTitle === '财务视图'"
             ></el-input>
           </template>
         </el-table-column>
@@ -166,8 +145,7 @@
               :disabled="
                 scope.row[item.month] === ' ' ||
                 item.month < estimateMonth ||
-                (scope.row.commandFlag === '0' &&
-                  scope.row.calculatMonth !== '合计')
+                (scope.row.commandFlag === '0' && scope.row.calculatMonth !== '合计')
               "
               placeholder=""
               v-model="scope.row[item.month]"
@@ -185,11 +163,7 @@
       >
         <el-table-column prop="calculatMonth" label="计算月份" width="180">
         </el-table-column>
-        <el-table-column
-          prop="calculatedEPI"
-          label="月最终预估保费/合计"
-          width="200"
-        >
+        <el-table-column prop="calculatedEPI" label="月最终预估保费/合计" width="200">
           <template slot-scope="scope">
             <span> {{ kiloSplitData(scope.row.calculatedEPI) }} </span>
           </template>
@@ -201,11 +175,7 @@
         </el-table-column>
         <el-table-column prop="manualAdjustEPI" label="EPI调整" width="200">
         </el-table-column>
-        <el-table-column
-          prop="workSheetAdjustEPI"
-          label="实际账单调整"
-          width="200"
-        >
+        <el-table-column prop="workSheetAdjustEPI" label="实际账单调整" width="200">
         </el-table-column>
         <el-table-column
           v-for="(item, index) in monthList"
@@ -216,9 +186,7 @@
         >
         </el-table-column>
       </el-table>
-      <span
-        >温馨提示：每月6号前调整的可调整上月EPI，每月6号后只能调整本月EPI</span
-      >
+      <span>温馨提示：每月6号前调整的可调整上月EPI，每月6号后只能调整本月EPI</span>
       <br />
       <el-dropdown
         v-if="historyShow !== '2' && this.viewTitle !== '财务视图'"
@@ -243,31 +211,19 @@
         <div class="adjustBox">
           <div class="adjustName"><span>手续费比例：</span></div>
           <div class="input">
-            <el-input
-              v-model="commRate"
-              :disabled="historyShow === '2'"
-            ></el-input>
+            <el-input v-model="commRate" :disabled="historyShow === '2'"></el-input>
           </div>
           <div class="adjustName"><span>预付手续费比例：</span></div>
           <div class="input">
-            <el-input
-              v-model="provCommRate"
-              :disabled="historyShow === '2'"
-            ></el-input>
+            <el-input v-model="provCommRate" :disabled="historyShow === '2'"></el-input>
           </div>
           <div class="adjustName"><span>经纪费比例：</span></div>
           <div class="input">
-            <el-input
-              v-model="brokerageRate"
-              :disabled="historyShow === '2'"
-            ></el-input>
+            <el-input v-model="brokerageRate" :disabled="historyShow === '2'"></el-input>
           </div>
           <div class="adjustName"><span>分出比例：</span></div>
           <div class="input">
-            <el-input
-              v-model="cedentRate"
-              :disabled="historyShow === '2'"
-            ></el-input>
+            <el-input v-model="cedentRate" :disabled="historyShow === '2'"></el-input>
           </div>
           <br />
           <div style="height: 30px"></div>
@@ -305,15 +261,9 @@
       <el-table :data="lastList" border style="width: 100%; margin-top: 80px">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
-        <el-table-column
-          prop="calculatItem"
-          label="计算项目"
-          width="220"
-          fixed="left"
-        >
+        <el-table-column prop="calculatItem" label="计算项目" width="220" fixed="left">
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种" width="100">
-        </el-table-column>
+        <el-table-column prop="currencyCode" label="币种" width="100"> </el-table-column>
         <el-table-column
           width="200"
           v-for="(item, index) in calculatedFeeList"
@@ -333,8 +283,7 @@
         v-show="false"
         style="width: 100%; margin-top: 20px"
       >
-        <el-table-column prop="company" label="公司" width="200">
-        </el-table-column>
+        <el-table-column prop="company" label="公司" width="200"> </el-table-column>
         <el-table-column prop="calculatItem" label="计算项目" width="220">
         </el-table-column>
         <el-table-column prop="currencyCode" label="币种"> </el-table-column>
@@ -351,9 +300,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-button plain class="checkDetial" @click="handleDetial"
-      >查看入账明细</el-button
-    >
+    <el-button plain class="checkDetial" @click="handleDetial">查看入账明细</el-button>
   </div>
 </template>
 
@@ -367,7 +314,7 @@ import FileSaver from "file-saver";
 export default {
   data() {
     return {
-      viewTitle: "精算视图",
+      viewTitle: "财务视图",
       historyShow: sessionStorage.getItem("licl"),
       dropLoading: false,
       adjustLoading: false,
@@ -625,13 +572,13 @@ export default {
       // console.log(this.$refs.exportTableRef1.$el);
     },
     handleChangeView() {
-      this.viewTitle = this.viewTitle === "精算视图" ? "财务视图" : "精算视图";
-      if (this.viewTitle === "精算视图") {
+      this.viewTitle = this.viewTitle === "财务视图" ? "精算视图" : "财务视图";
+      if (this.viewTitle === "财务视图") {
         $http
           .post(api.monthSpiltViewDetailQuery, {
             estimateKey: sessionStorage.getItem("finEstimateKey"),
             viewType: "0",
-            accountType: "0"
+            accountType: "0",
           })
           .then((res) => {
             console.log(res);
@@ -644,7 +591,7 @@ export default {
           .post(api.monthSpiltViewDetailQuery, {
             estimateKey: sessionStorage.getItem("finEstimateKey"),
             viewType: "1",
-            accountType: "1"
+            accountType: "1",
           })
           .then((res) => {
             console.log(res);
@@ -667,10 +614,8 @@ export default {
       let monthInfo = epiSplitInfo.calculatMonths % 12;
       let yearsInfo = parseInt(epiSplitInfo.calculatMonths / 12);
       // console.log(yearsInfo, "?????", monthInfo);
-      let endYear =
-        Number(epiSplitInfo.contractMonthBegin.slice(0, 4)) + yearsInfo;
-      let endMonth =
-        Number(epiSplitInfo.contractMonthBegin.slice(4)) + monthInfo;
+      let endYear = Number(epiSplitInfo.contractMonthBegin.slice(0, 4)) + yearsInfo;
+      let endMonth = Number(epiSplitInfo.contractMonthBegin.slice(4)) + monthInfo;
       // console.log(endYear, endMonth, "===============");
       if (endMonth > 12) {
         endYear += 1;
@@ -830,8 +775,7 @@ export default {
         for (var key1 in premiumHeaderObj) {
           if (item.calculatMonth === key1) {
             premiumHeaderObj[key1] = item.totalPremium;
-            premiumHeaderObjSum =
-              premiumHeaderObjSum + Number(item.totalPremium);
+            premiumHeaderObjSum = premiumHeaderObjSum + Number(item.totalPremium);
           }
         }
         for (var key2 in allHeaderObj) {
@@ -843,8 +787,7 @@ export default {
         for (var key3 in originEPIHeaderObj) {
           if (item.calculatMonth === key3) {
             originEPIHeaderObj[key3] = item.originEPI;
-            originEPIHeaderObjSum =
-              originEPIHeaderObjSum + Number(item.originEPI);
+            originEPIHeaderObjSum = originEPIHeaderObjSum + Number(item.originEPI);
           }
         }
         for (var key4 in manualAdjustEPIHeaderObj) {
@@ -885,8 +828,7 @@ export default {
         for (var key8 in calculatedEPIHeader) {
           if (item.calculatMonth === key8) {
             calculatedEPIHeader[key8] = item.calculatedEPI;
-            calculatedEPIHeaderSum =
-              calculatedEPIHeaderSum + Number(item.calculatedEPI);
+            calculatedEPIHeaderSum = calculatedEPIHeaderSum + Number(item.calculatedEPI);
           }
         }
       });
@@ -895,11 +837,9 @@ export default {
       sumHeaderObj.calculatedEPI = premiumHeaderObjSum.toFixed(2);
       premiumHeaderObj.calculatedEPI = allHeaderObjSum.toFixed(2);
       originEPIHeaderObj.calculatedEPI = originEPIHeaderObjSum.toFixed(2);
-      manualAdjustEPIHeaderObj.calculatedEPI =
-        manualAdjustEPIHeaderObjSum.toFixed(2);
+      manualAdjustEPIHeaderObj.calculatedEPI = manualAdjustEPIHeaderObjSum.toFixed(2);
       workSheetAmountHeader.calculatedEPI = workSheetAmountHeaderSum.toFixed(2);
-      workSheetAdjustEPIHeader.calculatedEPI =
-        workSheetAdjustEPIHeaderSum.toFixed(2);
+      workSheetAdjustEPIHeader.calculatedEPI = workSheetAdjustEPIHeaderSum.toFixed(2);
       actuarialAmountHeader.calculatedEPI = actuarialAmountHeaderSum.toFixed(2);
       calculatedEPIHeader.calculatedEPI = calculatedEPIHeaderSum.toFixed(2);
       // console.log(
@@ -1033,10 +973,7 @@ export default {
                 sumAmount: item[key],
               });
             }
-            this.sumDataList = this.sumDataList.splice(
-              0,
-              this.sumDataList.length - 2
-            );
+            this.sumDataList = this.sumDataList.splice(0, this.sumDataList.length - 2);
             console.log(this.sumDataList, "Object.keys(item)");
           }
         });
@@ -1096,10 +1033,7 @@ export default {
                 sumAmount: item[key],
               });
             }
-            this.sumDataList = this.sumDataList.splice(
-              0,
-              this.sumDataList.length - 2
-            );
+            this.sumDataList = this.sumDataList.splice(0, this.sumDataList.length - 2);
             console.log(this.sumDataList, "Object.keys(item)");
           }
         });
@@ -1198,34 +1132,24 @@ export default {
       this.lastList = [];
       // console.log(this.calculatedFeeList, "this.calculatedFeeList");
       var obj = {};
-      this.calculatedFeeList = this.calculatedFeeList.reduce(function (
-        item,
-        next
-      ) {
+      this.calculatedFeeList = this.calculatedFeeList.reduce(function (item, next) {
         obj[next.calculatMonth]
           ? ""
           : (obj[next.calculatMonth] = true && item.push(next));
         return item;
-      },
-      []);
+      }, []);
       var obj2 = {};
       var calculatObj = {};
       this.testList = this.calculatedFeeList2.reduce(function (item, next) {
-        obj2[next.company]
-          ? ""
-          : (obj2[next.company] = true && item.push(next));
+        obj2[next.company] ? "" : (obj2[next.company] = true && item.push(next));
         return item;
       }, []);
-      let calculatItemList = this.calculatedFeeList2.reduce(function (
-        item,
-        next
-      ) {
+      let calculatItemList = this.calculatedFeeList2.reduce(function (item, next) {
         calculatObj[next.calculatItem]
           ? ""
           : (calculatObj[next.calculatItem] = true && item.push(next));
         return item;
-      },
-      []);
+      }, []);
 
       var result = [];
       var obj3 = {};
