@@ -189,7 +189,7 @@
       <span>温馨提示：每月6号前调整的可调整上月EPI，每月6号后只能调整本月EPI</span>
       <br />
       <el-dropdown
-        v-if="historyShow !== '2' && this.viewTitle !== '财务视图'"
+        v-if="historyShow !== '2' && this.viewTitle === '财务视图'"
         :loading="dropLoading"
         class="dropdownButton"
         split-button
@@ -591,7 +591,7 @@ export default {
           .post(api.monthSpiltViewDetailQuery, {
             estimateKey: sessionStorage.getItem("finEstimateKey"),
             viewType: "1",
-            accountType: "1",
+            accountType: "0",
           })
           .then((res) => {
             console.log(res);
