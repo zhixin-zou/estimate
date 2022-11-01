@@ -59,14 +59,8 @@
             style="margin-right: 10px"
             >自定义列</el-button
           > -->
-
-      <el-table
-        :data="currentPageData"
-        border
-        style="width: 100%"
-        ref="listBox"
-        @selection-change="handleSelectionChange"
-      >
+      <!-- @selection-change="handleSelectionChange" -->
+      <el-table :data="currentPageData" border style="width: 100%" ref="listBox">
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column width="120" prop="id" label="项目id"> </el-table-column>
         <el-table-column prop="type" label="项目类型"> </el-table-column>
@@ -81,21 +75,21 @@
         <el-table-column prop="frequencyParameter" label="参数频率"> </el-table-column>
         <el-table-column prop="initializationTaskId" label="参数频率"> </el-table-column>
         <el-table-column prop="locked" label="锁定标志"> </el-table-column>
-        <!-- <el-table-column label="操作" width="200">
-            <template slot-scope="scope">
-              <el-button @click="handleookedDetail(scope.row)" type="text" size="small"
-                >查看明细</el-button
-              >
-            </template>
-          </el-table-column> -->
+        <el-table-column label="操作" width="200">
+          <template slot-scope="scope">
+            <el-button @click="handleProjectJournal(scope.row)" type="text" size="small"
+              >查看凭证</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
+      <!-- @size-change="handleSizeChange" -->
       <div class="listPagination">
         <el-pagination
           background
           layout="total, sizes, prev, pager, next"
           @prev-click="prevPage"
           @next-click="nextPage"
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page.sync="currentPage"
           :page-size="pageSize"
@@ -105,15 +99,15 @@
         </el-pagination>
       </div>
     </div>
-    <div class="checkGroup">
+    <!-- <div class="checkGroup">
       <el-button @click="handleShowDialog">确认</el-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 import { $http } from "@/utils/request";
-import api from "@/utils/api";
+// import api from "@/utils/api";
 import { kiloSplit, toPercent } from "@/utils/utils";
 // import * as XLSX from "xlsx";
 // import FileSaver from "file-saver";
@@ -130,9 +124,9 @@ export default {
       showGroupDialog: false,
       groupValue: "",
       form: {
-        projectId: "",
-        journalId: "",
-        effectiveDate: "",
+        name: "",
+        dateBegin: "",
+        dateEnd: "",
       },
       currentPageData: [],
       tableData: [],
@@ -158,12 +152,13 @@ export default {
       this.loading = true;
 
       $http
-        .post(api.projectListQuery, this.form)
+        // .post(api.projectListQuery, this.form)
+        .post("http://yapi.smart-xwork.cn/mock/134845/ifrs17/projectListQuery", this.form)
         .then((res) => {
           // this.$message.success('');
           if (res.data.code === "0") {
             this.tableData = res.data.data.projectList;
-            this.total = res.data.data.journalProjectList.length;
+            this.total = res.data.data.projectList.length;
             this.totalPage = Math.ceil(this.total / this.pageSize);
             this.totalPage = this.totalPage === 0 ? 1 : this.totalPage;
             this.setCurrentPageData();
@@ -177,9 +172,9 @@ export default {
     },
     handleResetClick() {
       this.form = {
-        projectId: "",
-        journalId: "",
-        effectiveDate: "",
+        name: "",
+        dateBegin: "",
+        dateEnd: "",
       };
     },
     // 假分页
@@ -209,14 +204,28 @@ export default {
       this.currentPage = page;
       this.setCurrentPageData();
     },
-    handleSelectionChange(val) {
-      console.log(val, "val");
-      this.contractGroupList = val;
+    handleProjectJournal(row) {
+      $http
+        // .post(api.projectJournalEntryQuery, {
+        .post("http://yapi.smart-xwork.cn/mock/134845/ifrs17/projectJournalEntryQuery", {
+          projectId: row.id,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            let downloadUrl = res.data.data.exportInfo.activeBlobUrl;
+            window.open(downloadUrl);
+          }
+        });
     },
-    handleShowDialog() {
-      this.groupValue = "";
-      this.showGroupDialog = true;
-    },
+    // handleSelectionChange(val) {
+    //   console.log(val, "val");
+    //   this.contractGroupList = val;
+    // },
+
+    // handleShowDialog() {
+    //   this.groupValue = "";
+    //   this.showGroupDialog = true;
+    // },
     // handleCancel() {
     //   this.showGroupDialog = false;
     // },

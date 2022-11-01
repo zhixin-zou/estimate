@@ -138,5 +138,7 @@ export default {
   // 项目凭证列表获取
   journalProjectQuery: '/ifrs17/journalProjectQuery',
   // i17项目列表获取
-  projectListQuery: '/ifrs17/projectListQuery'
+  projectListQuery: '/ifrs17/projectListQuery',
+  // 项目凭证导出excel
+  projectJournalEntryQuery: '/ifrs17/projectJournalEntryQuery'
 };
