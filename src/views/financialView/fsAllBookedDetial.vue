@@ -16,21 +16,11 @@
             <div class="searchMain">
               <el-form ref="form" :model="form" label-width="100px">
                 <el-form-item label="合同类型">
-                  <el-select
-                    v-model="form.contractType"
-                    placeholder="请选择"
-                    clearable
-                  >
+                  <el-select v-model="form.contractType" placeholder="请选择" clearable>
                     <el-option label="比例合约" value="PROPTTY"></el-option>
-                    <el-option
-                      label="非比例合约"
-                      value="NONPROPTTY"
-                    ></el-option>
+                    <el-option label="非比例合约" value="NONPROPTTY"></el-option>
                     <el-option label="比例临分" value="PROPFAC"></el-option>
-                    <el-option
-                      label="非比例临分"
-                      value="NONPROPFAC"
-                    ></el-option>
+                    <el-option label="非比例临分" value="NONPROPFAC"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="合同号开始">
@@ -40,11 +30,7 @@
                   <el-input v-model="form.contractNoEnd"></el-input>
                 </el-form-item>
                 <el-form-item label="账务类型">
-                  <el-select
-                    v-model="form.accountType"
-                    placeholder="请选择"
-                    clearable
-                  >
+                  <el-select v-model="form.accountType" placeholder="请选择" clearable>
                     <el-option label="财务" value="0"></el-option>
                     <el-option label="精算" value="1"></el-option>
                   </el-select>
@@ -56,11 +42,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="分入公司">
-                  <el-select
-                    v-model="form.cedent"
-                    placeholder="请选择"
-                    clearable
-                  >
+                  <el-select v-model="form.cedent" placeholder="请选择" clearable>
                     <el-option
                       v-for="(item, index) in companyList"
                       :key="index"
@@ -112,32 +94,16 @@
                   </el-date-picker
                 ></el-form-item>
                 <el-form-item label="凭证类型">
-                  <el-select
-                    v-model="form.accountClass"
-                    placeholder="请选择"
-                    clearable
-                  >
-                    <el-option label="预估帐" value="Estimation"></el-option>
-                    <el-option
-                      label="技术账单"
-                      value="SICS Technical"
-                    ></el-option>
-                    <el-option
-                      label="结算账单"
-                      value="SICS Settlement"
-                    ></el-option>
-                    <el-option
-                      label="资金账单"
-                      value="SICS Remittance"
-                    ></el-option>
+                  <el-select v-model="form.accountClass" placeholder="请选择" clearable>
+                    <el-option label="预估账" value="Estimation"></el-option>
+                    <el-option label="技术账单" value="SICS Technical"></el-option>
+                    <el-option label="结算账单" value="SICS Settlement"></el-option>
+                               <el-option label="资金账单" value="SICS Remittance"></el-option>
+                    <el-option label="ifrs17账务" value="Moody's IFRS 17 Journal Entries"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否反冲">
-                  <el-select
-                    v-model="form.reverseFlag"
-                    placeholder="请选择"
-                    clearable
-                  >
+                  <el-select v-model="form.reverseFlag" placeholder="请选择" clearable>
                     <el-option label="是" value="Y"></el-option>
                     <el-option label="否" value="N"></el-option>
                   </el-select>
@@ -164,11 +130,7 @@
                   <el-input v-model="form.productCode"></el-input>
                 </el-form-item>
                 <el-form-item label="是否过账">
-                  <el-select
-                    v-model="form.postFlag"
-                    placeholder="请选择"
-                    clearable
-                  >
+                  <el-select v-model="form.postFlag" placeholder="请选择" clearable>
                     <el-option label="是" value="Y"></el-option>
                     <el-option label="否" value="N"></el-option>
                   </el-select>
@@ -178,11 +140,7 @@
           </div>
         </el-collapse-item>
       </el-collapse>
-      <div
-        slot="footer"
-        style="float: right; margin-top: 10px"
-        class="searchFoot"
-      >
+      <div slot="footer" style="float: right; margin-top: 10px" class="searchFoot">
         <div class="searchButton">
           <el-button
             :loading="loading"
@@ -232,36 +190,22 @@
         <!-- <el-table-column fixed prop="ledger" label="ledger"> </el-table-column> -->
         <el-table-column type="selection" width="55" :selectable="selectable">
         </el-table-column>
-        <el-table-column prop="currency" label="Currency" width="90">
-        </el-table-column>
-        <el-table-column
-          prop="accountingDate"
-          label="Accounting Date"
-          width="150"
-        >
+        <el-table-column prop="currency" label="Currency" width="90"> </el-table-column>
+        <el-table-column prop="accountingDate" label="Accounting Date" width="150">
         </el-table-column>
         <el-table-column prop="period" label="Period"> </el-table-column>
         <!-- <el-table-column prop="company" label="COMPANY"> </el-table-column>
         <el-table-column prop="costcenter" label="COSTCENTER">
         </el-table-column> -->
-        <el-table-column prop="account" label="ACCOUNT" width="100">
-        </el-table-column>
+        <el-table-column prop="account" label="ACCOUNT" width="100"> </el-table-column>
         <el-table-column prop="subaccount" label="SUBACCOUNT" width="130">
         </el-table-column>
-        <el-table-column prop="product" label="PRODUCT" width="100">
-        </el-table-column>
-        <el-table-column prop="region" label="REGION" width="100">
-        </el-table-column>
-        <el-table-column prop="channel" label="CHANNEL" width="100">
-        </el-table-column>
+        <el-table-column prop="product" label="PRODUCT" width="100"> </el-table-column>
+        <el-table-column prop="region" label="REGION" width="100"> </el-table-column>
+        <el-table-column prop="channel" label="CHANNEL" width="100"> </el-table-column>
         <el-table-column prop="icp" label="ICP"> </el-table-column>
         <!-- <el-table-column prop="spare" label="SPARE"> </el-table-column> -->
-        <el-table-column
-          prop="debit"
-          label="Debit"
-          width="150"
-          show-overflow-tooltip
-        >
+        <el-table-column prop="debit" label="Debit" width="150" show-overflow-tooltip>
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.debit }}</span>
             <el-input
@@ -271,12 +215,7 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="credit"
-          label="Credit"
-          width="150"
-          show-overflow-tooltip
-        >
+        <el-table-column prop="credit" label="Credit" width="150" show-overflow-tooltip>
           <template slot-scope="scope">
             <span v-if="historyShow === '0'">{{ scope.row.credit }}</span>
             <el-input
@@ -331,15 +270,12 @@
       >
         <el-table-column prop="ledger" label="ledger"> </el-table-column>
         <el-table-column prop="currency" label="Currency"> </el-table-column>
-        <el-table-column prop="accountingDate" label="Accounting Date">
-        </el-table-column>
+        <el-table-column prop="accountingDate" label="Accounting Date"> </el-table-column>
         <el-table-column prop="period" label="Period"> </el-table-column>
         <el-table-column prop="company" label="COMPANY"> </el-table-column>
-        <el-table-column prop="costcenter" label="COSTCENTER">
-        </el-table-column>
+        <el-table-column prop="costcenter" label="COSTCENTER"> </el-table-column>
         <el-table-column prop="account" label="ACCOUNT"> </el-table-column>
-        <el-table-column prop="subaccount" label="SUBACCOUNT">
-        </el-table-column>
+        <el-table-column prop="subaccount" label="SUBACCOUNT"> </el-table-column>
         <el-table-column prop="product" label="PRODUCT"> </el-table-column>
         <el-table-column prop="region" label="REGION"> </el-table-column>
         <el-table-column prop="channel" label="CHANNEL"> </el-table-column>
@@ -358,8 +294,7 @@
         <el-table-column prop="batchName" label="Batch Name"> </el-table-column>
         <el-table-column prop="batchDescription" label="Batch Description">
         </el-table-column>
-        <el-table-column prop="journalName" label="Journal Name">
-        </el-table-column>
+        <el-table-column prop="journalName" label="Journal Name"> </el-table-column>
         <el-table-column prop="journalDescription" label="Journal Description">
         </el-table-column>
         <el-table-column prop="lineDescription" label="Line Description">
@@ -415,7 +350,7 @@ export default {
         accountCode: "",
         productCode: "",
         accountClass: "",
-        postFlag: ''
+        postFlag: "",
       },
       companyList: [],
       loading: false,
@@ -584,9 +519,7 @@ export default {
         contractTimeBegin: this.form.contractTimeBegin,
         contractTimeEnd: this.form.contractTimeEnd,
         estimateMonth:
-          this.form.estimateMonth === ""
-            ? ""
-            : getYearMonthDate(this.form.estimateMonth),
+          this.form.estimateMonth === "" ? "" : getYearMonthDate(this.form.estimateMonth),
         accountType: this.form.accountType,
         reverseFlag: this.form.reverseFlag,
         accountDate: this.form.accountDate,
@@ -595,7 +528,7 @@ export default {
         accountCode: this.form.accountCode,
         productCode: this.form.productCode,
         accountClass: this.form.accountClass,
-        postFlag: this.form.postFlag
+        postFlag: this.form.postFlag,
       };
       params.estimateMonth =
         params.estimateMonth === "197001" ? "" : params.estimateMonth;
@@ -608,8 +541,7 @@ export default {
           if (res.data.code === "0") {
             console.log(res, "res");
             this.listData = res.data.data.ebsDetail;
-            this.EBSSummaryForm =
-              res.data.data.ebsSummary || this.initEBSSummaryForm;
+            this.EBSSummaryForm = res.data.data.ebsSummary || this.initEBSSummaryForm;
             this.listData.forEach((item) => {
               // console.log(item);
               if (item.updateFlag == "Y") {
@@ -643,7 +575,7 @@ export default {
         accountCode: "",
         productCode: "",
         accountClass: "",
-        postFlag: ""
+        postFlag: "",
       };
     },
     handleSelectionChange(val) {

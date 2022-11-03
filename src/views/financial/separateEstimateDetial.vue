@@ -424,7 +424,7 @@ export default {
           width: 200,
         },
         {
-          title: "帐单币种",
+          title: "账单币种",
           property: "currencyCode",
         },
         {

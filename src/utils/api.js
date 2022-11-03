@@ -140,5 +140,9 @@ export default {
   // i17项目列表获取
   projectListQuery: '/ifrs17/projectListQuery',
   // 项目凭证导出excel
-  projectJournalEntryQuery: '/ifrs17/projectJournalEntryQuery'
+  projectJournalEntryQuery: '/ifrs17/projectJournalEntryQuery',
+  //汇算信息获取
+  summaryAllocatCalculatQuery: '/estimate/actuarial/summaryAllocatCalculatQuery',
+  // 凭证信息生成
+  projectJournalPush: '/ifrs17/projectJournalPush'
 };

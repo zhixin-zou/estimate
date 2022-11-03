@@ -401,7 +401,7 @@ export default {
           property: "entryName",
         },
         {
-          title: "帐单币种",
+          title: "账单币种",
           property: "currencyCode",
         },
         {

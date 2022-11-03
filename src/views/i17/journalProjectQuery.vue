@@ -52,7 +52,11 @@
           style="margin-right: 10px"
           >自定义列</el-button
         > -->
-
+      <el-button
+        @click="handleProjectJournalPush"
+        style="float: right; margin-bottom: 10px"
+        >凭证信息生成</el-button
+      >
       <el-table
         :data="currentPageData"
         border
@@ -197,7 +201,7 @@ export default {
       tableData: [],
       companyList: [],
       groupList: [],
-      contractGroupList: [],
+      projectJournalList: [],
     };
   },
   methods: {
@@ -270,11 +274,27 @@ export default {
     },
     handleSelectionChange(val) {
       console.log(val, "val");
-      this.contractGroupList = val;
+      this.projectJournalList = val;
     },
     handleShowDialog() {
       this.groupValue = "";
       this.showGroupDialog = true;
+    },
+    handleProjectJournalPush() {
+      let dataList = [];
+      if (this.projectJournalList.length !== 0) {
+        this.projectJournalList.forEach((item) => {
+          dataList.push(item.id);
+        });
+        $http.post(api.projectJournalPush, { projectId: dataList }).then((res) => {
+          if (res.data.code === "0") {
+            this.$message.error("生成成功");
+            this.handleSearchClick();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
+      }
     },
     // handleCancel() {
     //   this.showGroupDialog = false;

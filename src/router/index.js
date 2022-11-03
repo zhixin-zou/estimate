@@ -58,7 +58,7 @@ Vue.use(Router);
 const routes = [
   {
     path: "/",
-    component: FinancialForecasts,
+    component: JournalProjectQuery,
     meta: {
       title: "test",
       requireAuth: false,
@@ -107,6 +107,14 @@ const routes = [
   {
     path: "/groupInfo",
     component: GroupInfo,
+  },
+  {
+    path: "/journalProjectQuery",
+    component: JournalProjectQuery,
+  },
+  {
+    path: "/projectListQuery",
+    component: ProjectListQuery,
   },
   {
     path: "/annualEstimates",
@@ -223,14 +231,6 @@ const routes = [
   {
     path: "/monthTrialAdd",
     component: MonthTrialAdd,
-  },
-  {
-    path: "/journalProjectQuery",
-    component: JournalProjectQuery,
-  },
-  {
-    path: "/projectListQuery",
-    component: ProjectListQuery,
   },
   {
     path: "/404",

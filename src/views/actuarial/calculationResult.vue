@@ -5,11 +5,7 @@
       <el-date-picker v-model="estimateMonth" type="month" placeholder="选择月">
       </el-date-picker>
       <span style="padding-left: 20px">请选择汇算class</span>
-      <el-select
-        v-model="classCode"
-        placeholder="请选择"
-        style="padding: 0 20px"
-      >
+      <el-select v-model="classCode" placeholder="请选择" style="padding: 0 20px">
         <el-option
           v-for="(item, index) in classList"
           :key="index"
@@ -20,13 +16,9 @@
       <el-button type="primary" round @click="handleClick" :loading="loading"
         >汇算</el-button
       >
-      <!-- <el-button
-        type="primary"
-        round
-        @click="handleCheckClick"
-        :loading="loading"
+      <el-button type="primary" round @click="handleCheckClick" :loading="loading"
         >查询</el-button
-      > -->
+      >
       <div
         v-if="this.estimateMonthShow !== ''"
         class="headerRight"
@@ -59,11 +51,7 @@
             border
             style="width: 100%; margin-top: 20px"
           >
-            <el-table-column
-              prop="contractinfo"
-              :label="item.contractNo"
-              width="180"
-            >
+            <el-table-column prop="contractinfo" :label="item.contractNo" width="180">
             </el-table-column>
             <el-table-column prop="Gross" label="Gross"> </el-table-column>
             <el-table-column prop="Net" label="Net"> </el-table-column>
@@ -93,11 +81,7 @@
             border
             style="width: 100%; margin-top: 20px"
           >
-            <el-table-column
-              prop="contractinfo"
-              :label="item.className"
-              width="180"
-            >
+            <el-table-column prop="contractinfo" :label="item.className" width="180">
             </el-table-column>
             <el-table-column prop="Gross" label="Gross"> </el-table-column>
             <el-table-column prop="Net" label="Net"> </el-table-column>
@@ -127,11 +111,7 @@
             border
             style="width: 100%; margin-top: 20px"
           >
-            <el-table-column
-              prop="contractinfo"
-              :label="item.contractNo"
-              width="180"
-            >
+            <el-table-column prop="contractinfo" :label="item.contractNo" width="180">
             </el-table-column>
             <el-table-column prop="Gross" label="Gross"> </el-table-column>
             <el-table-column prop="Net" label="Net"> </el-table-column>
@@ -153,17 +133,8 @@
             :columns="xfcwColumns"
             :listData="lastList"
           ></fs-list-panel> -->
-          <el-table
-            :data="lastList"
-            border
-            style="width: 100%; margin-top: 20px"
-          >
-            <el-table-column
-              prop="company"
-              label="公司"
-              width="180"
-              fixed="left"
-            >
+          <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
+            <el-table-column prop="company" label="公司" width="180" fixed="left">
             </el-table-column>
             <el-table-column prop="calculatItem" label="计算项目" fixed="left">
             </el-table-column>
@@ -187,12 +158,9 @@
             border
             style="width: 100%; margin-top: 20px"
           >
-            <el-table-column prop="company" label="公司" width="180">
-            </el-table-column>
-            <el-table-column prop="calculatItem" label="计算项目">
-            </el-table-column>
-            <el-table-column prop="currencyCode" label="币种">
-            </el-table-column>
+            <el-table-column prop="company" label="公司" width="180"> </el-table-column>
+            <el-table-column prop="calculatItem" label="计算项目"> </el-table-column>
+            <el-table-column prop="currencyCode" label="币种"> </el-table-column>
             <el-table-column
               v-for="(item, index) in calculatedFeeList"
               :key="index"
@@ -207,10 +175,7 @@
         </div>
       </div>
       <div class="saveToFinance">
-        <el-button
-          plain
-          @click="saveToFinance"
-          style="margin-top: 10px; margin-left: 45%"
+        <el-button plain @click="saveToFinance" style="margin-top: 10px; margin-left: 45%"
           >确认并下发财务</el-button
         >
       </div>
@@ -338,11 +303,10 @@ export default {
         paramsMonth = String(date.getFullYear()) + month;
       }
       console.log(paramsMonth, "paramsMonth");
-       $http
+      $http
         .post(api.summaryAllocatCalculat, {
-          classCode: 'Health',
-          estimateMonth: paramsMonth
-
+          classCode: "Health",
+          estimateMonth: paramsMonth,
         })
         .then((res) => {
           this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
@@ -357,7 +321,6 @@ export default {
           this.handleFloatChange();
           this.estimateMonthShow = res.data.data.estimateMonth;
         });
-      
     },
     handleBack() {
       // this.$router.go(-1);
@@ -403,9 +366,7 @@ export default {
         .post(api.summaryAllocatCalculat, {
           classCode: this.classCode,
           estimateMonth:
-            this.estimateMonth === ""
-              ? ""
-              : getYearMonthDate(this.estimateMonth),
+            this.estimateMonth === "" ? "" : getYearMonthDate(this.estimateMonth),
         })
         .then((res) => {
           this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
@@ -422,15 +383,34 @@ export default {
         });
     },
     handleCheckClick() {
+      this.istrycalculate = true;
+
       this.$message.warning("功能暂不支持");
+      $http
+        .post(api.summaryAllocatCalculatQuery, {
+          classCode: this.classCode,
+          estimateMonth:
+            this.estimateMonth === "" ? "" : getYearMonthDate(this.estimateMonth),
+        })
+        .then((res) => {
+          this.hsqContractInfoList = res.data.data.beforeCalculatTreatyList;
+          this.handleHsq(this.hsqContractInfoList, 0);
+          let hsxzInfoList = res.data.data.calculatClassSummaryList;
+          this.hsxzDataList = res.data.data.calculatClassSummaryList;
+          this.handleHshz(hsxzInfoList);
+          this.hshContractInfoList = res.data.data.afterCalculatTreatyList;
+          this.handleHsq(this.hshContractInfoList, 1);
+          this.calculatedFeeList = res.data.data.calculatedFeeList;
+          this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+          this.handleFloatChange();
+          this.estimateMonthShow = res.data.data.estimateMonth;
+        });
       this.istrycalculate = false;
     },
     handleHshz(hshz) {
       let obj = {};
       let contractList = hshz.reduce((cur, next) => {
-        obj[next.className]
-          ? ""
-          : (obj[next.className] = true && cur.push(next));
+        obj[next.className] ? "" : (obj[next.className] = true && cur.push(next));
         return cur;
       }, []); //设置cur默认类型为数组，并且初始值为空的数组
       // console.log(contractList, "cont..............................................................................................ractList", hshz);
@@ -479,9 +459,7 @@ export default {
     handleHsq(hsxx, flag) {
       let obj = {};
       let contractList = hsxx.reduce((cur, next) => {
-        obj[next.contractNo]
-          ? ""
-          : (obj[next.contractNo] = true && cur.push(next));
+        obj[next.contractNo] ? "" : (obj[next.contractNo] = true && cur.push(next));
         return cur;
       }, []); //设置cur默认类型为数组，并且初始值为空的数组
       // console.log(contractList, "contractList", hsxx);
@@ -535,34 +513,22 @@ export default {
       this.lastList = [];
       // console.log(this.calculatedFeeList, "this.calculatedFeeList");
       var obj = {};
-      this.calculatedFeeList = this.calculatedFeeList.reduce(function (
-        item,
-        next
-      ) {
-        obj[next.contractNo]
-          ? ""
-          : (obj[next.contractNo] = true && item.push(next));
+      this.calculatedFeeList = this.calculatedFeeList.reduce(function (item, next) {
+        obj[next.contractNo] ? "" : (obj[next.contractNo] = true && item.push(next));
         return item;
-      },
-      []);
+      }, []);
       var obj2 = {};
       var calculatObj = {};
       this.testList = this.calculatedFeeList2.reduce(function (item, next) {
-        obj2[next.company]
-          ? ""
-          : (obj2[next.company] = true && item.push(next));
+        obj2[next.company] ? "" : (obj2[next.company] = true && item.push(next));
         return item;
       }, []);
-      let calculatItemList = this.calculatedFeeList2.reduce(function (
-        item,
-        next
-      ) {
+      let calculatItemList = this.calculatedFeeList2.reduce(function (item, next) {
         calculatObj[next.calculatItem]
           ? ""
           : (calculatObj[next.calculatItem] = true && item.push(next));
         return item;
-      },
-      []);
+      }, []);
 
       var result = [];
       var obj3 = {};

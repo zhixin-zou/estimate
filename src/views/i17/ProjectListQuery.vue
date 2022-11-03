@@ -107,7 +107,7 @@
 
 <script>
 import { $http } from "@/utils/request";
-// import api from "@/utils/api";
+import api from "@/utils/api";
 import { kiloSplit, toPercent } from "@/utils/utils";
 // import * as XLSX from "xlsx";
 // import FileSaver from "file-saver";
@@ -152,8 +152,8 @@ export default {
       this.loading = true;
 
       $http
-        // .post(api.projectListQuery, this.form)
-        .post("http://yapi.smart-xwork.cn/mock/134845/ifrs17/projectListQuery", this.form)
+        .post(api.projectListQuery, this.form)
+        // .post("http://yapi.smart-xwork.cn/mock/134845/ifrs17/projectListQuery", this.form)
         .then((res) => {
           // this.$message.success('');
           if (res.data.code === "0") {
@@ -206,8 +206,8 @@ export default {
     },
     handleProjectJournal(row) {
       $http
-        // .post(api.projectJournalEntryQuery, {
-        .post("http://yapi.smart-xwork.cn/mock/134845/ifrs17/projectJournalEntryQuery", {
+        .post(api.projectJournalEntryQuery, {
+          // .post("http://yapi.smart-xwork.cn/mock/134845/ifrs17/projectJournalEntryQuery", {
           projectId: row.id,
         })
         .then((res) => {
