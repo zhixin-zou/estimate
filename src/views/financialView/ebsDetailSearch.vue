@@ -97,8 +97,11 @@
                     <el-option label="预估账" value="Estimation"></el-option>
                     <el-option label="技术账单" value="SICS Technical"></el-option>
                     <el-option label="结算账单" value="SICS Settlement"></el-option>
-                               <el-option label="资金账单" value="SICS Remittance"></el-option>
-                    <el-option label="ifrs17账务" value="Moody's IFRS 17 Journal Entries"></el-option>
+                    <el-option label="资金账单" value="SICS Remittance"></el-option>
+                    <el-option
+                      label="ifrs17账务"
+                      value="Moody's IFRS 17 Journal Entries"
+                    ></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否反冲">
@@ -472,6 +475,10 @@ export default {
       $http.get("/estimate/partnerQuery").then((res) => {
         this.companyList = res.data.data.partnerList;
       });
+      if (sessionStorage.getItem("projectIdJournal")) {
+        this.form.accountClass = "Moody's IFRS 17 Journal Entries";
+        this.handleSearchProjectClick();
+      }
     },
 
     selectable(row) {
@@ -482,28 +489,90 @@ export default {
       }
     },
     handleSearchClick() {
+      let params = {};
+      if (sessionStorage.getItem("projectIdJournal")) {
+        params = {
+          contractType: this.form.contractType,
+          contractNoBegin: this.form.contractNoBegin,
+          contractNoEnd: this.form.contractNoEnd,
+          contractClass: this.form.contractClass,
+          cedent: this.form.cedent,
+          contractTimeBegin: this.form.contractTimeBegin,
+          contractTimeEnd: this.form.contractTimeEnd,
+          estimateMonth:
+            this.form.estimateMonth === ""
+              ? ""
+              : getYearMonthDate(this.form.estimateMonth),
+          accountType: this.form.accountType,
+          reverseFlag: this.form.reverseFlag,
+          accountDate: this.form.accountDate,
+          accountBatch: this.form.accountBatch,
+          journalDescription: this.form.journalDescription,
+          accountCode: this.form.accountCode,
+          productCode: this.form.productCode,
+          accountClass: this.form.accountClass,
+          postFlag: this.form.postFlag,
+          projectId: sessionStorage.getItem("projectIdJournal"),
+        };
+        params.estimateMonth =
+          params.estimateMonth === "197001" ? "" : params.estimateMonth;
+      } else {
+        params = {
+          contractType: this.form.contractType,
+          contractNoBegin: this.form.contractNoBegin,
+          contractNoEnd: this.form.contractNoEnd,
+          contractClass: this.form.contractClass,
+          cedent: this.form.cedent,
+          contractTimeBegin: this.form.contractTimeBegin,
+          contractTimeEnd: this.form.contractTimeEnd,
+          estimateMonth:
+            this.form.estimateMonth === ""
+              ? ""
+              : getYearMonthDate(this.form.estimateMonth),
+          accountType: this.form.accountType,
+          reverseFlag: this.form.reverseFlag,
+          accountDate: this.form.accountDate,
+          accountBatch: this.form.accountBatch,
+          journalDescription: this.form.journalDescription,
+          accountCode: this.form.accountCode,
+          productCode: this.form.productCode,
+          accountClass: this.form.accountClass,
+          postFlag: this.form.postFlag,
+          projectId: "",
+        };
+        params.estimateMonth =
+          params.estimateMonth === "197001" ? "" : params.estimateMonth;
+      }
+
+      this.loading = true;
+      this.canEdit = true;
+      $http
+        .post(api.ebsInfoQuery, params)
+        .then((res) => {
+          if (res.data.code === "0") {
+            console.log(res, "res");
+            this.listData = res.data.data.ebsDetail || [];
+            this.EBSSummaryForm = res.data.data.ebsSummary || this.initEBSSummaryForm;
+            this.listData.forEach((item) => {
+              // console.log(item);
+              if (item.updateFlag == "Y") {
+                this.canEdit = false;
+              }
+            });
+          } else {
+            console.log(res);
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    handleSearchProjectClick() {
       let params = {
-        contractType: this.form.contractType,
-        contractNoBegin: this.form.contractNoBegin,
-        contractNoEnd: this.form.contractNoEnd,
-        contractClass: this.form.contractClass,
-        cedent: this.form.cedent,
-        contractTimeBegin: this.form.contractTimeBegin,
-        contractTimeEnd: this.form.contractTimeEnd,
-        estimateMonth:
-          this.form.estimateMonth === "" ? "" : getYearMonthDate(this.form.estimateMonth),
-        accountType: this.form.accountType,
-        reverseFlag: this.form.reverseFlag,
-        accountDate: this.form.accountDate,
-        accountBatch: this.form.accountBatch,
-        journalDescription: this.form.journalDescription,
-        accountCode: this.form.accountCode,
-        productCode: this.form.productCode,
-        accountClass: this.form.accountClass,
-        postFlag: this.form.postFlag,
+        accountClass: "Moody's IFRS 17 Journal Entries",
+        projectId: sessionStorage.getItem("projectIdJournal"),
       };
-      params.estimateMonth =
-        params.estimateMonth === "197001" ? "" : params.estimateMonth;
       this.loading = true;
       this.canEdit = true;
       $http

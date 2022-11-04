@@ -60,7 +60,18 @@
             >自定义列</el-button
           > -->
       <!-- @selection-change="handleSelectionChange" -->
-      <el-table :data="currentPageData" border style="width: 100%" ref="listBox">
+      <el-button
+        @click="handleProjectJournalPush"
+        style="float: right; margin-bottom: 10px"
+        >凭证信息生成</el-button
+      >
+      <el-table
+        :data="currentPageData"
+        border
+        style="width: 100%"
+        ref="listBox"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="55"> </el-table-column>
         <el-table-column width="120" prop="id" label="项目id"> </el-table-column>
         <el-table-column prop="type" label="项目类型"> </el-table-column>
@@ -80,6 +91,15 @@
             <el-button @click="handleProjectJournal(scope.row)" type="text" size="small"
               >查看凭证</el-button
             >
+            <el-button
+              @click="handleProjectJournalPushRow(scope.row)"
+              type="text"
+              size="small"
+              >生成凭证信息</el-button
+            >
+            <el-button @click="handleJectJournal(scope.row)" type="text" size="small"
+              >查看明细</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -90,6 +110,7 @@
           layout="total, sizes, prev, pager, next"
           @prev-click="prevPage"
           @next-click="nextPage"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page.sync="currentPage"
           :page-size="pageSize"
@@ -132,7 +153,7 @@ export default {
       tableData: [],
       companyList: [],
       groupList: [],
-      contractGroupList: [],
+      projectJournalList: [],
     };
   },
   methods: {
@@ -217,10 +238,43 @@ export default {
           }
         });
     },
-    // handleSelectionChange(val) {
-    //   console.log(val, "val");
-    //   this.contractGroupList = val;
-    // },
+    handleProjectJournalPush() {
+      let dataList = [];
+      if (this.projectJournalList.length !== 0) {
+        this.projectJournalList.forEach((item) => {
+          dataList.push(item.id);
+        });
+        $http.post(api.projectJournalPush, { projectId: dataList }).then((res) => {
+          if (res.data.code === "0") {
+            this.$message.error("生成成功");
+            this.handleSearchClick();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
+      }
+    },
+    handleProjectJournalPushRow(row) {
+      console.log(row);
+      $http.post(api.projectJournalPush, { projectId: [row.id] }).then((res) => {
+        if (res.data.code === "0") {
+          this.$message.error("生成成功");
+          this.handleSearchClick();
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
+    handleJectJournal(row) {
+      console.log(row, "row");
+      this.$router.push("/ebsDetailSearch");
+      sessionStorage.setItem("accountClassJournal", "Moody's IFRS 17 Journal Entries");
+      sessionStorage.setItem("projectIdJournal", row.id);
+    },
+    handleSelectionChange(val) {
+      console.log(val, "val");
+      this.projectJournalList = val;
+    },
 
     // handleShowDialog() {
     //   this.groupValue = "";

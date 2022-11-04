@@ -52,11 +52,11 @@
           style="margin-right: 10px"
           >自定义列</el-button
         > -->
-      <el-button
+      <!-- <el-button
         @click="handleProjectJournalPush"
         style="float: right; margin-bottom: 10px"
         >凭证信息生成</el-button
-      >
+      > -->
       <el-table
         :data="currentPageData"
         border
