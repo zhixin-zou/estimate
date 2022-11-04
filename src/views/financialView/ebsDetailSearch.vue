@@ -100,7 +100,7 @@
                     <el-option label="资金账单" value="SICS Remittance"></el-option>
                     <el-option
                       label="ifrs17账务"
-                      value="Moody's IFRS 17 Journal Entries"
+                      value=" I17 sub-ledger"
                     ></el-option>
                   </el-select>
                 </el-form-item>
@@ -476,7 +476,7 @@ export default {
         this.companyList = res.data.data.partnerList;
       });
       if (sessionStorage.getItem("projectIdJournal")) {
-        this.form.accountClass = "Moody's IFRS 17 Journal Entries";
+        this.form.accountClass = " I17 sub-ledger";
         this.handleSearchProjectClick();
       }
     },
@@ -570,7 +570,7 @@ export default {
     },
     handleSearchProjectClick() {
       let params = {
-        accountClass: "Moody's IFRS 17 Journal Entries",
+        accountClass: " I17 sub-ledger",
         projectId: sessionStorage.getItem("projectIdJournal"),
       };
       this.loading = true;

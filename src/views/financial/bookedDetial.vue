@@ -101,7 +101,7 @@
                     <el-option label="资金账单" value="SICS Remittance"></el-option>
                     <el-option
                       label="ifrs17账务"
-                      value="Moody's IFRS 17 Journal Entries"
+                      value=" I17 sub-ledger"
                     ></el-option>
                   </el-select>
                 </el-form-item>
