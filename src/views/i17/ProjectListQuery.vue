@@ -60,11 +60,6 @@
             >自定义列</el-button
           > -->
       <!-- @selection-change="handleSelectionChange" -->
-      <el-button
-        @click="handleProjectJournalPush"
-        style="float: right; margin-bottom: 10px"
-        >凭证信息生成</el-button
-      >
       <el-table
         :data="currentPageData"
         border
@@ -89,16 +84,16 @@
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <el-button @click="handleProjectJournal(scope.row)" type="text" size="small"
-              >查看凭证</el-button
+              >moodys子账</el-button
             >
             <el-button
               @click="handleProjectJournalPushRow(scope.row)"
               type="text"
               size="small"
-              >生成凭证信息</el-button
+              >生成ebs凭证</el-button
             >
             <el-button @click="handleJectJournal(scope.row)" type="text" size="small"
-              >查看明细</el-button
+              >查看凭证信息</el-button
             >
           </template>
         </el-table-column>
@@ -120,9 +115,9 @@
         </el-pagination>
       </div>
     </div>
-    <!-- <div class="checkGroup">
-      <el-button @click="handleShowDialog">确认</el-button>
-    </div> -->
+    <div class="checkGroup">
+      <el-button @click="handleProjectJournalPush">生成ebs凭证</el-button>
+    </div>
   </div>
 </template>
 
@@ -258,7 +253,7 @@ export default {
       console.log(row);
       $http.post(api.projectJournalPush, { projectId: [row.id] }).then((res) => {
         if (res.data.code === "0") {
-          this.$message.error("生成成功");
+          this.$message.success("生成成功");
           this.handleSearchClick();
         } else {
           this.$message.error(res.data.msg);

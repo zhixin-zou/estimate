@@ -7,6 +7,13 @@
         @click="handleExport('bookDetialList', '明细')"
         >导出</el-button
       >
+      <el-button
+        v-if="showBtn"
+        class="dbtn"
+        style="margin-right: 5px"
+        @click="handleBack()"
+        >返回</el-button
+      >
     </div>
     <div class="collapseSearch">
       <el-collapse v-model="activeNames" @change="handleChange">
@@ -98,10 +105,7 @@
                     <el-option label="技术账单" value="SICS Technical"></el-option>
                     <el-option label="结算账单" value="SICS Settlement"></el-option>
                     <el-option label="资金账单" value="SICS Remittance"></el-option>
-                    <el-option
-                      label="ifrs17账务"
-                      value=" I17 sub-ledger"
-                    ></el-option>
+                    <el-option label="ifrs17账务" value=" I17 sub-ledger"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否反冲">
@@ -136,6 +140,9 @@
                     <el-option label="是" value="Y"></el-option>
                     <el-option label="否" value="N"></el-option>
                   </el-select>
+                </el-form-item>
+                <el-form-item label="ifrs17项目ID">
+                  <el-input v-model="form.productId"></el-input>
                 </el-form-item>
               </el-form>
             </div>
@@ -349,6 +356,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
+        productID: "",
       },
       companyList: [],
       loading: false,
@@ -461,6 +469,7 @@ export default {
       ebsModifyList: [],
       canEditflag: 0,
       // selectable: false
+      showBtn: sessionStorage.getItem("projectIdJournal"),
     };
   },
   computed: {
@@ -476,7 +485,7 @@ export default {
         this.companyList = res.data.data.partnerList;
       });
       if (sessionStorage.getItem("projectIdJournal")) {
-        this.form.accountClass = " I17 sub-ledger";
+        this.form.accountClass = "I17 sub-ledger";
         this.handleSearchProjectClick();
       }
     },
@@ -538,7 +547,7 @@ export default {
           productCode: this.form.productCode,
           accountClass: this.form.accountClass,
           postFlag: this.form.postFlag,
-          projectId: "",
+          projectId: this.form.projectId,
         };
         params.estimateMonth =
           params.estimateMonth === "197001" ? "" : params.estimateMonth;
@@ -616,6 +625,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
+        productID: "",
       };
     },
     handleSelectionChange(val) {
@@ -703,6 +713,9 @@ export default {
     handleExport(data, filename) {
       this.exportBtn(data, filename);
       // console.log(this.$refs.exportTableRef1.$el);
+    },
+    handleBack() {
+      this.$router.push("/projectListQuery");
     },
     handleChange(val) {
       console.log(val);

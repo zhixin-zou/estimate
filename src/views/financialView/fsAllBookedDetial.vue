@@ -98,8 +98,11 @@
                     <el-option label="预估账" value="Estimation"></el-option>
                     <el-option label="技术账单" value="SICS Technical"></el-option>
                     <el-option label="结算账单" value="SICS Settlement"></el-option>
-                               <el-option label="资金账单" value="SICS Remittance"></el-option>
-                    <el-option label="ifrs17账务" value=" I17 sub-ledger"></el-option>
+                    <el-option label="资金账单" value="SICS Remittance"></el-option>
+                    <el-option
+                      label="ifrs17账务"
+                      value="Moody's IFRS 17 Journal Entries"
+                    ></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否反冲">
@@ -134,6 +137,9 @@
                     <el-option label="是" value="Y"></el-option>
                     <el-option label="否" value="N"></el-option>
                   </el-select>
+                </el-form-item>
+                <el-form-item label="ifrs17项目ID">
+                  <el-input v-model="form.productId"></el-input>
                 </el-form-item>
               </el-form>
             </div>
@@ -351,6 +357,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
+        productID: "",
       },
       companyList: [],
       loading: false,
@@ -529,6 +536,7 @@ export default {
         productCode: this.form.productCode,
         accountClass: this.form.accountClass,
         postFlag: this.form.postFlag,
+        projectId: this.form.projectId,
       };
       params.estimateMonth =
         params.estimateMonth === "197001" ? "" : params.estimateMonth;
@@ -576,6 +584,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
+        productID: "",
       };
     },
     handleSelectionChange(val) {
