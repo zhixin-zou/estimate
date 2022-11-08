@@ -47,6 +47,7 @@ import ContractSearch from "@/views/i17/contractSearch.vue"
 import GroupInfo from "@/views/i17/groupInfo.vue"
 import JournalProjectQuery from "@/views/i17/journalProjectQuery.vue"
 import ProjectListQuery from "@/views/i17/ProjectListQuery.vue"
+import ContractGroupQuery from "@/views/i17/groupQuery.vue"
 
 
 // import { Message } from 'element-ui'
@@ -115,6 +116,10 @@ const routes = [
   {
     path: "/projectListQuery",
     component: ProjectListQuery,
+  },
+  {
+    path: "/contractGroupQuery",
+    component: ContractGroupQuery,
   },
   {
     path: "/annualEstimates",

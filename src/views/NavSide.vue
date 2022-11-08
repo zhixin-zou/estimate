@@ -57,6 +57,7 @@
             <el-menu-item index="/groupInfo">分组信息</el-menu-item>
             <el-menu-item index="/journalProjectQuery">凭证查询</el-menu-item>
             <el-menu-item index="/projectListQuery">项目查询</el-menu-item>
+            <el-menu-item index="/contractGroupQuery">合同组查询</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
       </el-menu>
