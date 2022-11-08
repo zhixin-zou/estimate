@@ -4,11 +4,7 @@
       <div class="searchMain">
         <el-form ref="form" :model="form" label-width="100px">
           <el-form-item label="合同类型">
-            <el-select
-              v-model="form.contractType"
-              placeholder="请选择"
-              clearable
-            >
+            <el-select v-model="form.contractType" placeholder="请选择" clearable>
               <el-option label="比例合约" value="PROPTREATY "></el-option>
               <el-option label="非比例合约" value="NONPROPTREATY"></el-option>
               <el-option label="比例临分" value="PROPFAC"></el-option>
@@ -102,17 +98,9 @@
           v-if="columns[0].show"
         >
         </el-table-column>
-        <el-table-column
-          prop="planName"
-          label="合同标题"
-          v-if="columns[1].show"
-        >
+        <el-table-column prop="planName" label="合同标题" v-if="columns[1].show">
         </el-table-column>
-        <el-table-column
-          prop="contractType"
-          label="合同类型"
-          v-if="columns[2].show"
-        >
+        <el-table-column prop="contractType" label="合同类型" v-if="columns[2].show">
         </el-table-column>
         <el-table-column prop="planName" label="主险种" v-if="columns[3].show">
         </el-table-column>
@@ -143,39 +131,22 @@
         </el-table-column>
         <el-table-column prop="payType" label="缴费方式" v-if="columns[8].show">
         </el-table-column>
-        <el-table-column
-          prop="epi"
-          label="预估保费"
-          width="200"
-          v-if="columns[9].show"
-        >
+        <el-table-column prop="epi" label="预估保费" width="200" v-if="columns[9].show">
           <template slot-scope="scope">
             <span>{{ kiloSplitData(scope.row.epi) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="commissionRate"
-          label="手续费比例"
-          v-if="columns[10].show"
-        >
+        <el-table-column prop="commissionRate" label="手续费比例" v-if="columns[10].show">
           <template slot-scope="scope">
             <span>{{ toPercentData(scope.row.commissionRate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="brokerageRate"
-          label="经纪费比例"
-          v-if="columns[11].show"
-        >
+        <el-table-column prop="brokerageRate" label="经纪费比例" v-if="columns[11].show">
           <template slot-scope="scope">
             <span>{{ toPercentData(scope.row.brokerageRate) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="cedentRate"
-          label="分出比例"
-          v-if="columns[12].show"
-        >
+        <el-table-column prop="cedentRate" label="分出比例" v-if="columns[12].show">
           <template slot-scope="scope">
             <span>{{ toPercentData(scope.row.cedentRate) }}</span>
           </template></el-table-column
@@ -185,10 +156,7 @@
         <el-table-column prop="groupName" label="合同分组"> </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button
-              @click="handleookedDetail(scope.row)"
-              type="text"
-              size="small"
+            <el-button @click="handleookedDetail(scope.row)" type="text" size="small"
               >查看明细</el-button
             >
           </template>
@@ -213,6 +181,11 @@
     <div class="checkGroup">
       <el-button @click="handleShowDialog">确认分组</el-button>
     </div>
+    <div class="buttonGroup">
+      <el-button :loading="downLoading" @click="handleyanshou">应收账单下载</el-button>
+      <el-button :loading="downLoading" @click="handlezijin">资金账单下载</el-button>
+      <el-button :loading="downLoading" @click="handlezhangdan">结算帐单下载</el-button>
+    </div>
     <el-dialog
       title="选择分组"
       class="groupDialog"
@@ -231,14 +204,27 @@
         </el-select>
       </div>
       <div class="dialogFoot" style="text-align: right">
-        <el-button type="primary" size="mini" @click="handleCancel"
-          >取消</el-button
-        >
-        <el-button type="primary" size="mini" @click="handleClick"
-          >确认</el-button
-        >
+        <el-button type="primary" size="mini" @click="handleCancel">取消</el-button>
+        <el-button type="primary" size="mini" @click="handleClick">确认</el-button>
       </div>
     </el-dialog>
+    <div v-show="false">
+      <fs-list-panel
+        :ref="'premiumBill'"
+        :columns="premiumBillColumns"
+        :listData="premiumBillList"
+      ></fs-list-panel>
+      <fs-list-panel
+        :ref="'fundBill'"
+        :columns="fundBillColumns"
+        :listData="fundBillList"
+      ></fs-list-panel>
+      <fs-list-panel
+        :ref="'settleBill'"
+        :columns="settleBillColumns"
+        :listData="settleBillList"
+      ></fs-list-panel>
+    </div>
   </div>
 </template>
 
@@ -246,8 +232,8 @@
 import { $http } from "@/utils/request";
 import api from "@/utils/api";
 import { kiloSplit, toPercent } from "@/utils/utils";
-// import * as XLSX from "xlsx";
-// import FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+import FileSaver from "file-saver";
 // import { mapActions } from "vuex";
 
 export default {
@@ -338,11 +324,361 @@ export default {
           show: true,
         },
       ],
+      premiumBillColumns: [
+        {
+          title: "同步时间",
+          property: "syncTime",
+        },
+        {
+          title: "提交人及提交时间",
+          property: "commitInfo",
+        },
+        {
+          title: "复核人及复核时间",
+          property: "checkInfo",
+        },
+        {
+          title: "公司代码名称",
+          property: "companyInfo",
+        },
+        {
+          title: "部门",
+          property: "department",
+        },
+        {
+          title: "核算类型",
+          property: "entryCode",
+        },
+        {
+          title: "核算名称",
+          property: "entryName",
+        },
+        {
+          title: "合同id",
+          property: "contractNo",
+        },
+        {
+          title: "账单id",
+          property: "workSheetNo",
+        },
+        {
+          title: "合同类型",
+          property: "contractType",
+        },
+        {
+          title: "是否预估",
+          property: "isEstimateFlag",
+        },
+        {
+          title: "合同类别",
+          property: "contractClass",
+        },
+        {
+          title: "渠道",
+          property: "channel",
+        },
+        {
+          title: "合约覆盖范围",
+          property: "region",
+        },
+        {
+          title: "贴牌非贴牌",
+          property: "OemFlag",
+        },
+        {
+          title: "地址",
+          property: "addressInfo",
+        },
+        {
+          title: "对方公司",
+          property: "oppCompanyInfo",
+        },
+        {
+          title: "账单类型",
+          property: "billType",
+        },
+        {
+          title: "是否反冲",
+          property: "reverseInfo",
+        },
+        {
+          title: "国家",
+          property: "country",
+        },
+        {
+          title: "发票日期",
+          property: "invoiceDate",
+        },
+        {
+          title: "应收日期",
+          property: "dueDate",
+        },
+        {
+          title: "承保起期",
+          property: "insureBeginDate",
+        },
+        {
+          title: "分入人",
+          property: "cedentInfo",
+        },
+        {
+          title: "分出人",
+          property: "reinsurerInfo",
+        },
+        {
+          title: "经济人",
+          property: "brokerInfo",
+        },
+        {
+          title: "账单币种",
+          property: "billCurrency",
+        },
+        {
+          title: "账单金额",
+          property: "billAmount",
+        },
+        {
+          title: "折算币种",
+          property: "billFuncionCurrency",
+        },
+        {
+          title: "折算金额",
+          property: "billFuncionAmount",
+        },
+        {
+          title: "余额主键",
+          property: "balanceKey",
+        },
+        {
+          title: "主键",
+          property: "billKey",
+        },
+        {
+          title: "凭证行信息1",
+          property: "accountBs",
+        },
+        {
+          title: "凭证行信息2",
+          property: "accountPl",
+        },
+        {
+          title: "凭证日期1",
+          property: "accountDate1",
+        },
+        {
+          title: "凭证日期2",
+          property: "accountDate2",
+        },
+        {
+          title: "凭证状态1",
+          property: "accountStatus1",
+        },
+        {
+          title: "凭证状态2",
+          property: "accountStatus2",
+        },
+      ],
+      fundBillColumns: [
+        {
+          title: "同步时间",
+          property: "syncTime",
+        },
+        {
+          title: "提交人及提交时间",
+          property: "commitInfo",
+        },
+        {
+          title: "复核人及复核时间",
+          property: "checkInfo",
+        },
+        {
+          title: "公司代码名称",
+          property: "companyInfo",
+        },
+        {
+          title: "收费类型",
+          property: "tranType",
+        },
+        {
+          title: "交易id",
+          property: "workSheetNo",
+        },
+        {
+          title: "转账流水",
+          property: "tranSerial",
+        },
+        {
+          title: "交易日期",
+          property: "tranDate",
+        },
+        {
+          title: "对方公司",
+          property: "oppCompanyInfo",
+        },
+        {
+          title: "交易币种",
+          property: "billCurrency",
+        },
+        {
+          title: "交易金额",
+          property: "billAmount",
+        },
+        {
+          title: "折算币种",
+          property: "billFuncionCurrency",
+        },
+        {
+          title: "折算金额",
+          property: "billFuncionAmount",
+        },
+        {
+          title: "我司公司账户",
+          property: "bankAccount",
+        },
+        {
+          title: "主键",
+          property: "billKey",
+        },
+        {
+          title: "凭证行信息1",
+          property: "accountBs",
+        },
+        {
+          title: "凭证行信息2",
+          property: "accountPl",
+        },
+        {
+          title: "凭证日期1",
+          property: "accountDate1",
+        },
+        {
+          title: "凭证日期2",
+          property: "accountDate2",
+        },
+        {
+          title: "凭证状态1",
+          property: "accountStatus1",
+        },
+        {
+          title: "凭证状态2",
+          property: "accountStatus2",
+        },
+      ],
+      settleBillColumns: [
+        {
+          title: "合同id",
+          property: "contractNo",
+        },
+        {
+          title: "账单id",
+          property: "workSheetNo",
+        },
+        {
+          title: "交易id",
+          property: "tranWorkSheetNo",
+        },
+        {
+          title: "转账流水",
+          property: "tranSerial",
+        },
+        {
+          title: "分入分出",
+          property: "contractClass",
+        },
+        {
+          title: "结算表同步时间",
+          property: "syncDate",
+        },
+        {
+          title: "结算人及结算日期",
+          property: "settleInfo",
+        },
+        {
+          title: "结算P表主键",
+          property: "settleKey",
+        },
+        {
+          title: "R表资金主键",
+          property: "fundKey",
+        },
+        {
+          title: "T账单约主键",
+          property: "premiumKey",
+        },
+        {
+          title: "账单明细数量",
+          property: "premiumCount",
+        },
+        {
+          title: "关联类型1资金币种",
+          property: "fundCurrency",
+        },
+        {
+          title: "关联类型2资金币种",
+          property: "premiumCurrency",
+        },
+        {
+          title: "关联类型1资金金额",
+          property: "fundAmount",
+        },
+        {
+          title: "关联类型2资金金额",
+          property: "premiumAmount",
+        },
+        {
+          title: "尾差",
+          property: "diff",
+        },
+        {
+          title: "关联类型1资金折算币种",
+          property: "fundFunctionCurrency",
+        },
+        {
+          title: "关联类型2资金折算币种",
+          property: "premiumFunctionCurrency",
+        },
+        {
+          title: "关联类型1资金折算金额",
+          property: "fundFunctionAmount",
+        },
+        {
+          title: "关联类型2资金折算金额",
+          property: "premiumFunctionAmount",
+        },
+        {
+          title: "凭证行信息1",
+          property: "accountBs",
+        },
+        {
+          title: "凭证行信息2",
+          property: "accountPl",
+        },
+        {
+          title: "凭证日期1",
+          property: "accountDate1",
+        },
+        {
+          title: "凭证日期2",
+          property: "accountDate2",
+        },
+        {
+          title: "凭证状态1",
+          property: "accountStatus1",
+        },
+        {
+          title: "凭证状态2",
+          property: "accountStatus2",
+        },
+      ],
       currentPageData: [],
       tableData: [],
       companyList: [],
       groupList: [],
       contractGroupList: [],
+      premiumBillList: [],
+      fundBillList: [],
+      settleBillList: [],
+      downLoading: false,
     };
   },
   methods: {
@@ -452,35 +788,77 @@ export default {
       this.showGroupDialog = false;
       this.init();
     },
+    handleyanshou() {
+      this.downLoading = true;
+      $http
+        .post(api.premiumBill, {})
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.premiumBillList = res.data.data.premiumBillList;
+          }
+        })
+        .finally(() => {
+          this.handleExport("premiumBill", "应收账单下载");
+          this.downLoading = false;
+        });
+    },
+    handlezijin() {
+      this.downLoading = true;
+      $http
+        .post(api.fundBill, {})
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.fundBillList = res.data.data.fundBillList;
+          }
+        })
+        .finally(() => {
+          this.handleExport("fundBill", "资金账单下载");
+          this.downLoading = false;
+        });
+    },
+    handlezhangdan() {
+      this.downLoading = true;
+      $http
+        .post(api.settleBill, {})
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.settleBillList = res.data.data.settleBillList;
+          }
+        })
+        .finally(() => {
+          this.handleExport("settleBill", "结算账单下载");
+          this.downLoading = false;
+        });
+    },
     // 导出方法
-    // exportBtn(refProp, fname) {
-    //   // 获取表格元素
-    //   const el = this.$refs[refProp].$el;
-    //   // 文件名
-    //   console.log(this.$refs[refProp], "elelele");
-    //   const filename = fname + ".xlsx";
-    //   /* generate workbook object from table */
-    //   const wb = XLSX.utils.table_to_book(el);
-    //   /* get binary string as output */
-    //   const wbout = XLSX.write(wb, {
-    //     bookType: "xlsx",
-    //     bookSST: true,
-    //     type: "array",
-    //   });
-    //   try {
-    //     FileSaver.saveAs(
-    //       new Blob([wbout], { type: "application/octet-stream" }),
-    //       filename
-    //     );
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    //   return wbout;
-    // },
-    // handleExport(data, filename) {
-    //   this.exportBtn(data, filename);
-    //   // console.log(this.$refs.exportTableRef1.$el);
-    // },
+    exportBtn(refProp, fname) {
+      // 获取表格元素
+      const el = this.$refs[refProp].$el;
+      // 文件名
+      console.log(this.$refs[refProp], "elelele");
+      const filename = fname + ".xlsx";
+      /* generate workbook object from table */
+      const wb = XLSX.utils.table_to_book(el);
+      /* get binary string as output */
+      const wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array",
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], { type: "application/octet-stream" }),
+          filename
+        );
+      } catch (e) {
+        console.log(e);
+      }
+      return wbout;
+    },
+    handleExport(data, filename) {
+      this.exportBtn(data, filename);
+      // console.log(this.$refs.exportTableRef1.$el);
+    },
   },
   // mounted () {
   //   this.test()
@@ -593,6 +971,10 @@ export default {
   .checkGroup {
     text-align: center;
     padding-bottom: 20px;
+  }
+  .buttonGroup {
+    margin-left: 10px;
+    padding: 10px;
   }
   .groupDialog {
     .dialogBody {

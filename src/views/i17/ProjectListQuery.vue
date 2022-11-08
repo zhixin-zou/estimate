@@ -263,7 +263,7 @@ export default {
     handleJectJournal(row) {
       console.log(row, "row");
       this.$router.push("/ebsDetailSearch");
-      sessionStorage.setItem("accountClassJournal", " I17 sub-ledger");
+      sessionStorage.setItem("accountClassJournal", "I17 sub-ledger");
       sessionStorage.setItem("projectIdJournal", row.id);
     },
     handleSelectionChange(val) {

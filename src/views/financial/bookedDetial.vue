@@ -99,7 +99,7 @@
                     <el-option label="技术账单" value="SICS Technical"></el-option>
                     <el-option label="结算账单" value="SICS Settlement"></el-option>
                     <el-option label="资金账单" value="SICS Remittance"></el-option>
-                    <el-option label="ifrs17账务" value=" I17 sub-ledger"></el-option>
+                    <el-option label="ifrs17账务" value="I17 sub-ledger"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否反冲">
@@ -354,7 +354,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
-        productID: "",
+        productId: "",
       },
       companyList: [],
       loading: false,

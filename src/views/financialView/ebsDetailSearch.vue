@@ -105,7 +105,7 @@
                     <el-option label="技术账单" value="SICS Technical"></el-option>
                     <el-option label="结算账单" value="SICS Settlement"></el-option>
                     <el-option label="资金账单" value="SICS Remittance"></el-option>
-                    <el-option label="ifrs17账务" value=" I17 sub-ledger"></el-option>
+                    <el-option label="ifrs17账务" value="I17 sub-ledger"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="是否反冲">
@@ -142,7 +142,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="ifrs17项目ID">
-                  <el-input v-model="form.productId"></el-input>
+                  <el-input v-model="form.projectId"></el-input>
                 </el-form-item>
               </el-form>
             </div>
@@ -356,7 +356,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
-        productID: "",
+        projectId: "",
       },
       companyList: [],
       loading: false,
@@ -486,6 +486,7 @@ export default {
       });
       if (sessionStorage.getItem("projectIdJournal")) {
         this.form.accountClass = "I17 sub-ledger";
+        this.form.projectId = sessionStorage.getItem("projectIdJournal");
         this.handleSearchProjectClick();
       }
     },
@@ -499,67 +500,37 @@ export default {
     },
     handleSearchClick() {
       let params = {};
-      if (sessionStorage.getItem("projectIdJournal")) {
-        params = {
-          contractType: this.form.contractType,
-          contractNoBegin: this.form.contractNoBegin,
-          contractNoEnd: this.form.contractNoEnd,
-          contractClass: this.form.contractClass,
-          cedent: this.form.cedent,
-          contractTimeBegin: this.form.contractTimeBegin,
-          contractTimeEnd: this.form.contractTimeEnd,
-          estimateMonth:
-            this.form.estimateMonth === ""
-              ? ""
-              : getYearMonthDate(this.form.estimateMonth),
-          accountType: this.form.accountType,
-          reverseFlag: this.form.reverseFlag,
-          accountDate: this.form.accountDate,
-          accountBatch: this.form.accountBatch,
-          journalDescription: this.form.journalDescription,
-          accountCode: this.form.accountCode,
-          productCode: this.form.productCode,
-          accountClass: this.form.accountClass,
-          postFlag: this.form.postFlag,
-          projectId: sessionStorage.getItem("projectIdJournal"),
-        };
-        params.estimateMonth =
-          params.estimateMonth === "197001" ? "" : params.estimateMonth;
-      } else {
-        params = {
-          contractType: this.form.contractType,
-          contractNoBegin: this.form.contractNoBegin,
-          contractNoEnd: this.form.contractNoEnd,
-          contractClass: this.form.contractClass,
-          cedent: this.form.cedent,
-          contractTimeBegin: this.form.contractTimeBegin,
-          contractTimeEnd: this.form.contractTimeEnd,
-          estimateMonth:
-            this.form.estimateMonth === ""
-              ? ""
-              : getYearMonthDate(this.form.estimateMonth),
-          accountType: this.form.accountType,
-          reverseFlag: this.form.reverseFlag,
-          accountDate: this.form.accountDate,
-          accountBatch: this.form.accountBatch,
-          journalDescription: this.form.journalDescription,
-          accountCode: this.form.accountCode,
-          productCode: this.form.productCode,
-          accountClass: this.form.accountClass,
-          postFlag: this.form.postFlag,
-          projectId: this.form.projectId,
-        };
-        params.estimateMonth =
-          params.estimateMonth === "197001" ? "" : params.estimateMonth;
-      }
-
+      params = {
+        contractType: this.form.contractType,
+        contractNoBegin: this.form.contractNoBegin,
+        contractNoEnd: this.form.contractNoEnd,
+        contractClass: this.form.contractClass,
+        cedent: this.form.cedent,
+        contractTimeBegin: this.form.contractTimeBegin,
+        contractTimeEnd: this.form.contractTimeEnd,
+        estimateMonth:
+          this.form.estimateMonth === "" ? "" : getYearMonthDate(this.form.estimateMonth),
+        accountType: this.form.accountType,
+        reverseFlag: this.form.reverseFlag,
+        accountDate: this.form.accountDate,
+        accountBatch: this.form.accountBatch,
+        journalDescription: this.form.journalDescription,
+        accountCode: this.form.accountCode,
+        productCode: this.form.productCode,
+        accountClass: this.form.accountClass,
+        postFlag: this.form.postFlag,
+        projectId: this.form.projectId,
+      };
+      params.estimateMonth =
+        params.estimateMonth === "197001" ? "" : params.estimateMonth;
       this.loading = true;
       this.canEdit = true;
+      console.log(params, "params");
       $http
         .post(api.ebsInfoQuery, params)
         .then((res) => {
           if (res.data.code === "0") {
-            console.log(res, "res");
+            // console.log(res, "res");
             this.listData = res.data.data.ebsDetail || [];
             this.EBSSummaryForm = res.data.data.ebsSummary || this.initEBSSummaryForm;
             this.listData.forEach((item) => {
@@ -579,7 +550,7 @@ export default {
     },
     handleSearchProjectClick() {
       let params = {
-        accountClass: " I17 sub-ledger",
+        accountClass: "I17 sub-ledger",
         projectId: sessionStorage.getItem("projectIdJournal"),
       };
       this.loading = true;
@@ -625,7 +596,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
-        productID: "",
+        productId: "",
       };
     },
     handleSelectionChange(val) {

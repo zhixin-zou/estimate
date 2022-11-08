@@ -144,5 +144,9 @@ export default {
   //汇算信息获取
   summaryAllocatCalculatQuery: '/estimate/actuarial/summaryAllocatCalculatQuery',
   // 凭证信息生成
-  projectJournalPush: '/ifrs17/projectJournalPush'
+  projectJournalPush: '/ifrs17/projectJournalPush',
+  // 
+  premiumBill: '/ifrs17/download/premiumBill',
+  fundBill: '/ifrs17/download/fundBill',
+  settleBill: '/ifrs17/download/settleBill',
 };

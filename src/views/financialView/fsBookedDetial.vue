@@ -357,7 +357,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
-        productID: "",
+        productId: "",
       },
       companyList: [],
       loading: false,
@@ -583,7 +583,7 @@ export default {
         productCode: "",
         accountClass: "",
         postFlag: "",
-        productID: "",
+        productId: "",
       };
     },
     handleSelectionChange(val) {
