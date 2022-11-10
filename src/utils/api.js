@@ -149,4 +149,6 @@ export default {
   premiumBill: '/ifrs17/download/premiumBill',
   fundBill: '/ifrs17/download/fundBill',
   settleBill: '/ifrs17/download/settleBill',
+  // 精算预估批量导入
+  saveActuarialEpi: '/estimate/actuarial/saveActuarialEpi'
 };

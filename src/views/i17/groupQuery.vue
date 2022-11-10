@@ -221,9 +221,9 @@
         </el-pagination>
       </div>
     </div>
-    <!-- <div class="checkGroup">
-        <el-button @click="handleProjectJournalPush">生成ebs凭证</el-button>
-      </div> -->
+    <div class="checkGroup">
+      <el-button @click="handleAddGroup">新增合同分组</el-button>
+    </div>
   </div>
 </template>
 
@@ -326,64 +326,9 @@ export default {
       this.currentPage = page;
       this.setCurrentPageData();
     },
-    // handleProjectJournal(row) {
-    //   $http
-    //     .post(api.projectJournalEntryQuery, {
-    //       // .post("http://yapi.smart-xwork.cn/mock/134845/ifrs17/projectJournalEntryQuery", {
-    //       projectId: row.id,
-    //     })
-    //     .then((res) => {
-    //       if (res.data.code === "0") {
-    //         let downloadUrl = res.data.data.exportInfo.activeBlobUrl;
-    //         window.open(downloadUrl);
-    //       }
-    //     });
-    // },
-    // handleProjectJournalPush() {
-    //   let dataList = [];
-    //   if (this.projectJournalList.length !== 0) {
-    //     this.projectJournalList.forEach((item) => {
-    //       dataList.push(item.id);
-    //     });
-    //     $http.post(api.projectJournalPush, { projectId: dataList }).then((res) => {
-    //       if (res.data.code === "0") {
-    //         this.$message.error("生成成功");
-    //         this.handleSearchClick();
-    //       } else {
-    //         this.$message.error(res.data.msg);
-    //       }
-    //     });
-    //   }
-    // },
-    // handleProjectJournalPushRow(row) {
-    //   console.log(row);
-    //   $http.post(api.projectJournalPush, { projectId: [row.id] }).then((res) => {
-    //     if (res.data.code === "0") {
-    //       this.$message.success("生成成功");
-    //       this.handleSearchClick();
-    //     } else {
-    //       this.$message.error(res.data.msg);
-    //     }
-    //   });
-    // },
-    // handleJectJournal(row) {
-    //   console.log(row, "row");
-    //   this.$router.push("/ebsDetailSearch");
-    //   sessionStorage.setItem("accountClassJournal", "I17 sub-ledger");
-    //   sessionStorage.setItem("projectIdJournal", row.id);
-    // },
-    // handleSelectionChange(val) {
-    //   console.log(val, "val");
-    //   this.projectJournalList = val;
-    // },
-
-    // handleShowDialog() {
-    //   this.groupValue = "";
-    //   this.showGroupDialog = true;
-    // },
-    // handleCancel() {
-    //   this.showGroupDialog = false;
-    // },
+    handleAddGroup() {
+      this.$router.push("/groupInfo");
+    },
     // 导出方法
     // exportBtn(refProp, fname) {
     //   // 获取表格元素
