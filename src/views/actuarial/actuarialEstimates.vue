@@ -160,6 +160,18 @@
         </el-pagination>
       </div>
     </div>
+    <div style="float: left">
+      数据期间
+      <el-date-picker
+        v-model="dataMonth"
+        type="month"
+        placeholder="选择月"
+        format="yyyy-MM"
+        value-format="yyyyMM"
+        style="width: 150px"
+      >
+      </el-date-picker>
+    </div>
     <div style="float: left; margin-top: 10px">
       <a
         href="javascript:;"
@@ -256,6 +268,7 @@ export default {
   data() {
     return {
       loading: false,
+      dataMonth: "",
       total: 0,
       pageSize: 10,
       currentPage: 1,
@@ -482,6 +495,7 @@ export default {
       if (target.files && target.files.length) {
         var data = new FormData();
         data.append("file", target.files[0]);
+        data.append("dataPeriod", this.dataMonth);
         this.importing = true;
         $http
           .post(api.saveActuarialEpi, data)

@@ -3,6 +3,7 @@
     <div class="searchBox">
       分组名称：
       <el-input v-model="form.groupName" style="width: 200px"></el-input>
+      <el-button style="float: right" @click="handleBack()">返回</el-button>
     </div>
     <div class="mainBox">
       分组信息填充：
@@ -88,33 +89,24 @@
           <tr>
             <td>Commission type</td>
             <td><el-input v-model="form.commissionType"></el-input></td>
+            <td>Maximum sliding scale commission ratio（多个值怎么计算综合）</td>
             <td>
-              Maximum sliding scale commission ratio（多个值怎么计算综合）
-            </td>
-            <td>
-              <el-input
-                v-model="form.maximumSlidingScaleCommissionRatio"
-              ></el-input>
+              <el-input v-model="form.maximumSlidingScaleCommissionRatio"></el-input>
             </td>
           </tr>
           <tr>
             <td>Actual Premium Received for Current & Future Service</td>
             <td><el-input v-model="form.actualPremiumReceived"></el-input></td>
+            <td>Provisional sliding scale commission ratio（多个值怎么计算综合）</td>
             <td>
-              Provisional sliding scale commission ratio（多个值怎么计算综合）
-            </td>
-            <td>
-              <el-input
-                v-model="form.provisionalSlidingScaleCommissionRatio"
-              ></el-input>
+              <el-input v-model="form.provisionalSlidingScaleCommissionRatio"></el-input>
             </td>
           </tr>
           <tr>
             <td>Paid Claims and ALAE</td>
             <td><el-input v-model="form.paidClaimsAndALAE"></el-input></td>
             <td>
-              Sliding scale commission ratio correponding to the incurred loss
-              ratio
+              Sliding scale commission ratio correponding to the incurred loss ratio
             </td>
             <td>
               <el-input v-model="form.slidingScaleCommissionRatio"></el-input>
@@ -131,9 +123,7 @@
           <tr>
             <td>Paid acquisition and maintenance expenses</td>
             <td>
-              <el-input
-                v-model="form.paidAcquisitionAndMaintenanceExpenses"
-              ></el-input>
+              <el-input v-model="form.paidAcquisitionAndMaintenanceExpenses"></el-input>
             </td>
             <td></td>
             <td>
@@ -230,9 +220,12 @@ export default {
             groupId: "",
           };
         } else {
-            this.$message.error(res.data.msg)
+          this.$message.error(res.data.msg);
         }
       });
+    },
+    handleBack() {
+      this.$router.push("/contractGroupQuery");
     },
   },
 };
