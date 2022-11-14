@@ -182,6 +182,18 @@
       <el-button @click="handleShowDialog">确认分组</el-button>
     </div>
     <div class="buttonGroup">
+      <div style="float: left; margin-right: 10px">
+        数据期间
+        <el-date-picker
+          v-model="dataMonth"
+          type="month"
+          placeholder="选择月"
+          format="yyyy-MM"
+          value-format="yyyyMM"
+          style="width: 150px"
+        >
+        </el-date-picker>
+      </div>
       <el-button :loading="downLoading" @click="handleyanshou">应收账单下载</el-button>
       <el-button :loading="downLoading" @click="handlezijin">资金账单下载</el-button>
       <el-button :loading="downLoading" @click="handlezhangdan">结算帐单下载</el-button>
@@ -240,6 +252,7 @@ export default {
   data() {
     return {
       loading: false,
+      dataMonth: "",
       total: 0,
       pageSize: 10,
       currentPage: 1,
@@ -776,7 +789,7 @@ export default {
       $http
         .post(api.contractGroupRelate, {
           groupId: this.groupValue,
-          contractNo: contractGroupRelateArr,
+          contractList: contractGroupRelateArr,
         })
         .then((res) => {
           if (res.data.code === "0") {
@@ -791,7 +804,9 @@ export default {
     handleyanshou() {
       this.downLoading = true;
       $http
-        .post(api.premiumBill, {})
+        .post(api.premiumBill, {
+          dataPeriod: this.dataMonth,
+        })
         .then((res) => {
           if (res.data.code === "0") {
             this.premiumBillList = res.data.data.premiumBillList;
@@ -805,7 +820,9 @@ export default {
     handlezijin() {
       this.downLoading = true;
       $http
-        .post(api.fundBill, {})
+        .post(api.fundBill, {
+          dataPeriod: this.dataMonth,
+        })
         .then((res) => {
           if (res.data.code === "0") {
             this.fundBillList = res.data.data.fundBillList;
@@ -819,7 +836,9 @@ export default {
     handlezhangdan() {
       this.downLoading = true;
       $http
-        .post(api.settleBill, {})
+        .post(api.settleBill, {
+          dataPeriod: this.dataMonth,
+        })
         .then((res) => {
           if (res.data.code === "0") {
             this.settleBillList = res.data.data.settleBillList;
