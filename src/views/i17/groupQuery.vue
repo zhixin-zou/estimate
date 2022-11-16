@@ -187,22 +187,16 @@
         <el-table-column width="150" prop="groupName" label="合同组名称">
         </el-table-column>
         <el-table-column width="150" prop="groupId" label="合同组id"> </el-table-column>
-        <!-- <el-table-column label="操作" width="200">
-            <template slot-scope="scope">
-              <el-button @click="handleProjectJournal(scope.row)" type="text" size="small"
-                >moodys子账</el-button
-              >
-              <el-button
-                @click="handleProjectJournalPushRow(scope.row)"
-                type="text"
-                size="small"
-                >生成ebs凭证</el-button
-              >
-              <el-button @click="handleJectJournal(scope.row)" type="text" size="small"
-                >查看凭证信息</el-button
-              >
-            </template>
-          </el-table-column> -->
+        <el-table-column label="操作" width="200" fixed="right">
+          <template slot-scope="scope">
+            <el-button @click="handleEdit(scope.row)" type="text" size="small"
+              >修改</el-button
+            >
+            <el-button @click="handleDelete(scope.row)" type="text" size="small"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
       <!-- @size-change="handleSizeChange" -->
       <div class="listPagination">
@@ -224,6 +218,139 @@
     <div class="checkGroup">
       <el-button @click="handleAddGroup">新增合同分组</el-button>
     </div>
+    <el-dialog title="编辑" :visible.sync="showEditForm">
+      <el-form ref="editForm" :model="editForm" style="overflow: auto">
+        <el-form-item label="IFRS17 methodology flag (e.g. GMM, PAA)">
+          <el-input v-model="editForm.methodologyFlag" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Level of Aggregation (IFRS 17 group tagging)">
+          <el-input v-model="editForm.levelOfAggregation" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="IFRS17 group tagging - Inception date">
+          <el-input v-model="editForm.inceptionDate" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="IFRS17 group tagging - Expiry date">
+          <el-input v-model="editForm.expiryDate" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="IFRS17 group tagging - Currency">
+          <el-input v-model="editForm.currency" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="IFRS17 group tagging - Onerosity">
+          <el-input v-model="editForm.onerosity" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="IFRS17 group tagging - Portfolio">
+          <el-input v-model="editForm.portfolio" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Type of contract">
+          <el-input v-model="editForm.typeOfContract" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Total Premium Written (EPI)">
+          <el-input v-model="editForm.epi" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="	Commission type">
+          <el-input v-model="editForm.commissionType" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Actual Premium Received for Current & Future Service">
+          <el-input
+            v-model="editForm.actualPremiumReceived"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Paid Claims and ALAE">
+          <el-input v-model="editForm.paidClaimsAndALAE" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Actual commissions paid">
+          <el-input
+            v-model="editForm.actualCommissionsPaid"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Paid acquisition and maintenance expenses">
+          <el-input
+            v-model="editForm.paidAcquisitionAndMaintenanceExpenses"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Attributable/non-attributable classification">
+          <el-input
+            v-model="editForm.attributableClassification"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Acquisition/maintenance classification ">
+          <el-input
+            v-model="editForm.acquisitionClassification"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Loss ratio (LRC)">
+          <el-input v-model="editForm.lossRatioLRC" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Loss ratio (LIC)">
+          <el-input v-model="editForm.lossRatioLIC" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Coverage Units">
+          <el-input v-model="editForm.coverageUnits" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Current period discount rates">
+          <el-input
+            v-model="editForm.currentPeriodDiscountRates"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Risk adjustment ratios (GMM)">
+          <el-input
+            v-model="editForm.riskAdjustmentRatios"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Locked-in Rate">
+          <el-input v-model="editForm.lockedInRate" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="P&L Rates curves">
+          <el-input v-model="editForm.plRatesCurves" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="Maximum sliding scale commission ratio">
+          <el-input
+            v-model="editForm.maximumSlidingScaleCommissionRatio"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Provisional sliding scale commission ratio">
+          <el-input
+            v-model="editForm.provisionalSlidingScaleCommissionRatio"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="Sliding scale commission ratio correponding to the incurred loss ratio"
+        >
+          <el-input
+            v-model="editForm.slidingScaleCommissionRatio"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="Maximum profit commission ratio">
+          <el-input
+            v-model="editForm.maximumProfitCommissionRatio"
+            style="width: 200px"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="父级合同组">
+          <el-input v-model="editForm.parentGroup" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="合同组名称">
+          <el-input v-model="editForm.groupName" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item label="合同分组主键">
+          <el-input v-model="editForm.groupId" style="width: 200px"></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="dialogFoot" style="text-align: right">
+        <el-button type="primary" size="mini" @click="handleCancel">取消</el-button>
+        <el-button type="primary" size="mini" @click="handleClick">确认</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -254,7 +381,39 @@ export default {
       tableData: [],
       companyList: [],
       groupList: [],
-      projectJournalList: [],
+      contractGroupList: [],
+      editForm: {
+        methodologyFlag: "",
+        levelOfAggregation: "",
+        inceptionDate: "",
+        expiryDate: "",
+        currency: "",
+        onerosity: "",
+        portfolio: "",
+        typeOfContract: "",
+        epi: "",
+        commissionType: "",
+        actualPremiumReceived: "",
+        paidClaimsAndALAE: "",
+        actualCommissionsPaid: "",
+        paidAcquisitionAndMaintenanceExpenses: "",
+        attributableClassification: "",
+        acquisitionClassification: "",
+        lossRatioLRC: "",
+        lossRatioLIC: "",
+        coverageUnits: "",
+        currentPeriodDiscountRates: "",
+        riskAdjustmentRatios: "",
+        plRatesCurves: "",
+        maximumSlidingScaleCommissionRatio: "",
+        provisionalSlidingScaleCommissionRatio: "",
+        slidingScaleCommissionRatio: "",
+        maximumProfitCommissionRatio: "",
+        parentGroup: "",
+        groupName: "",
+        groupId: "",
+      },
+      showEditForm: false,
     };
   },
   methods: {
@@ -328,6 +487,77 @@ export default {
     },
     handleAddGroup() {
       this.$router.push("/groupInfo");
+    },
+    handleSelectionChange(val) {
+      console.log(val, "val");
+      this.contractGroupList = val;
+    },
+    handleEdit(row) {
+      this.showEditForm = true;
+      this.editForm = {
+        methodologyFlag: row.methodologyFlag,
+        levelOfAggregation: row.levelOfAggregation,
+        inceptionDate: row.inceptionDate,
+        expiryDate: row.expiryDate,
+        currency: row.currency,
+        onerosity: row.onerosity,
+        portfolio: row.portfolio,
+        typeOfContract: row.typeOfContract,
+        epi: row.epi,
+        commissionType: row.commissionType,
+        actualPremiumReceived: row.actualPremiumReceived,
+        paidClaimsAndALAE: row.paidClaimsAndALAE,
+        actualCommissionsPaid: row.actualCommissionsPaid,
+        paidAcquisitionAndMaintenanceExpenses: row.paidAcquisitionAndMaintenanceExpenses,
+        attributableClassification: row.attributableClassification,
+        acquisitionClassification: row.acquisitionClassification,
+        lossRatioLRC: row.lossRatioLRC,
+        lossRatioLIC: row.lossRatioLIC,
+        coverageUnits: row.coverageUnits,
+        currentPeriodDiscountRates: row.currentPeriodDiscountRates,
+        riskAdjustmentRatios: row.riskAdjustmentRatios,
+        plRatesCurves: row.plRatesCurves,
+        maximumSlidingScaleCommissionRatio: row.maximumSlidingScaleCommissionRatio,
+        provisionalSlidingScaleCommissionRatio:
+          row.provisionalSlidingScaleCommissionRatio,
+        slidingScaleCommissionRatio: row.slidingScaleCommissionRatio,
+        maximumProfitCommissionRatio: row.maximumProfitCommissionRatio,
+        parentGroup: row.parentGroup,
+        groupName: row.groupName,
+        groupId: row.groupId,
+      };
+    },
+    handleCancel() {
+      this.showEditForm = false;
+    },
+    handleClick() {
+      $http
+        .post(api.groupModify, this.editForm)
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("修改成功");
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .finally(() => {
+          this.showEditForm = false;
+        });
+      this.showEditForm = false;
+    },
+    handleDelete(row) {
+      $http
+        .post(api.groupDelete, {
+          groupId: row.groupId,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("删除成功");
+            this.init();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
     },
     // 导出方法
     // exportBtn(refProp, fname) {
@@ -482,6 +712,15 @@ export default {
     margin-left: 45%;
     // margin-bottom: 20px;
     height: 50px;
+  }
+}
+</style>
+<style lang="scss" scoped>
+.financialSearch {
+  .el-form-item {
+    // float: left;
+    width: 660px;
+    float: left;
   }
 }
 </style>

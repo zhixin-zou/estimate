@@ -75,7 +75,7 @@
         <el-table-column prop="dateBegin" label="项目开始时间"> </el-table-column>
         <el-table-column prop="dateEnd" label="项目结束时间"> </el-table-column>
         <el-table-column prop="levelParameter" label="参数级别"> </el-table-column>
-        <el-table-column prop="projectHumanName" label="项目名称"> </el-table-column>
+        <el-table-column prop="projectHumanName" label="项目人名称"> </el-table-column>
         <el-table-column prop="typeParameter" label="参数类别"> </el-table-column>
         <el-table-column prop="methodParameter" label="参数方法"> </el-table-column>
         <el-table-column prop="frequencyParameter" label="参数频率"> </el-table-column>

@@ -179,7 +179,8 @@
       </div>
     </div>
     <div class="checkGroup">
-      <el-button @click="handleShowDialog">确认分组</el-button>
+      <el-button @click="handleShowDialog(0)">确认分组</el-button>
+      <el-button @click="handleShowDialog(1)">解绑分组</el-button>
     </div>
     <div class="buttonGroup">
       <div style="float: left; margin-right: 10px">
@@ -692,6 +693,7 @@ export default {
       fundBillList: [],
       settleBillList: [],
       downLoading: false,
+      groupFlag: 0,
     };
   },
   methods: {
@@ -703,7 +705,11 @@ export default {
       });
       this.handleSearchClick();
     },
-    handleookedDetail() {},
+    handleookedDetail(row) {
+      sessionStorage.setItem("contractNoStart", row.contractNo);
+      sessionStorage.setItem("contractNoEnd", row.contractNo);
+      this.$router.push("/financialForecasts");
+    },
     toPercentData(data) {
       return toPercent(data);
     },
@@ -774,8 +780,10 @@ export default {
       console.log(val, "val");
       this.contractGroupList = val;
     },
-    handleShowDialog() {
+    handleShowDialog(a) {
       this.groupValue = "";
+      this.groupFlag = a;
+      console.log(this.groupFlag);
       this.showGroupDialog = true;
     },
     handleCancel() {
@@ -786,18 +794,34 @@ export default {
       this.contractGroupList.forEach((item) => {
         contractGroupRelateArr.push(item.contractNo);
       });
-      $http
-        .post(api.contractGroupRelate, {
-          groupId: this.groupValue,
-          contractList: contractGroupRelateArr,
-        })
-        .then((res) => {
-          if (res.data.code === "0") {
-            this.$message.success("分组成功");
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        });
+      if (this.groupFlag === 0) {
+        $http
+          .post(api.contractGroupRelate, {
+            groupId: this.groupValue,
+            contractList: contractGroupRelateArr,
+          })
+          .then((res) => {
+            if (res.data.code === "0") {
+              this.$message.success("分组成功");
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+      } else {
+        $http
+          .post(api.contractGroupUnbund, {
+            groupId: this.groupValue,
+            contractList: contractGroupRelateArr,
+          })
+          .then((res) => {
+            if (res.data.code === "0") {
+              this.$message.success("解绑成功");
+            } else {
+              this.$message.error(res.data.msg);
+            }
+          });
+      }
+
       this.showGroupDialog = false;
       this.init();
     },

@@ -539,7 +539,13 @@ export default {
         console.log(res, "queryCompany");
         this.companyList = res.data.data.partnerList;
       });
+      if (sessionStorage.getItem("contractNoStart")) {
+        this.form.contractNoBegin = sessionStorage.getItem("contractNoStart");
+        this.form.contractNoEnd = sessionStorage.getItem("contractNoEnd");
+      }
       this.handleSearchClick();
+      sessionStorage.removeItem("contractNoStart");
+      sessionStorage.removeItem("contractNoEnd");
     },
     onSubmit() {
       console.log("submit!");

@@ -131,6 +131,8 @@ export default {
   groupAdd: '/ifrs17/groupAdd',
   // 合同管理合同分组
   contractGroupRelate: '/ifrs17/contractGroupRelate',
+  // 合同分组拆分
+  contractGroupUnbund: '/ifrs17/contractGroupUnbund',
   // 精算年缴预估保费修改
   yearContractPremiumModify: '/estimate/actuarial/yearContractPremiumModify',
   // 精算年缴预估保费修改
@@ -150,5 +152,7 @@ export default {
   fundBill: '/ifrs17/download/fundBill',
   settleBill: '/ifrs17/download/settleBill',
   // 精算预估批量导入
-  saveActuarialEpi: '/estimate/actuarial/saveActuarialEpi'
+  saveActuarialEpi: '/estimate/actuarial/saveActuarialEpi',
+  groupModify: '/ifrs17/groupModify',
+  groupDelete: '/ifrs17/groupDelete'
 };
