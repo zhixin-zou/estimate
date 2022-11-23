@@ -180,7 +180,7 @@
     </div>
     <div class="checkGroup">
       <el-button @click="handleShowDialog(0)">确认分组</el-button>
-      <el-button @click="handleShowDialog(1)">解绑分组</el-button>
+      <el-button @click="handleUnbundling()">解绑分组</el-button>
     </div>
     <div class="buttonGroup">
       <div style="float: left; margin-right: 10px">
@@ -791,10 +791,12 @@ export default {
     },
     handleClick() {
       let contractGroupRelateArr = [];
-      this.contractGroupList.forEach((item) => {
-        contractGroupRelateArr.push(item.contractNo);
-      });
-      if (this.groupFlag === 0) {
+      if (this.contractGroupList.length === 0) {
+        this.$message.warning("请选择相关合同");
+      } else {
+        this.contractGroupList.forEach((item) => {
+          contractGroupRelateArr.push(item.contractNo);
+        });
         $http
           .post(api.contractGroupRelate, {
             groupId: this.groupValue,
@@ -807,23 +809,48 @@ export default {
               this.$message.error(res.data.msg);
             }
           });
+      }
+
+      // else {
+      //   $http
+      //     .post(api.contractGroupUnbund, {
+      //       groupId: this.groupValue,
+      //       contractList: contractGroupRelateArr,
+      //     })
+      //     .then((res) => {
+      //       if (res.data.code === "0") {
+      //         this.$message.success("解绑成功");
+      //       } else {
+      //         this.$message.error(res.data.msg);
+      //       }
+      //     });
+      // }
+
+      this.showGroupDialog = false;
+      this.init();
+    },
+    handleUnbundling() {
+      let contractGroupRelateArr = [];
+      if (this.contractGroupList.length === 0) {
+        this.$message.warning("请选择相关合同");
       } else {
+        this.contractGroupList.forEach((item) => {
+          contractGroupRelateArr.push(item.contractNo);
+        });
         $http
           .post(api.contractGroupUnbund, {
-            groupId: this.groupValue,
             contractList: contractGroupRelateArr,
           })
           .then((res) => {
             if (res.data.code === "0") {
               this.$message.success("解绑成功");
+              this.contractGroupList = [];
+              this.init();
             } else {
               this.$message.error(res.data.msg);
             }
           });
       }
-
-      this.showGroupDialog = false;
-      this.init();
     },
     handleyanshou() {
       this.downLoading = true;

@@ -173,6 +173,9 @@
               style="margin-left: 0"
               >新增预估</el-button
             >
+            <el-button @click="handleInvalid(scope.row)" type="text" size="small"
+              >作废</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -770,6 +773,20 @@ export default {
         (this.addForm.estimateKey = row.estimateKey || ""),
         (this.addForm.contractKey = row.contractKey || ""),
         (this.showAddFinance = true);
+    },
+    handleInvalid(row) {
+      $http
+        .post(api.disableContractEstimate, {
+          contractKey: row.contractKey,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.$message.success("作废成功");
+            this.init();
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
     },
     handleAdjustType(row) {
       this.showTypeDialog = true;

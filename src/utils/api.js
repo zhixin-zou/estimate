@@ -154,5 +154,8 @@ export default {
   // 精算预估批量导入
   saveActuarialEpi: '/estimate/actuarial/saveActuarialEpi',
   groupModify: '/ifrs17/groupModify',
-  groupDelete: '/ifrs17/groupDelete'
+  groupDelete: '/ifrs17/groupDelete',
+
+  // 分入预估作废
+  disableContractEstimate: '/estimate/finance/disableContractEstimate'
 };
