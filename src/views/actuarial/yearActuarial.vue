@@ -49,9 +49,7 @@
           </el-table-column>
           <el-table-column prop="expectClaimRate" label="预计赔付率">
             <template slot-scope="scope">
-              <span v-if="historyShow === '4'">{{
-                scope.row.expectClaimRate
-              }}</span>
+              <span v-if="historyShow === '4'">{{ scope.row.expectClaimRate }}</span>
               <el-input
                 v-else
                 v-model="scope.row.expectClaimRate"
@@ -61,21 +59,14 @@
           </el-table-column>
           <el-table-column prop="expectXOLRate" label="预期XOL費用率">
             <template slot-scope="scope">
-              <span v-if="historyShow === '4'">{{
-                scope.row.expectXOLRate
-              }}</span>
+              <span v-if="historyShow === '4'">{{ scope.row.expectXOLRate }}</span>
               <el-input v-else v-model="scope.row.expectXOLRate"></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="expectMaintainRate" label="预计维持費用">
             <template slot-scope="scope">
-              <span v-if="historyShow === '4'">{{
-                scope.row.expectMaintainRate
-              }}</span>
-              <el-input
-                v-else
-                v-model="scope.row.expectMaintainRate"
-              ></el-input>
+              <span v-if="historyShow === '4'">{{ scope.row.expectMaintainRate }}</span>
+              <el-input v-else v-model="scope.row.expectMaintainRate"></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="riskMargin" label="Risk Margin">
@@ -86,9 +77,7 @@
           </el-table-column>
           <el-table-column prop="discounting" label="Discounting">
             <template slot-scope="scope">
-              <span v-if="historyShow === '4'">{{
-                scope.row.discounting
-              }}</span>
+              <span v-if="historyShow === '4'">{{ scope.row.discounting }}</span>
               <el-input v-else v-model="scope.row.discounting"></el-input>
             </template>
           </el-table-column>
@@ -100,34 +89,24 @@
               <span v-if="historyShow === '4'">{{
                 scope.row.adjustedRiskMarginFactor
               }}</span>
-              <el-input
-                v-else
-                v-model="scope.row.adjustedRiskMarginFactor"
-              ></el-input>
+              <el-input v-else v-model="scope.row.adjustedRiskMarginFactor"></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="cedentRate" label="比例分出">
             <template slot-scope="scope">
               <span v-if="historyShow === '4'">{{ scope.row.cedentRate }}</span>
-              <el-input
-                v-else
-                v-model="scope.row.cedentRate"
-              ></el-input> </template
+              <el-input v-else v-model="scope.row.cedentRate"></el-input> </template
           ></el-table-column>
           <el-table-column prop="retroDacRate" label="转分保DAC比例">
             <template slot-scope="scope">
-              <span v-if="historyShow === '4'">{{
-                scope.row.retroDacRate
-              }}</span>
+              <span v-if="historyShow === '4'">{{ scope.row.retroDacRate }}</span>
               <el-input v-else v-model="scope.row.retroDacRate"></el-input>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div class="monthHeader">
-        <el-button @click="handleExport('uprRate', 'UPR计算比例')"
-          >导出</el-button
-        >
+        <el-button @click="handleExport('uprRate', 'UPR计算比例')">导出</el-button>
       </div>
       <div class="separateInfo">
         <h2>UPR计算比例</h2>
@@ -152,9 +131,7 @@
             :label="item.policyMonth"
           >
             <template slot-scope="scope">
-              <span v-if="historyShow === '4'"
-                >{{ scope.row[item.policyMonth] }}
-              </span>
+              <span v-if="historyShow === '4'">{{ scope.row[item.policyMonth] }} </span>
               <el-input
                 v-else
                 @change="handleChange"
@@ -176,9 +153,7 @@
       </div>
     </div>
     <div class="monthHeader">
-      <el-button @click="handleExport('cedentInfo', '分出信息')"
-        >导出</el-button
-      >
+      <el-button @click="handleExport('cedentInfo', '分出信息')">导出</el-button>
     </div>
     <div class="separateInfo">
       <h2>分出信息</h2>
@@ -203,12 +178,7 @@
         :summary-method="getSummaries"
         show-summary
       >
-        <el-table-column
-          prop="calculatMonth"
-          label="计算月份"
-          width="180"
-          fixed="left"
-        >
+        <el-table-column prop="calculatMonth" label="计算月份" width="180" fixed="left">
         </el-table-column>
         <el-table-column prop="financePremium" label="月年缴保费" width="150">
           <template slot-scope="scope">
@@ -296,15 +266,9 @@
       <el-table :data="lastList" border style="width: 100%; margin-top: 20px">
         <el-table-column prop="company" label="公司" width="200" fixed="left">
         </el-table-column>
-        <el-table-column
-          prop="calculatItem"
-          label="计算项目"
-          width="100"
-          fixed="left"
-        >
+        <el-table-column prop="calculatItem" label="计算项目" width="100" fixed="left">
         </el-table-column>
-        <el-table-column prop="currencyCode" label="币种" width="100">
-        </el-table-column>
+        <el-table-column prop="currencyCode" label="币种" width="100"> </el-table-column>
         <el-table-column
           width="150"
           v-for="(item, index) in calculatedFeeList"
@@ -324,8 +288,7 @@
         border
         style="width: 100%; margin-top: 20px"
       >
-        <el-table-column prop="company" label="公司" width="200">
-        </el-table-column>
+        <el-table-column prop="company" label="公司" width="200"> </el-table-column>
         <el-table-column prop="calculatItem" label="计算项目" width="100">
         </el-table-column>
         <el-table-column prop="currencyCode" label="币种"> </el-table-column>
@@ -342,11 +305,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-button
-      plain
-      class="checkDetial"
-      @click="handleSave"
-      v-if="historyShow !== '4'"
+    <el-button plain class="checkDetial" @click="handleSave" v-if="historyShow !== '4'"
       >保存</el-button
     >
   </div>
@@ -558,10 +517,7 @@ export default {
           // 对this.uprRAteList进行冒泡排序
           for (var i = 0; i < this.uprRateList.length; i++) {
             for (var j = 0; j < this.uprRateList.length - 1 - i; j++) {
-              console.log(
-                this.uprRateList.length[j],
-                "this.uprRateList.length[j]"
-              );
+              console.log(this.uprRateList.length[j], "this.uprRateList.length[j]");
               if (
                 Number(this.uprRateList[j].policyMonth) >
                 Number(this.uprRateList[j + 1].policyMonth)
@@ -604,10 +560,8 @@ export default {
       let monthInfo = uprSplitInfo.calculatMonths % 12;
       let yearsInfo = parseInt(uprSplitInfo.calculatMonths / 12);
       console.log(yearsInfo, "?????", monthInfo);
-      let endYear =
-        Number(uprSplitInfo.contractMonthBegin.slice(0, 4)) + yearsInfo;
-      let endMonth =
-        Number(uprSplitInfo.contractMonthBegin.slice(4)) + monthInfo;
+      let endYear = Number(uprSplitInfo.contractMonthBegin.slice(0, 4)) + yearsInfo;
+      let endMonth = Number(uprSplitInfo.contractMonthBegin.slice(4)) + monthInfo;
       console.log(endYear, endMonth, "===============");
       if (endMonth > 12) {
         endYear += 1;
@@ -769,34 +723,24 @@ export default {
       this.lastList = [];
       // console.log(this.calculatedFeeList, "this.calculatedFeeList");
       var obj = {};
-      this.calculatedFeeList = this.calculatedFeeList.reduce(function (
-        item,
-        next
-      ) {
+      this.calculatedFeeList = this.calculatedFeeList.reduce(function (item, next) {
         obj[next.calculatMonth]
           ? ""
           : (obj[next.calculatMonth] = true && item.push(next));
         return item;
-      },
-      []);
+      }, []);
       var obj2 = {};
       var calculatObj = {};
       this.testList = this.calculatedFeeList2.reduce(function (item, next) {
-        obj2[next.company]
-          ? ""
-          : (obj2[next.company] = true && item.push(next));
+        obj2[next.company] ? "" : (obj2[next.company] = true && item.push(next));
         return item;
       }, []);
-      let calculatItemList = this.calculatedFeeList2.reduce(function (
-        item,
-        next
-      ) {
+      let calculatItemList = this.calculatedFeeList2.reduce(function (item, next) {
         calculatObj[next.calculatItem]
           ? ""
           : (calculatObj[next.calculatItem] = true && item.push(next));
         return item;
-      },
-      []);
+      }, []);
 
       var result = [];
       var obj3 = {};
@@ -870,12 +814,12 @@ export default {
     },
     handleBack() {
       // this.$router.go(-1);
-      if (localStorage.getItem('ActuarialGoto') === 'actuarialEstimates') {
-      this.$router.push("/actuarialEstimates");
-      } else if (localStorage.getItem('ActuarialGoto') === 'jsnViewHistory') {
-        this.$router.push("/jsnViewHistory")
+      if (localStorage.getItem("ActuarialGoto") === "actuarialEstimates") {
+        this.$router.push("/actuarialEstimates");
+      } else if (localStorage.getItem("ActuarialGoto") === "jsnViewHistory") {
+        this.$router.push("/jsnViewHistory");
       }
-      localStorage.removeItem("ActuarialGoto")
+      localStorage.removeItem("ActuarialGoto");
     },
     // 导出方法
     exportBtn(refProp, fname) {
@@ -984,8 +928,8 @@ export default {
           }
         });
     },
-    handleEditPremium () {
-      console.log(this.UPRData, 'UPRDataUPRDataUPRDataUPRData');
+    handleEditPremium() {
+      console.log(this.UPRData, "UPRDataUPRDataUPRDataUPRData");
       for (var key in this.uprRateListData[0]) {
         this.uprRateList.forEach((item) => {
           if (key === item.policyMonth) {
@@ -1015,34 +959,35 @@ export default {
             this.feeInfoList = [];
             this.contractInfoList.push(res.data.data.contractInfo);
             this.feeInfoList.push(res.data.data.feeInfo);
-            this.cedentList = res.data.data.cedentList;
-            let obj = { policyMonth: "UPR 分布" };
-            this.uprRateList = res.data.data.uprRateList;
-            // 对this.uprRAteList进行冒泡排序
-            for (var i = 0; i < this.uprRateList.length; i++) {
-              for (var j = 0; j < this.uprRateList.length - 1 - i; j++) {
-                if (
-                  Number(this.uprRateList[j].policyMonth) >
-                  Number(this.uprRateList[j + 1].policyMonth)
-                ) {
-                  //相邻元素两两对比
-                  var temp = this.uprRateList[j + 1]; //元素交换
-                  this.uprRateList[j + 1] = this.uprRateList[j];
-                  this.uprRateList[j] = temp;
-                }
-              }
-            }
-            // 排序结束
-            this.uprRateList.map((item) => {
-              obj[item.policyMonth] = item.uprRate;
-            });
-            this.uprRateListData = [];
-            this.uprRateListData.push(obj);
-            let uprSplitInfo = res.data.data.uprEstimateList;
-            this.dataProcess(uprSplitInfo);
-            this.calculatedFeeList = res.data.data.calculatedFeeList;
-            this.calculatedFeeList2 = res.data.data.calculatedFeeList;
-            this.handleFloatChange();
+            // this.cedentList = res.data.data.cedentList;
+            // let obj = { policyMonth: "UPR 分布" };
+            // this.uprRateList = res.data.data.uprRateList;
+            // // 对this.uprRAteList进行冒泡排序
+            // for (var i = 0; i < this.uprRateList.length; i++) {
+            //   for (var j = 0; j < this.uprRateList.length - 1 - i; j++) {
+            //     if (
+            //       Number(this.uprRateList[j].policyMonth) >
+            //       Number(this.uprRateList[j + 1].policyMonth)
+            //     ) {
+            //       //相邻元素两两对比
+            //       var temp = this.uprRateList[j + 1]; //元素交换
+            //       this.uprRateList[j + 1] = this.uprRateList[j];
+            //       this.uprRateList[j] = temp;
+            //     }
+            //   }
+            // }
+            // // 排序结束
+            // this.uprRateList.map((item) => {
+            //   obj[item.policyMonth] = item.uprRate;
+            // });
+            // this.uprRateListData = [];
+            // this.uprRateListData.push(obj);
+            // let uprSplitInfo = res.data.data.uprEstimateList;
+            // this.dataProcess(uprSplitInfo);
+            // this.calculatedFeeList = res.data.data.calculatedFeeList;
+            // this.calculatedFeeList2 = res.data.data.calculatedFeeList;
+            // this.handleFloatChange();
+            this.init();
           } else {
             this.$message.error(res.data.msg);
           }
@@ -1050,7 +995,7 @@ export default {
         .finally(() => {
           this.adjustLoading = false;
         });
-    }
+    },
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => vm.init());

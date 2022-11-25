@@ -371,7 +371,11 @@
         >
           <template slot-scope="scope">
             <!-- <span>{{ kiloSplitData(scope.row[item.calculatMonth]) }}</span> -->
-            <el-input placeholder="" v-model="scope.row[item.calculatMonth]"></el-input>
+            <el-input
+              placeholder=""
+              v-model="scope.row[item.calculatMonth]"
+              :disabled="scope.row.class === '预估UPR' ? true : false"
+            ></el-input>
             <!-- <span v-show="!scope.row.show">{{scope.row.tab1}}</span> -->
           </template>
         </el-table-column>
