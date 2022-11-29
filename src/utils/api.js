@@ -157,5 +157,6 @@ export default {
   groupDelete: '/ifrs17/groupDelete',
 
   // 分入预估作废
-  disableContractEstimate: '/estimate/finance/disableContractEstimate'
+  disableContractEstimate: '/estimate/finance/disableContractEstimate',
+  estimateResult: '/ifrs17/download/estimate'
 };

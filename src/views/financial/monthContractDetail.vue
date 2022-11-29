@@ -107,7 +107,7 @@
               v-else
               placeholder="请输入内容"
               v-model="scope.row.manualAdjustEPI"
-              :disabled="scope.row.commandFlag === '1' || viewTitle === '财务视图'"
+              :disabled="scope.row.commandFlag === '1' || viewTitle === '精算视图'"
             ></el-input>
           </template>
         </el-table-column>
@@ -201,6 +201,7 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="0">月份金额调整</el-dropdown-item>
           <el-dropdown-item command="1">分摊明细调整</el-dropdown-item>
+          <el-dropdown-item command="2">合计金额调整</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>

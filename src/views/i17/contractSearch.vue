@@ -197,7 +197,8 @@
       </div>
       <el-button :loading="downLoading" @click="handleyanshou">应收账单下载</el-button>
       <el-button :loading="downLoading" @click="handlezijin">资金账单下载</el-button>
-      <el-button :loading="downLoading" @click="handlezhangdan">结算帐单下载</el-button>
+      <el-button :loading="downLoading" @click="handlezhangdan">结算账单下载</el-button>
+      <el-button :loading="downLoading" @click="handleyugujieguo">预估结果下载</el-button>
     </div>
     <el-dialog
       title="选择分组"
@@ -236,6 +237,11 @@
         :ref="'settleBill'"
         :columns="settleBillColumns"
         :listData="settleBillList"
+      ></fs-list-panel>
+      <fs-list-panel
+        :ref="'iabCalculatedFee'"
+        :columns="iabCalculatedFeeColumns"
+        :listData="iabCalculatedFeeList"
       ></fs-list-panel>
     </div>
   </div>
@@ -684,6 +690,64 @@ export default {
           property: "accountStatus2",
         },
       ],
+      iabCalculatedFeeColumns: [
+        {
+          title: "合同号",
+          property: "contractNo",
+        },
+        {
+          title: "合同标题",
+          property: "contractTitle",
+        },
+        {
+          title: "合同session",
+          property: "classificName",
+        },
+        {
+          title: "合同类型",
+          property: "contractType",
+        },
+        {
+          title: "合同类别",
+          property: "contractClass",
+        },
+        {
+          title: "合同开始时间",
+          property: "effectivePeriodBegin",
+        },
+        {
+          title: "合同结束时间",
+          property: "effectivePeriodEnd",
+        },
+        {
+          title: "当前预估月份",
+          property: "estimateMonth",
+        },
+        {
+          title: "计算月份",
+          property: "calculatMonth",
+        },
+        {
+          title: "计算项目",
+          property: "calculatItem",
+        },
+        {
+          title: "币种",
+          property: "currencyCode",
+        },
+        {
+          title: "计算公司",
+          property: "partnerName",
+        },
+        {
+          title: "分出合同号",
+          property: "orpContractNo",
+        },
+        {
+          title: "计算金额",
+          property: "confirmAmount",
+        },
+      ],
       currentPageData: [],
       tableData: [],
       companyList: [],
@@ -692,6 +756,7 @@ export default {
       premiumBillList: [],
       fundBillList: [],
       settleBillList: [],
+      iabCalculatedFeeList: [],
       downLoading: false,
       groupFlag: 0,
     };
@@ -897,6 +962,22 @@ export default {
         })
         .finally(() => {
           this.handleExport("settleBill", "结算账单下载");
+          this.downLoading = false;
+        });
+    },
+    handleyugujieguo() {
+      this.downLoading = true;
+      $http
+        .post(api.estimateResult, {
+          dataPeriod: this.dataMonth,
+        })
+        .then((res) => {
+          if (res.data.code === "0") {
+            this.iabCalculatedFeeList = res.data.data.iabCalculatedFeeList;
+          }
+        })
+        .finally(() => {
+          this.handleExport("iabCalculatedFee", "预估结果下载");
           this.downLoading = false;
         });
     },
