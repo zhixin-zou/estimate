@@ -385,7 +385,7 @@ export default {
     handleCheckClick() {
       this.istrycalculate = true;
 
-      this.$message.warning("功能暂不支持");
+      // this.$message.warning("功能暂不支持");
       $http
         .post(api.summaryAllocatCalculatQuery, {
           classCode: this.classCode,
