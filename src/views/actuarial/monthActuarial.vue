@@ -740,7 +740,7 @@ export default {
       $http
         .post(api.monthSpiltViewDetailQuery, {
           estimateKey: sessionStorage.getItem("jsMonthEstimateKey"),
-          viewType: "0",
+          viewType: "1",
           accountType: "1",
         })
         .then((res) => {
